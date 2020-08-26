@@ -51,5 +51,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# Special Files Compilers-Project
+# Files from Compilers-Project
 *.yy.c
+*/etapa*
