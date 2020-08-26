@@ -25,7 +25,7 @@ int main (int argc, char**argv) {
         switch (token){
             case '~':
             case '@':
-            case '‘':
+            case '`':
             case ',':
             case ';':
             case ':':
@@ -47,7 +47,7 @@ int main (int argc, char**argv) {
             case '.':
             case '%':
             case '#':
-            case 'ˆ':
+            case '^':
             case '|':
             case '$':
             case '?': print_nome2 (token); break;
