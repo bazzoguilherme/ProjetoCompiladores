@@ -1,6 +1,9 @@
 %{
 #include "tokens.h"
 int line_counter = 1;
+
+void read_multiline();
+
 %}
 
 digito [0-9]
@@ -86,26 +89,28 @@ branco [ \t]
 
 {branco}+ { }
 
- "/*" {
-        register int c;
-
-        for ( ; ; ) {
-            while ( (c = input()) != '*' && c != '\n' &&  c != EOF );
-            if (c == '\n'){
-                line_counter++;
-            } else if ( c == '*' ) {
-                while ( (c = input()) == '*' );
-                if ( c == '/' )
-                    break;
-            } else if ( c == EOF ) {
-                break;
-            }
-        }
-      }
+ "/*" { read_multiline(); }
 
 
 %%
 
 int get_line_number(){
     return line_counter;
+}
+
+void read_multiline() {
+    register int c;
+
+    for ( ; ; ) {
+        while ( (c = input()) != '*' && c != '\n' &&  c != EOF );
+        if (c == '\n'){
+            line_counter++;
+        } else if ( c == '*' ) {
+            while ( (c = input()) == '*' );
+            if ( c == '/' )
+                break;
+        } else if ( c == EOF ) {
+            break;
+        }
+    }
 }
