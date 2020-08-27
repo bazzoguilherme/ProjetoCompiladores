@@ -86,6 +86,24 @@ branco [ \t]
 
 {branco}+ { }
 
+ "/*" {
+        register int c;
+
+        for ( ; ; ) {
+            while ( (c = input()) != '*' && c != '\n' &&  c != EOF );
+            if (c == '\n'){
+                line_counter++;
+            } else if ( c == '*' ) {
+                while ( (c = input()) == '*' );
+                if ( c == '/' )
+                    break;
+            } else if ( c == EOF ) {
+                break;
+            }
+        }
+      }
+
+
 %%
 
 int get_line_number(){
