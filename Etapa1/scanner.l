@@ -10,12 +10,11 @@ digito [0-9]
 letra [a-zA-Z_]
 branco [ \t]
 
-
 %%
 
 \n {line_counter++;}
 "//"({letra}|{digito}|{branco})* { }
-
+"/*" { read_multiline(); }
 
 "int" { return TK_PR_INT; }
 "float" { return TK_PR_FLOAT; }
@@ -89,8 +88,7 @@ branco [ \t]
 
 {branco}+ { }
 
- "/*" { read_multiline(); }
-
+. { return TOKEN_ERRO; }
 
 %%
 
