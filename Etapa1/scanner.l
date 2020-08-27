@@ -1,16 +1,17 @@
 %{
 #include "tokens.h"
-int line_counter = 0;
+int line_counter = 1;
 %}
 
 digito [0-9]
-letra [a-zA-Z_]  
+letra [a-zA-Z_]
+branco [ \t]
 
 
 %%
 
 \n {line_counter++;}
-^"//" {line_counter++;}
+"//"({letra}|{digito}|{branco})* { }
 
 
 "int" { return TK_PR_INT; }
@@ -78,11 +79,12 @@ letra [a-zA-Z_]
 "false" { return TK_LIT_FALSE; }
 {letra}+({digito}|{letra})* { return TK_IDENTIFICADOR; }
 ("\-"|"\+")?{digito}+ { return TK_LIT_INT; }
-("\-"|"\+")?{digito}+"."{digito}+(("E"|"e"){digito}+)? { return TK_LIT_FLOAT; }
+("\-"|"\+")?{digito}+"."{digito}+(("E"|"e")("\-")?{digito}+)? { return TK_LIT_FLOAT; }
+("\-"|"\+")?{digito}+(("E"|"e")("\-")?{digito}+)? { return TK_LIT_FLOAT; }
 "\'"."\'" { return TK_LIT_CHAR; }
 \".+\" { return TK_LIT_STRING; }
 
-. { return TOKEN_ERRO; }
+{branco}+ { }
 
 %%
 
