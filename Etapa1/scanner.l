@@ -16,6 +16,8 @@ branco [ \t]
 "//"({letra}|{digito}|{branco})* { }
 "/*" { read_multiline(); }
 
+\r { }
+
 "int" { return TK_PR_INT; }
 "float" { return TK_PR_FLOAT; }
 "bool" { return TK_PR_BOOL; }
