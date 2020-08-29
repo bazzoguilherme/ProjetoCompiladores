@@ -95,7 +95,7 @@ escape_symbol ['"]
 "\'\\"({escape_char}|{escape_symbol})"\'" { return TK_LIT_CHAR; }
 "\'\'" { return TOKEN_ERRO; }
 
-\".+\" { return TK_LIT_STRING; }
+\".*\" { return TK_LIT_STRING; }
 
 {branco}+ { }
 \r { }
