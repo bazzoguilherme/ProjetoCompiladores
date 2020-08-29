@@ -9,6 +9,8 @@ void read_multiline();
 digito [0-9]
 letra [a-zA-Z_]
 branco [ \t]
+escape_char [abefnrtv0]
+escape_symbol ['"]
 
 %%
 
@@ -83,7 +85,12 @@ branco [ \t]
 ("\-"|"\+")?{digito}+ { return TK_LIT_INT; }
 ("\-"|"\+")?{digito}+"."{digito}+(("E"|"e")("\-")?{digito}+)? { return TK_LIT_FLOAT; }
 ("\-"|"\+")?{digito}+(("E"|"e")("\-"|"\+")?{digito}+)? { return TK_LIT_FLOAT; }
-"\'"."\'" { return TK_LIT_CHAR; }
+
+"\'"[^'"]"\'" { return TK_LIT_CHAR; }
+"\'\\"({escape_char}|{escape_symbol})"\'" { return TK_LIT_CHAR; }
+"\'"{escape_symbol}"\'" { return TOKEN_ERRO; }
+"\'\'" { return TOKEN_ERRO; }
+
 \".+\" { return TK_LIT_STRING; }
 
 {branco}+ { }

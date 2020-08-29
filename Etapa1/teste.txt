@@ -4,7 +4,7 @@ float num4 = 3.0;
 float num5 = 3.5;
 float num6 = 3E-5;
 15.75
-1.575E1   /* = 15.75   */
+1.575E1   /* = 15.75   */ Comentario
 1575e-2   /* = 15.75   */
 -2.5e-3   /* = -0.0025 */
 25E-4     /* =  0.0025 */
@@ -24,3 +24,11 @@ var // comentario depois
 1NV4L1D0 // Erro
 
  depoisComentadioNome
+
+'' // ERRO
+'0' // Char
+'\0' // Char
+''' // ERRO
+'\'' // Char
+
+'3'
