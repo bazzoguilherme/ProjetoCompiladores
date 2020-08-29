@@ -15,7 +15,7 @@ Antes /* Comentario em linha*/ Depois
 id
 int var;
 1NV4L1D0 // Erro
-
+1+NV4L1D0
 
 // PALAVRAS RESERVADAS
 int

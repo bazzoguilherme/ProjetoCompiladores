@@ -16,7 +16,7 @@ escape_symbol ['"]
 %%
 
 \n {line_counter++;}
-"//"({letra}|{digito}|{branco})* { }
+"//"[^\n]* { }
 "/*" { read_multiline(); }
 
 "int" { return TK_PR_INT; }
@@ -131,12 +131,12 @@ int string_sem_fim() {
     register int c;
 
     for ( ; ; ) {
-        while ( (c = input()) != '\n' && c != '\"' && c != '\\' c != EOF );
+        while ( (c = input()) != '\n' && c != '\"' && c != '\\' && c != EOF );
         if (c == '\"') {
             return TK_LIT_STRING;
         } else if (c == '\\'){
-            if ((c = input()) == "\"") {
-                
+            if ((c = input()) == '\"') {
+
             }
         } else if (c == '\n'){
             line_counter++;
