@@ -3,13 +3,14 @@
 int line_counter = 1;
 
 void read_multiline();
+int string_sem_fim();
 
 %}
 
 digito [0-9]
 letra [a-zA-Z_]
 branco [ \t]
-escape_char [abefnrtv0]
+escape_char [abenrtv0]
 escape_symbol ['"]
 
 %%
@@ -81,14 +82,17 @@ escape_symbol ['"]
 
 "true" { return TK_LIT_TRUE; }
 "false" { return TK_LIT_FALSE; }
+
 {letra}+({digito}|{letra})* { return TK_IDENTIFICADOR; }
-("\-"|"\+")?{digito}+ { return TK_LIT_INT; }
-("\-"|"\+")?{digito}+"."{digito}+(("E"|"e")("\-")?{digito}+)? { return TK_LIT_FLOAT; }
-("\-"|"\+")?{digito}+(("E"|"e")("\-"|"\+")?{digito}+)? { return TK_LIT_FLOAT; }
+
+[-+]?{digito}+ { return TK_LIT_INT; }
+[-+]?{digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
+
+[-+]?{digito}+(("."{digito}+)?|"."{digito}+)(("E"|"e")[-+]?{digito}+)? { return TK_LIT_FLOAT; }
+[-+]?{digito}+"."({digito}*{letra}({digito}|{letra})*)? { return TOKEN_ERRO; }
 
 "\'"[^'"]"\'" { return TK_LIT_CHAR; }
 "\'\\"({escape_char}|{escape_symbol})"\'" { return TK_LIT_CHAR; }
-"\'"{escape_symbol}"\'" { return TOKEN_ERRO; }
 "\'\'" { return TOKEN_ERRO; }
 
 \".+\" { return TK_LIT_STRING; }
@@ -96,7 +100,6 @@ escape_symbol ['"]
 {branco}+ { }
 \r { }
 
-{digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
 "*/" { return TOKEN_ERRO; }
 
 . { return TOKEN_ERRO; }
@@ -120,6 +123,22 @@ void read_multiline() {
                 break;
         } else if ( c == EOF ) {
             break;
+        }
+    }
+}
+
+int string_sem_fim() {
+    register int c;
+
+    for ( ; ; ) {
+        while ( (c = input()) != '\n' && c != '\"' &&  c != EOF );
+        if (c == '\"') {
+            return TK_LIT_STRING;
+        } else if (c == '\n'){
+            line_counter++;
+            return TOKEN_ERRO;
+        } else if ( c == EOF ) {
+            return TOKEN_ERRO;
         }
     }
 }

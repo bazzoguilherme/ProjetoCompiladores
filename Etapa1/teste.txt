@@ -1,17 +1,5 @@
 
-int var = 0;
-float num4 = 3.0;
-float num5 = 3.5;
-float num6 = 3E-5;
-15.75
-1.575E1   /* = 15.75   */ Comentario
-1575e-2   /* = 15.75   */
--2.5e-3   /* = -0.0025 */
-25E-4     /* =  0.0025 */
-
-"String ex .!";
-
-// comment
+// COMENTARIOS
 var // comentario depois
 
 /*
@@ -21,14 +9,71 @@ var // comentario depois
 
  */ // Erro
 
+Antes /* Comentario em linha*/ Depois
+
+// IDENTIFICADORES
+id
+int var;
 1NV4L1D0 // Erro
 
- depoisComentadioNome
 
+// PALAVRAS RESERVADAS
+int
+float
+bool
+char
+string
+if
+then
+else
+while
+do
+input
+output
+return
+const
+static
+foreach
+for
+switch
+case
+break
+continue
+class
+private
+public
+protected
+end
+default
+
+// INT
+10
+1
+
+// FLOAT
+10.1;
+10.;  // ERRO
+10.e; // ERRO
+10.letras; // ERRO
+float num4 = 3.0;
+float num5 = 3.5;
+float num6 = 3E-5;
+15.75
+1.575E1   /* = 15.75   */
+1575e-2   /* = 15.75   */
+-2.5e-3   /* = -0.0025 */
+25E-4     /* =  0.0025 */
+
+// CHARS
 '' // ERRO
-'0' // Char
-'\0' // Char
+'0'
+'\0'
 ''' // ERRO
-'\'' // Char
-
+'\''
 '3'
+
+// STRINGS
+"String ex .!";
+""
+"string aberta
+
