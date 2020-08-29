@@ -16,8 +16,6 @@ branco [ \t]
 "//"({letra}|{digito}|{branco})* { }
 "/*" { read_multiline(); }
 
-\r { }
-
 "int" { return TK_PR_INT; }
 "float" { return TK_PR_FLOAT; }
 "bool" { return TK_PR_BOOL; }
@@ -84,11 +82,14 @@ branco [ \t]
 {letra}+({digito}|{letra})* { return TK_IDENTIFICADOR; }
 ("\-"|"\+")?{digito}+ { return TK_LIT_INT; }
 ("\-"|"\+")?{digito}+"."{digito}+(("E"|"e")("\-")?{digito}+)? { return TK_LIT_FLOAT; }
-("\-"|"\+")?{digito}+(("E"|"e")("\-")?{digito}+)? { return TK_LIT_FLOAT; }
+("\-"|"\+")?{digito}+(("E"|"e")("\-"|"\+")?{digito}+)? { return TK_LIT_FLOAT; }
 "\'"."\'" { return TK_LIT_CHAR; }
 \".+\" { return TK_LIT_STRING; }
 
 {branco}+ { }
+\r { }
+
+
 
 . { return TOKEN_ERRO; }
 
