@@ -18,9 +18,10 @@ escape_symbol ['"]
 "/*" { BEGIN(comment); }
 
 <comment>[^*\n]*
+<comment>[^*\n]*\n	   line_counter++;
 <comment>"*"+[^*/\n]*
-<comment>\n		    line_counter++;
-<comment>"*"+"/"	BEGIN(INITIAL);
+<comment>"*"+[^*/\n]*\n line_counter++;
+<comment>"*"+"/"	   BEGIN(INITIAL);
 
 "int" { return TK_PR_INT; }
 "float" { return TK_PR_FLOAT; }
