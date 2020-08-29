@@ -75,5 +75,6 @@ float num6 = 3E-5;
 // STRINGS
 "String ex .!";
 ""
+"\"quote\""
 "string aberta
 
