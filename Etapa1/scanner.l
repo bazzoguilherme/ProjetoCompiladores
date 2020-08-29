@@ -131,9 +131,13 @@ int string_sem_fim() {
     register int c;
 
     for ( ; ; ) {
-        while ( (c = input()) != '\n' && c != '\"' &&  c != EOF );
+        while ( (c = input()) != '\n' && c != '\"' && c != '\\' c != EOF );
         if (c == '\"') {
             return TK_LIT_STRING;
+        } else if (c == '\\'){
+            if ((c = input()) == "\"") {
+                
+            }
         } else if (c == '\n'){
             line_counter++;
             return TOKEN_ERRO;
