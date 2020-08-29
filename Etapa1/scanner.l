@@ -2,10 +2,8 @@
 #include "tokens.h"
 int line_counter = 1;
 
-void read_multiline();
-int string_sem_fim();
-
 %}
+%x comment 
 
 digito [0-9]
 letra [a-zA-Z_]
@@ -17,7 +15,12 @@ escape_symbol ['"]
 
 \n {line_counter++;}
 "//"[^\n]* { }
-"/*" { read_multiline(); }
+"/*" { BEGIN(comment); }
+
+<comment>[^*\n]*
+<comment>"*"+[^*/\n]*
+<comment>\n		    line_counter++;
+<comment>"*"+"/"	BEGIN(INITIAL);
 
 "int" { return TK_PR_INT; }
 "float" { return TK_PR_FLOAT; }
@@ -88,7 +91,7 @@ escape_symbol ['"]
 [-+]?{digito}+ { return TK_LIT_INT; }
 [-+]?{digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
 
-[-+]?{digito}+(("."{digito}+)?|"."{digito}+)(("E"|"e")[-+]?{digito}+)? { return TK_LIT_FLOAT; }
+[-+]?{digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { return TK_LIT_FLOAT; }
 [-+]?{digito}+"."({digito}*{letra}({digito}|{letra})*)? { return TOKEN_ERRO; }
 
 "\'"[^'"]"\'" { return TK_LIT_CHAR; }
@@ -108,41 +111,4 @@ escape_symbol ['"]
 
 int get_line_number(){
     return line_counter;
-}
-
-void read_multiline() {
-    register int c;
-
-    for ( ; ; ) {
-        while ( (c = input()) != '*' && c != '\n' &&  c != EOF );
-        if (c == '\n'){
-            line_counter++;
-        } else if ( c == '*' ) {
-            while ( (c = input()) == '*' );
-            if ( c == '/' )
-                break;
-        } else if ( c == EOF ) {
-            break;
-        }
-    }
-}
-
-int string_sem_fim() {
-    register int c;
-
-    for ( ; ; ) {
-        while ( (c = input()) != '\n' && c != '\"' && c != '\\' && c != EOF );
-        if (c == '\"') {
-            return TK_LIT_STRING;
-        } else if (c == '\\'){
-            if ((c = input()) == '\"') {
-
-            }
-        } else if (c == '\n'){
-            line_counter++;
-            return TOKEN_ERRO;
-        } else if ( c == EOF ) {
-            return TOKEN_ERRO;
-        }
-    }
 }
