@@ -89,7 +89,8 @@ branco [ \t]
 {branco}+ { }
 \r { }
 
-
+{digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
+"*/" { return TOKEN_ERRO; }
 
 . { return TOKEN_ERRO; }
 

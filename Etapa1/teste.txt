@@ -19,4 +19,8 @@ var // comentario depois
  *  Comment
  */
 
+ */ // Erro
+
+1NV4L1D0 // Erro
+
  depoisComentadioNome
