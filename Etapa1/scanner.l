@@ -100,11 +100,11 @@ escape_symbol ['"]
 [-+]?{digito}+"."({digito}*{letra}({digito}|{letra})*)? { return TOKEN_ERRO; }
 "."({digito}|{letra})* { return TOKEN_ERRO; }
 
-"\'"[^'"]"\'" { return TK_LIT_CHAR; }
+"\'"[^'"\n]"\'" { return TK_LIT_CHAR; }
 "\'\\"({escape_char}|{escape_symbol})"\'" { return TK_LIT_CHAR; }
 "\'\'" { return TOKEN_ERRO; }
 
-\"("\\\""|.)*\" { return TK_LIT_STRING; }
+\"("\\\""|[^\n])*\" { return TK_LIT_STRING; }
 
 {branco}+ { }
 \r { }
