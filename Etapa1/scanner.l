@@ -75,6 +75,10 @@ escape_symbol ['"]
 "^" { return (int)'^'; }
 "\." { return (int)'.'; }
 "\$" { return (int)'$'; }
+"@" { return (int)'@'; }
+"~" { return (int)'~'; }
+"`" { return (int)'`'; }
+"\?" { return (int)'?'; }
 "<=" { return TK_OC_LE ; }
 ">=" { return TK_OC_GE ; }
 "==" { return TK_OC_EQ ; }
@@ -94,6 +98,7 @@ escape_symbol ['"]
 
 [-+]?{digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { return TK_LIT_FLOAT; }
 [-+]?{digito}+"."({digito}*{letra}({digito}|{letra})*)? { return TOKEN_ERRO; }
+"."({digito}|{letra})* { return TOKEN_ERRO; }
 
 "\'"[^'"]"\'" { return TK_LIT_CHAR; }
 "\'\\"({escape_char}|{escape_symbol})"\'" { return TK_LIT_CHAR; }

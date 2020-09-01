@@ -53,6 +53,7 @@ default
 // FLOAT
 10.1;
 10.;  // ERRO
+.123 // erro
 10.e; // ERRO
 10.letras; // ERRO
 float num4 = 3.0;
@@ -71,10 +72,15 @@ float num6 = 3E-5;
 ''' // ERRO
 '\''
 '3'
+'a
 
 // STRINGS
 "String ex .!";
 ""
 "\"quote\""
 "string aberta
+fechou?"
 
+,   ;   :   (   )   [   ]   {   }   +   -   |  * /  <   >   =   !   &   %   #   ^   .   $   @  ? ` ~
+
+<=    >=    ==     !=    &&    ||    >>     <<
