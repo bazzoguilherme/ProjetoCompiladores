@@ -55,6 +55,21 @@ void yyerror (char const *s);
 
 programa:
 
+DECL_GLOBAL : TK_PR_STATIC TYPE TK_IDENTIFICADOR LIST_VAR 
+            | TYPE TK_IDENTIFICADOR LIST_VAR;
+
+LIST_VAR : COMMA TK_IDENTIFICADOR LIST_VAR 
+         | SEMI;
+
+TYPE : TK_PR_INT
+     | TK_PR_FLOAT
+     | TK_PR_BOOL
+     | TK_PR_CHAR
+     | TK_PR_STRING;
+
+COMMA : ',';
+SEMI : ';';
+
 %%
 
 void yyerror (char const *s) {
