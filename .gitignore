@@ -54,3 +54,4 @@ dkms.conf
 # Files from Compilers-Project
 *.yy.c
 */etapa*
+parser.tab.*
