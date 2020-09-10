@@ -55,25 +55,26 @@ void yyerror (char const *s);
 
 programa: DECL_GLOBAL;
 
-DECL_GLOBAL : TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
-            | TYPE ID_or_VECT LIST_VAR;
+DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
+           | TYPE ID_or_VECT LIST_VAR;
 
-LIST_VAR : COMMA ID_or_VECT LIST_VAR 
-         | SEMI;
+LIST_VAR: COMMA ID_or_VECT LIST_VAR 
+        | SEMI;
 
-ID_or_VECT : TK_IDENTIFICADOR
-           | TK_IDENTIFICADOR OP_COLCH TK_LIT_INT CL_COLCH
+ID_or_VECT: TK_IDENTIFICADOR
+          | TK_IDENTIFICADOR OP_COLCH TK_LIT_INT CL_COLCH;
 
-TYPE : TK_PR_INT
-     | TK_PR_FLOAT
-     | TK_PR_BOOL
-     | TK_PR_CHAR
-     | TK_PR_STRING;
+TYPE: TK_PR_INT
+    | TK_PR_FLOAT
+    | TK_PR_BOOL
+    | TK_PR_CHAR
+    | TK_PR_STRING;
 
-COMMA : ',';
-SEMI : ';';
-OP_COLCH : '[';
-CL_COLCH : ']';
+
+COMMA: ',';
+SEMI: ';';
+OP_COLCH: '[';
+CL_COLCH: ']';
 
 %%
 
