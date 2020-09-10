@@ -53,7 +53,7 @@ void yyerror (char const *s);
 
 %%
 
-programa: DECL_GLOBAL;
+programa: EXPR;
 
 DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
            | TYPE ID_or_VECT LIST_VAR;
@@ -70,11 +70,52 @@ TYPE: TK_PR_INT
     | TK_PR_CHAR
     | TK_PR_STRING;
 
+EXPR: EXPR OP_BIN T
+    | T;
+
+T: OP_PAR EXPR CL_PAR
+ | EXPR_ARIT;
+
+EXPR_ARIT: EXPR_ARIT_A
+         | EXPR_ARIT_B;
+
+EXPR_ARIT_A: TK_IDENTIFICADOR
+           | TK_IDENTIFICADOR OP_COLCH EXPR_ARIT CL_COLCH;
+
+EXPR_ARIT_B: TK_LIT_INT
+           | TK_LIT_FLOAT;
+
+OP_UN: '+'
+     | '-'
+     | '!'
+     | '&'
+     | '*'
+     | '?'
+     | '#';
+
+OP_BIN: '+'
+      | '-'
+      | '*'
+      | '/'
+      | '%'
+      | '|'
+      | '&'
+      | '^'
+      | "<"
+      | ">"
+      | "<="
+      | ">="
+      | "=="
+      | "!="
+      | "||"
+      | "&&";
 
 COMMA: ',';
 SEMI: ';';
 OP_COLCH: '[';
 CL_COLCH: ']';
+OP_PAR: '(';
+CL_PAR: ')';
 
 %%
 
