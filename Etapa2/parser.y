@@ -58,11 +58,11 @@ programa: EXPR;
 DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
            | TYPE ID_or_VECT LIST_VAR;
 
-LIST_VAR: COMMA ID_or_VECT LIST_VAR 
-        | SEMI;
+LIST_VAR: ',' ID_or_VECT LIST_VAR 
+        | ';';
 
 ID_or_VECT: TK_IDENTIFICADOR
-          | TK_IDENTIFICADOR OP_COLCH TK_LIT_INT CL_COLCH;
+          | TK_IDENTIFICADOR '[' TK_LIT_INT ']';
 
 TYPE: TK_PR_INT
     | TK_PR_FLOAT
@@ -70,52 +70,58 @@ TYPE: TK_PR_INT
     | TK_PR_CHAR
     | TK_PR_STRING;
 
-EXPR: EXPR OP_BIN T
-    | T;
+EXPR: Expr_prod OP_BIN_Sum EXPR
+    | Expr_prod;
 
-T: OP_PAR EXPR CL_PAR
- | EXPR_ARIT;
+Expr_prod: Expr_Exp OP_BIN_Prod EXPR
+         | Expr_Exp;
+
+Expr_Exp: F OP_BIN_Exp EXPR
+        | F;
+
+F: '(' EXPR ')'
+ | EXPR_ARIT
+ | OP_Sinal_Explicito EXPR_ARIT
+ | OP_ACESSO_VAR EXPR_ARIT_A;
 
 EXPR_ARIT: EXPR_ARIT_A
          | EXPR_ARIT_B;
 
 EXPR_ARIT_A: TK_IDENTIFICADOR
-           | TK_IDENTIFICADOR OP_COLCH EXPR_ARIT CL_COLCH;
+           | TK_IDENTIFICADOR '[' EXPR_ARIT ']';
 
 EXPR_ARIT_B: TK_LIT_INT
            | TK_LIT_FLOAT;
 
-OP_UN: '+'
-     | '-'
-     | '!'
-     | '&'
-     | '*'
-     | '?'
-     | '#';
+OP_Sinal_Explicito: '+'
+                  | '-';
 
-OP_BIN: '+'
-      | '-'
-      | '*'
-      | '/'
-      | '%'
-      | '|'
-      | '&'
-      | '^'
-      | "<"
-      | ">"
-      | "<="
-      | ">="
-      | "=="
-      | "!="
-      | "||"
-      | "&&";
+OP_ACESSO_VAR: '&'
+             | '*'
+             | '#';
 
-COMMA: ',';
-SEMI: ';';
-OP_COLCH: '[';
-CL_COLCH: ']';
-OP_PAR: '(';
-CL_PAR: ')';
+OP_BIN_Sum: '+'
+          | '-';
+
+OP_BIN_Prod: '*'
+           | '/'
+           | '%';
+
+OP_BIN_Exp: '^';
+
+OP_BIN_Logic: '|'
+            | '&'
+            | TK_OC_SR
+            | TK_OC_SL;
+
+OP_BIN_Comp: "<"
+           | ">"
+           | TK_OC_LE
+           | TK_OC_GE
+           | TK_OC_EQ
+           | TK_OC_NE
+           | TK_OC_OR
+           | TK_OC_AND;
 
 %%
 
