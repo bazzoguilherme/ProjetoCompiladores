@@ -75,13 +75,13 @@ EXPRESSAO: EXPR_OPERACAO    //Expressao Aritmetica
 
 EXPR_OPERACAO: Expr_Sum;
 
-Expr_Sum: Expr_Prod OP_BIN_Sum EXPR_OPERACAO
+Expr_Sum: EXPR_OPERACAO OP_BIN_Sum Expr_Prod
         | Expr_Prod;
 
-Expr_Prod: Expr_Exp OP_BIN_Prod EXPR_OPERACAO
+Expr_Prod: EXPR_OPERACAO OP_BIN_Prod Expr_Exp
          | Expr_Exp;
 
-Expr_Exp: F OP_BIN_Exp EXPR_OPERACAO
+Expr_Exp: EXPR_OPERACAO OP_BIN_Exp F
         | F;
 
 F: '(' EXPR_OPERACAO ')'
