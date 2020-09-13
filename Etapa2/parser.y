@@ -70,14 +70,15 @@ TYPE: TK_PR_INT
     | TK_PR_CHAR
     | TK_PR_STRING;
 
-EXPRESSAO: EXPRESSAO_ARITMETICA;
-        //  | EXPRESSAO_LOGICA
-        //  | EXPR_TERNARIA;
+EXPRESSAO: Expr_Cmp;
 
 EXPRESSAO_ARITMETICA: Expr_Sum;
 
-// EXPRESSAO_LOGICA: EXPRESSAO OP_BIN_Comp EXPRESSAO
-//                 | EXPRESSAO OP_BIN_Logic EXPRESSAO;
+Expr_Cmp: Expr_Cmp OP_BIN_Comp Expr_Log
+        | Expr_Log;
+
+Expr_Log: Expr_Log OP_BIN_Logic Expr_Sum
+        | Expr_Sum;
 
 Expr_Sum: Expr_Sum OP_BIN_Sum Expr_Prod
         | Expr_Prod;
