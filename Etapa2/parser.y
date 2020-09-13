@@ -53,7 +53,7 @@ void yyerror (char const *s);
 
 %%
 
-programa: EXPR;
+programa: EXPRESSAO;
 
 DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
            | TYPE ID_or_VECT LIST_VAR;
@@ -70,16 +70,21 @@ TYPE: TK_PR_INT
     | TK_PR_CHAR
     | TK_PR_STRING;
 
-EXPR: Expr_prod OP_BIN_Sum EXPR
-    | Expr_prod;
+EXPRESSAO: EXPR_OPERACAO    //Expressao Aritmetica
+         | EXPR_LOGICA;
 
-Expr_prod: Expr_Exp OP_BIN_Prod EXPR
+EXPR_OPERACAO: Expr_Sum;
+
+Expr_Sum: Expr_Prod OP_BIN_Sum EXPR_OPERACAO
+        | Expr_Prod;
+
+Expr_Prod: Expr_Exp OP_BIN_Prod EXPR_OPERACAO
          | Expr_Exp;
 
-Expr_Exp: F OP_BIN_Exp EXPR
+Expr_Exp: F OP_BIN_Exp EXPR_OPERACAO
         | F;
 
-F: '(' EXPR ')'
+F: '(' EXPR_OPERACAO ')'
  | EXPR_ARIT
  | OP_Sinal_Explicito EXPR_ARIT
  | OP_ACESSO_VAR EXPR_ARIT_A;
@@ -88,10 +93,15 @@ EXPR_ARIT: EXPR_ARIT_A
          | EXPR_ARIT_B;
 
 EXPR_ARIT_A: TK_IDENTIFICADOR
-           | TK_IDENTIFICADOR '[' EXPR_ARIT ']';
+           | TK_IDENTIFICADOR '[' EXPR_OPERACAO ']';
 
 EXPR_ARIT_B: TK_LIT_INT
            | TK_LIT_FLOAT;
+
+EXPR_ARIT_C: ;
+
+EXPR_LOGICA: EXPRESSAO OP_BIN_Comp EXPRESSAO
+           | EXPRESSAO OP_BIN_Logic EXPRESSAO;
 
 OP_Sinal_Explicito: '+'
                   | '-';
