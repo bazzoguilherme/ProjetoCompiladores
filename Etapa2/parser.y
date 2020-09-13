@@ -72,8 +72,6 @@ TYPE: TK_PR_INT
 
 EXPRESSAO: Expr_Cmp;
 
-EXPRESSAO_ARITMETICA: Expr_Sum;
-
 Expr_Cmp: Expr_Cmp OP_BIN_Comp Expr_Log
         | Expr_Log;
 
@@ -89,7 +87,7 @@ Expr_Prod: Expr_Prod OP_BIN_Prod Expr_Exp
 Expr_Exp: Expr_Exp OP_BIN_Exp F
         | F;
 
-F: '(' EXPRESSAO_ARITMETICA ')'
+F: '(' EXPRESSAO ')'
  | EXPR_ARIT
  | EXPR_LOG_LIT
  | OP_UNARIO EXPR_ARIT
