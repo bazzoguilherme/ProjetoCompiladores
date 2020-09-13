@@ -70,10 +70,13 @@ TYPE: TK_PR_INT
     | TK_PR_CHAR
     | TK_PR_STRING;
 
-EXPRESSAO: EXPRESSAO_ARITMETICA    //Expressao Aritmetica
+EXPRESSAO: EXPRESSAO_ARITMETICA
          | EXPRESSAO_LOGICA;
 
 EXPRESSAO_ARITMETICA: Expr_Sum;
+
+EXPRESSAO_LOGICA: EXPRESSAO OP_BIN_Comp EXPRESSAO
+                | EXPRESSAO OP_BIN_Logic EXPRESSAO;
 
 Expr_Sum: EXPRESSAO_ARITMETICA OP_BIN_Sum Expr_Prod
         | Expr_Prod;
@@ -86,22 +89,31 @@ Expr_Exp: EXPRESSAO_ARITMETICA OP_BIN_Exp F
 
 F: '(' EXPRESSAO_ARITMETICA ')'
  | EXPR_ARIT
- | OP_Sinal_Explicito EXPR_ARIT
- | OP_ACESSO_VAR EXPR_ARIT_A;
+ | EXPR_LOG_LIT
+ | OP_UNARIO EXPR_ARIT
+ | OP_UNARIO EXPR_LOG_LIT;
 
 EXPR_ARIT: EXPR_ARIT_A
          | EXPR_ARIT_B;
 
 EXPR_ARIT_A: TK_IDENTIFICADOR
-           | TK_IDENTIFICADOR '[' EXPRESSAO_ARITMETICA ']';
+           | TK_IDENTIFICADOR '[' EXPRESSAO ']';
 
 EXPR_ARIT_B: TK_LIT_INT
            | TK_LIT_FLOAT;
 
-EXPR_ARIT_C: ;
+EXPR_ARIT_C: ; // Chamada de funcao
 
-EXPRESSAO_LOGICA: EXPRESSAO_ARITMETICA OP_BIN_Comp EXPRESSAO_ARITMETICA
-                | EXPRESSAO OP_BIN_Logic EXPRESSAO;
+EXPR_LOG_LIT: TK_LIT_TRUE
+            | TK_LIT_FALSE;
+
+OP_UNARIO: '+'
+         | '-'
+         | '!'
+         | '&'
+         | '*'
+         | '?'
+         | '#';
 
 OP_Sinal_Explicito: '+'
                   | '-';
@@ -124,8 +136,8 @@ OP_BIN_Logic: '|'
             | TK_OC_SR
             | TK_OC_SL;
 
-OP_BIN_Comp: "<"
-           | ">"
+OP_BIN_Comp: '<'
+           | '>'
            | TK_OC_LE
            | TK_OC_GE
            | TK_OC_EQ
