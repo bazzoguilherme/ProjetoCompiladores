@@ -15,6 +15,8 @@ parser.tab.c: parser.y
 lex.yy.c: scanner.l
 	$(LEX) scanner.l
 
+report: parser.y
+	$(BISON) --report-file="report.txt" parser.y
 
 clean:
 	rm $(filename) lex.yy.* parser.tab.* main.o
