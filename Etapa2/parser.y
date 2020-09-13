@@ -71,7 +71,8 @@ TYPE: TK_PR_INT
     | TK_PR_STRING;
 
 EXPRESSAO: EXPRESSAO_ARITMETICA
-         | EXPRESSAO_LOGICA;
+         | EXPRESSAO_LOGICA
+         | EXPR_TERNARIA;
 
 EXPRESSAO_ARITMETICA: Expr_Sum;
 
@@ -107,6 +108,8 @@ EXPR_ARIT_C: ; // Chamada de funcao
 EXPR_LOG_LIT: TK_LIT_TRUE
             | TK_LIT_FALSE;
 
+EXPR_TERNARIA: EXPRESSAO '?' EXPRESSAO ':' EXPRESSAO;
+
 OP_UNARIO: '+'
          | '-'
          | '!'
@@ -114,13 +117,6 @@ OP_UNARIO: '+'
          | '*'
          | '?'
          | '#';
-
-OP_Sinal_Explicito: '+'
-                  | '-';
-
-OP_ACESSO_VAR: '&'
-             | '*'
-             | '#';
 
 OP_BIN_Sum: '+'
           | '-';
