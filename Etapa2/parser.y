@@ -53,7 +53,7 @@ void yyerror (char const *s);
 
 %%
 
-programa: IO_Dados;
+programa: DECL_FUNC;
 
 DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
            | TYPE ID_or_VECT LIST_VAR;
@@ -137,6 +137,29 @@ LIT: TK_LIT_INT
    | TK_LIT_FALSE;
 
 // EXPR_TERNARIA: EXPRESSAO '?' EXPRESSAO ':' EXPRESSAO;
+
+
+
+
+DECL_FUNC: DECL_HEADER CORPO;
+
+DECL_HEADER: FUNC_STATIC TYPE TK_IDENTIFICADOR '(' PARAM ')';
+
+FUNC_STATIC: TK_PR_STATIC
+           | ; 
+
+TYPE_CONST_PARAM: TK_PR_CONST
+                | ;
+
+PARAM: TYPE_CONST_PARAM TYPE TK_IDENTIFICADOR L_PARAM
+     | ;
+
+L_PARAM: ',' PARAM
+       | ;
+
+CORPO: BLOCO;
+
+BLOCO: '{' '}';
 
 OP_UNARIO: '+'
          | '-'
