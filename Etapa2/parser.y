@@ -53,7 +53,7 @@ void yyerror (char const *s);
 
 %%
 
-programa: CHAMA_FUNC;
+programa: EXPRESSAO;
 
 DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
            | TYPE ID_or_VECT LIST_VAR;
@@ -92,12 +92,15 @@ TYPE: TK_PR_INT
     | TK_PR_CHAR
     | TK_PR_STRING;
 
-EXPRESSAO: Expr_Cmp;
+EXPRESSAO: Expr_Log_Cmp;
 
-Expr_Cmp: Expr_Cmp OP_BIN_Comp Expr_Log
-        | Expr_Log;
+Expr_Log_Cmp: Expr_Log_Cmp OP_LOG_Comp Expr_Log
+            | Expr_Log;
 
-Expr_Log: Expr_Log OP_BIN_Logic Expr_Sum
+Expr_Log: Expr_Log OP_BIN_Logic Expr_Cmp
+        | Expr_Cmp;
+        
+Expr_Cmp: Expr_Cmp OP_BIN_Comp Expr_Sum
         | Expr_Sum;
 
 Expr_Sum: Expr_Sum OP_BIN_Sum Expr_Prod
@@ -191,18 +194,17 @@ OP_BIN_Prod: '*'
 OP_BIN_Exp: '^';
 
 OP_BIN_Logic: '|'
-            | '&'
-            | TK_OC_SR
-            | TK_OC_SL;
+            | '&';
+
+OP_LOG_Comp: TK_OC_AND
+           | TK_OC_OR;
 
 OP_BIN_Comp: '<'
            | '>'
            | TK_OC_LE
            | TK_OC_GE
            | TK_OC_EQ
-           | TK_OC_NE
-           | TK_OC_OR
-           | TK_OC_AND;
+           | TK_OC_NE;
 
 %%
 
