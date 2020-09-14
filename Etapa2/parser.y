@@ -53,7 +53,7 @@ void yyerror (char const *s);
 
 %%
 
-programa: DECL_FUNC;
+programa: CHAMA_FUNC;
 
 DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
            | TYPE ID_or_VECT LIST_VAR;
@@ -160,6 +160,18 @@ L_PARAM: ',' PARAM
 CORPO: BLOCO;
 
 BLOCO: '{' '}';
+
+
+
+
+CHAMA_FUNC: TK_IDENTIFICADOR '(' PARAM_F_CALL ')';
+
+PARAM_F_CALL: EXPRESSAO L_PARAM_F_CALL
+            | ;
+
+L_PARAM_F_CALL: ',' PARAM_F_CALL
+              | ;
+
 
 OP_UNARIO: '+'
          | '-'
