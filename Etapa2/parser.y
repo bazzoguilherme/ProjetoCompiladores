@@ -53,7 +53,7 @@ void yyerror (char const *s);
 
 %%
 
-programa: EXPRESSAO;
+programa: BLOCO;
 
 DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR 
            | TYPE ID_or_VECT LIST_VAR;
@@ -162,9 +162,35 @@ L_PARAM: ',' PARAM
 
 CORPO: BLOCO;
 
-BLOCO: '{' '}';
+BLOCO: '{' COMANDOS '}';
 
+COMANDOS: COMANDO COMANDOS
+			   | ;
 
+COMANDO: DECL_LOCAL ';'
+	   | ATRIBUICAO ';'
+	   | IO_Dados ';'
+	   | CHAMA_FUNC ';'
+	   | COM_SHIFT ';'
+	   | RET ';'
+	   | CONT ';'
+	   | BREAK ';'
+	   | CONTR_FLUXO
+	   | WHILE
+	   | FOR;
+
+CONTR_FLUXO: TK_PR_IF '(' EXPRESSAO ')' BLOCO
+           | TK_PR_IF '(' EXPRESSAO ')' BLOCO TK_PR_ELSE BLOCO;
+
+WHILE: TK_PR_WHILE '(' EXPRESSAO ')' TK_PR_DO BLOCO;
+
+FOR: TK_PR_FOR '(' ATRIBUICAO ':' EXPRESSAO ':' ATRIBUICAO ')' BLOCO;
+
+RET: TK_PR_RETURN EXPRESSAO;
+
+CONT: TK_PR_CONTINUE;
+
+BREAK: TK_PR_BREAK;
 
 
 CHAMA_FUNC: TK_IDENTIFICADOR '(' PARAM_F_CALL ')';
@@ -174,6 +200,12 @@ PARAM_F_CALL: EXPRESSAO L_PARAM_F_CALL
 
 L_PARAM_F_CALL: ',' PARAM_F_CALL
               | ;
+
+
+COM_SHIFT: TK_IDENTIFICADOR OP_Shift EXPRESSAO
+         | TK_IDENTIFICADOR '[' EXPRESSAO ']' OP_Shift EXPRESSAO;
+
+
 
 
 OP_UNARIO: '+'
@@ -205,6 +237,10 @@ OP_BIN_Comp: '<'
            | TK_OC_GE
            | TK_OC_EQ
            | TK_OC_NE;
+
+OP_Shift: TK_OC_SR
+        | TK_OC_SL;
+
 
 %%
 
