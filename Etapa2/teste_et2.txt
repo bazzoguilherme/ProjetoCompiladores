@@ -1,2 +1,17 @@
-int var1, var2;
-static float average;
+int main () {
+    int i;
+    i = 2;
+    i = 1 + 2;
+    while (i % 2 != 0) do {
+        i << 2;
+    }
+
+    input val;
+
+    output val;
+    output 5;
+
+
+
+    return 0;
+}
