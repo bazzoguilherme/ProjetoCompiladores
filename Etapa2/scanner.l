@@ -93,11 +93,11 @@ escape_symbol ['"]
 
 {letra}+({digito}|{letra})* { return TK_IDENTIFICADOR; }
 
-[-+]?{digito}+ { return TK_LIT_INT; }
-[-+]?{digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
+{digito}+ { return TK_LIT_INT; }
+{digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
 
-[-+]?{digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { return TK_LIT_FLOAT; }
-[-+]?{digito}+"."({digito}*{letra}({digito}|{letra})*)? { return TOKEN_ERRO; }
+{digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { return TK_LIT_FLOAT; }
+{digito}+"."({digito}*{letra}({digito}|{letra})*)? { return TOKEN_ERRO; }
 "."({digito}|{letra})* { return TOKEN_ERRO; }
 
 "\'"[^'"\n]"\'" { return TK_LIT_CHAR; }
