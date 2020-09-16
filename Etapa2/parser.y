@@ -3,6 +3,8 @@
 
 int yylex(void);
 void yyerror (char const *s);
+
+extern int get_line_number(void);
 %}
 
 %token TK_PR_INT
@@ -249,5 +251,5 @@ OP_Shift: TK_OC_SR
 %%
 
 void yyerror (char const *s) {
-    printf("%s - error\n", s); // ONLY DEBUG - depois remover print e *include de stdio*
+    printf("%d %s - error\n", get_line_number(), s); // ONLY DEBUG - depois remover print e *include de stdio*
 }

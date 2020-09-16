@@ -15,7 +15,7 @@ int main () {
     output val;
     output 5;
 
-
+    for -- 
 
     return 0;
 }
