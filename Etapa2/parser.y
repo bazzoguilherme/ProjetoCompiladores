@@ -184,7 +184,8 @@ COMANDO: DECL_LOCAL ';'
 	   | BREAK ';'
 	   | CONTR_FLUXO
 	   | WHILE
-	   | FOR;
+	   | FOR
+	   | BLOCO;
 
 CONTR_FLUXO: TK_PR_IF '(' EXPRESSAO ')' BLOCO
            | TK_PR_IF '(' EXPRESSAO ')' BLOCO TK_PR_ELSE BLOCO;
