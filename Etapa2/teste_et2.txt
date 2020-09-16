@@ -10,12 +10,24 @@ int main () {
         i << 2;
     }
 
+    for (i = 0: i < 2: i=i-(-1)) {
+        output i;
+    }
+
+    if (true) {
+        i = 10;
+    } 
+    
+    if (false) {
+        i = 7;
+    } else {
+        i = 9;
+    }
+
     input val;
 
     output val;
     output 5;
-
-    for -- 
 
     return 0;
 }

@@ -140,8 +140,8 @@ EXPR_ARIT_C: CHAMA_FUNC ; // Chamada de funcao
 EXPR_LOG_LIT: TK_LIT_TRUE
             | TK_LIT_FALSE;
 
-LIT: TK_LIT_INT
-   | TK_LIT_FLOAT
+LIT: MM TK_LIT_INT
+   | MM TK_LIT_FLOAT
    | TK_LIT_CHAR
    | TK_LIT_STRING
    | TK_LIT_TRUE
@@ -208,8 +208,9 @@ L_PARAM_F_CALL: ',' PARAM_F_CALL
               | ;
 
 
-COM_SHIFT: TK_IDENTIFICADOR OP_Shift EXPRESSAO
-         | TK_IDENTIFICADOR '[' EXPRESSAO ']' OP_Shift EXPRESSAO;
+COM_SHIFT: TK_IDENTIFICADOR OP_Shift TK_LIT_INT
+         | TK_IDENTIFICADOR '[' EXPRESSAO ']' OP_Shift TK_LIT_INT;
+
 
 
 
@@ -247,6 +248,9 @@ OP_BIN_Comp: '<'
 OP_Shift: TK_OC_SR
         | TK_OC_SL;
 
+MM: '+'
+  | '-'
+  | ;
 
 %%
 
