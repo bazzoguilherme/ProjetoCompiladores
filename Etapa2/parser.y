@@ -99,7 +99,10 @@ TYPE: TK_PR_INT
     | TK_PR_CHAR
     | TK_PR_STRING;
 
-EXPRESSAO: Expr_Log_Cmp;
+EXPRESSAO: Expr;
+
+Expr: Expr_Log_Cmp
+	| Expr_Log_Cmp '?' EXPRESSAO ':' EXPRESSAO;
 
 Expr_Log_Cmp: Expr_Log_Cmp OP_LOG_Comp Expr_Log
             | Expr_Log;
@@ -146,8 +149,6 @@ LIT: MM TK_LIT_INT
    | TK_LIT_STRING
    | TK_LIT_TRUE
    | TK_LIT_FALSE;
-
-// EXPR_TERNARIA: EXPRESSAO '?' EXPRESSAO ':' EXPRESSAO;
 
 
 
