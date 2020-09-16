@@ -256,5 +256,5 @@ MM: '+'
 %%
 
 void yyerror (char const *s) {
-    printf("%d %s - error\n", get_line_number(), s); // ONLY DEBUG - depois remover print e *include de stdio*
+    printf("%5d | %s - error\n", get_line_number(), s); // ONLY DEBUG - depois remover print e *include de stdio*
 }
