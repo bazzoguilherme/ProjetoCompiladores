@@ -55,212 +55,216 @@ extern int get_line_number(void);
 
 %%
 
-programa: DECL_GLOBAL programa
-		| DECL_FUNC programa
-		| ;
+programa: declaracao_global programa
+	| declaracao_funcao programa
+	| ;
 
-DECL_GLOBAL: TK_PR_STATIC TYPE ID_or_VECT LIST_VAR_GL 
-           | TYPE ID_or_VECT LIST_VAR_GL;
+declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global 
+	| tipo id_ou_vetor lista_var_global;
 
-LIST_VAR_GL: ',' ID_or_VECT LIST_VAR_GL
-           | ';';
+lista_var_global: ',' id_ou_vetor lista_var_global
+	| ';';
 
-ID_or_VECT: TK_IDENTIFICADOR
-          | TK_IDENTIFICADOR '[' TK_LIT_INT ']';
+id_ou_vetor: TK_IDENTIFICADOR
+	| TK_IDENTIFICADOR '[' TK_LIT_INT ']';
 
-DECL_LOCAL: TK_PR_STATIC ID_LOCAL LIST_VAR_LOCAL
-          | TK_PR_STATIC TK_PR_CONST ID_LOCAL LIST_VAR_LOCAL
-          | TK_PR_CONST ID_LOCAL LIST_VAR_LOCAL
-          | ID_LOCAL LIST_VAR_LOCAL;
+declaracao_local: TK_PR_STATIC id_local lista_var_local
+	| TK_PR_STATIC TK_PR_CONST id_local lista_var_local
+	| TK_PR_CONST id_local lista_var_local
+	| id_local lista_var_local;
 
-LIST_VAR_LOCAL: ',' ID_LOCAL LIST_VAR_LOCAL
-			  | ;
+lista_var_local: ',' id_local lista_var_local
+	| ;
 
-ID_LOCAL: TYPE TK_IDENTIFICADOR
-        | TYPE TK_IDENTIFICADOR ASSIGN LIT
-        | TYPE TK_IDENTIFICADOR ASSIGN TK_IDENTIFICADOR;
+id_local: tipo TK_IDENTIFICADOR
+	| tipo TK_IDENTIFICADOR assign literal
+	| tipo TK_IDENTIFICADOR assign TK_IDENTIFICADOR;
 
-ASSIGN: TK_OC_LE;
+assign: TK_OC_LE;
 
-ATRIBUICAO: TK_IDENTIFICADOR '=' EXPRESSAO
-		  | TK_IDENTIFICADOR '=' LIT_c_s
-          | TK_IDENTIFICADOR '[' EXPRESSAO ']' '=' EXPRESSAO
-          | TK_IDENTIFICADOR '[' EXPRESSAO ']' '=' LIT_c_s;
+atribuicao: TK_IDENTIFICADOR '=' expressao
+	| TK_IDENTIFICADOR '=' literal_char_str
+	| TK_IDENTIFICADOR '[' expressao ']' '=' expressao
+	| TK_IDENTIFICADOR '[' expressao ']' '=' literal_char_str;
 
-IO_Dados: ENTRADA
-        | SAIDA;
+io_dados: entrada
+	| saida;
 
-ENTRADA: TK_PR_INPUT TK_IDENTIFICADOR;
+entrada: TK_PR_INPUT TK_IDENTIFICADOR;
 
-SAIDA: TK_PR_OUTPUT TK_IDENTIFICADOR
-     | TK_PR_OUTPUT LIT;
+saida: TK_PR_OUTPUT TK_IDENTIFICADOR
+    | TK_PR_OUTPUT literal;
 
-TYPE: TK_PR_INT
-    | TK_PR_FLOAT
-    | TK_PR_BOOL
-    | TK_PR_CHAR
-    | TK_PR_STRING;
+tipo: TK_PR_INT
+	| TK_PR_FLOAT
+	| TK_PR_BOOL
+	| TK_PR_CHAR
+	| TK_PR_STRING;
 
-EXPRESSAO: Expr;
+expressao: expr;
 
-Expr: Expr_Log_Cmp
-	| Expr_Log_Cmp '?' EXPRESSAO ':' EXPRESSAO;
+expr: expr_log_comp
+	| expr_log_comp '?' expressao ':' expressao;
 
-Expr_Log_Cmp: Expr_Log_Cmp OP_LOG_Comp Expr_Log
-            | Expr_Log;
+expr_log_comp: expr_log_comp op_logica_comparacao expr_log
+	| expr_log;
 
-Expr_Log: Expr_Log OP_BIN_Logic Expr_Cmp
-        | Expr_Cmp;
+expr_log: expr_log op_binaria_logica expr_comp
+	| expr_comp;
         
-Expr_Cmp: Expr_Cmp OP_BIN_Comp Expr_Sum
-        | Expr_Sum;
+expr_comp: expr_comp op_binaria_comparacao expr_soma
+	| expr_soma;
 
-Expr_Sum: Expr_Sum OP_BIN_Sum Expr_Prod
-        | Expr_Prod;
+expr_soma: expr_soma op_binaria_soma expr_produto
+	| expr_produto;
 
-Expr_Prod: Expr_Prod OP_BIN_Prod Expr_Exp
-         | Expr_Exp;
+expr_produto: expr_produto op_binaria_produto expr_expoente
+	| expr_expoente;
 
-Expr_Exp: Expr_Exp OP_BIN_Exp F
-        | F;
+expr_expoente: expr_expoente op_binaria_expoente F
+	| F;
 
-F: '(' EXPRESSAO ')'
- | EXPR_ARIT
- | EXPR_LOG_LIT
- | OP_UNARIO EXPR_ARIT
- | OP_UNARIO EXPR_LOG_LIT;
+F: '(' expressao ')'
+	| expr_arit
+	| expr_log_literal
+	| op_unaria expr_arit
+	| op_unaria expr_log_literal
+	| op_unaria_prio_dir '(' expressao ')';
 
-EXPR_ARIT: EXPR_ARIT_A
-         | EXPR_ARIT_B
-		 | EXPR_ARIT_C;
+expr_arit: expr_arit_A
+	| expr_arit_B
+	| expr_arit_C;
 
-EXPR_ARIT_A: TK_IDENTIFICADOR
-           | TK_IDENTIFICADOR '[' EXPRESSAO ']';
+expr_arit_A: TK_IDENTIFICADOR
+	| TK_IDENTIFICADOR '[' expressao ']';
 
-EXPR_ARIT_B: TK_LIT_INT
-           | TK_LIT_FLOAT;
+expr_arit_B: TK_LIT_INT
+	| TK_LIT_FLOAT;
 
-EXPR_ARIT_C: CHAMA_FUNC ; // Chamada de funcao
+expr_arit_C: chamada_funcao ; // Chamada de funcao
 
-EXPR_LOG_LIT: TK_LIT_TRUE
-            | TK_LIT_FALSE;
+expr_log_literal: TK_LIT_TRUE
+	| TK_LIT_FALSE;
 
-LIT: MM TK_LIT_INT
-   | MM TK_LIT_FLOAT
+literal: mais_menos TK_LIT_INT
+   | mais_menos TK_LIT_FLOAT
    | TK_LIT_CHAR
    | TK_LIT_STRING
    | TK_LIT_TRUE
    | TK_LIT_FALSE;
 
 
-LIT_c_s: TK_LIT_CHAR
-   | TK_LIT_STRING;
+literal_char_str: TK_LIT_CHAR
+	| TK_LIT_STRING;
 
 
 
 
-DECL_FUNC: DECL_HEADER CORPO;
+declaracao_funcao: declaracao_header bloco;
 
-DECL_HEADER: TK_PR_STATIC TYPE TK_IDENTIFICADOR '(' PARAM ')'
-		   | TYPE TK_IDENTIFICADOR '(' PARAM ')';
+declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR '(' parametro ')'
+	| tipo TK_IDENTIFICADOR '(' parametro ')';
 
-TYPE_CONST_PARAM: TK_PR_CONST
-                | ;
+tipo_const: TK_PR_CONST
+	| ;
 
-PARAM: TYPE_CONST_PARAM TYPE TK_IDENTIFICADOR L_PARAM
-     | ;
+parametro: tipo_const tipo TK_IDENTIFICADOR lista_parametro
+	| ;
 
-L_PARAM: ',' PARAM
-       | ;
+lista_parametro: ',' parametro
+	| ;
 
-CORPO: BLOCO;
+bloco: '{' comandos '}';
 
-BLOCO: '{' COMANDOS '}';
+comandos: comando comandos
+	| ;
 
-COMANDOS: COMANDO COMANDOS
-			   | ;
+comando: declaracao_local ';'
+	| atribuicao ';'
+	| io_dados ';'
+	| chamada_funcao ';'
+	| comando_shift ';'
+	| retorno ';'
+	| continue ';'
+	| break ';'
+	| controle_fluxo
+	| while
+	| for
+	| bloco;
 
-COMANDO: DECL_LOCAL ';'
-	   | ATRIBUICAO ';'
-	   | IO_Dados ';'
-	   | CHAMA_FUNC ';'
-	   | COM_SHIFT ';'
-	   | RET ';'
-	   | CONT ';'
-	   | BREAK ';'
-	   | CONTR_FLUXO
-	   | WHILE
-	   | FOR
-	   | BLOCO;
+controle_fluxo: TK_PR_IF '(' expressao ')' bloco
+	| TK_PR_IF '(' expressao ')' bloco TK_PR_ELSE bloco;
 
-CONTR_FLUXO: TK_PR_IF '(' EXPRESSAO ')' BLOCO
-           | TK_PR_IF '(' EXPRESSAO ')' BLOCO TK_PR_ELSE BLOCO;
+while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco;
 
-WHILE: TK_PR_WHILE '(' EXPRESSAO ')' TK_PR_DO BLOCO;
+for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco;
 
-FOR: TK_PR_FOR '(' ATRIBUICAO ':' EXPRESSAO ':' ATRIBUICAO ')' BLOCO;
+retorno: TK_PR_RETURN expressao
+   | TK_PR_RETURN literal_char_str;
 
-RET: TK_PR_RETURN EXPRESSAO
-   | TK_PR_RETURN LIT_c_s;
+continue: TK_PR_CONTINUE;
 
-CONT: TK_PR_CONTINUE;
-
-BREAK: TK_PR_BREAK;
+break: TK_PR_BREAK;
 
 
-CHAMA_FUNC: TK_IDENTIFICADOR '(' PARAM_F_CALL ')';
+chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')';
 
-PARAM_F_CALL: EXPRESSAO L_PARAM_F_CALL
-			| LIT_c_s L_PARAM_F_CALL
-            | ;
+parametro_chamada_funcao: expressao lista_parametro_chamada_funcao
+	| literal_char_str lista_parametro_chamada_funcao
+	| ;
 
-L_PARAM_F_CALL: ',' PARAM_F_CALL
-              | ;
+lista_parametro_chamada_funcao: ',' parametro_chamada_funcao
+	| ;
 
 
-COM_SHIFT: TK_IDENTIFICADOR OP_Shift TK_LIT_INT
-         | TK_IDENTIFICADOR '[' EXPRESSAO ']' OP_Shift TK_LIT_INT;
+comando_shift: TK_IDENTIFICADOR op_shift TK_LIT_INT
+	| TK_IDENTIFICADOR '[' expressao ']' op_shift TK_LIT_INT;
 
 
 
 
 
-OP_UNARIO: '+'
-         | '-'
-         | '!'
-         | '&'
-         | '*'
-         | '?'
-         | '#';
+op_unaria: '+'
+	| '-'
+	| '!'
+	| '&'
+	| '*'
+	| '?'
+	| '#';
 
-OP_BIN_Sum: '+'
-          | '-';
+op_unaria_prio_dir: '+'
+	| '-'
+	| '!'
+	| '?';
 
-OP_BIN_Prod: '*'
-           | '/'
-           | '%';
+op_binaria_soma: '+'
+	| '-';
 
-OP_BIN_Exp: '^';
+op_binaria_produto: '*'
+	| '/'
+	| '%';
 
-OP_BIN_Logic: '|'
-            | '&';
+op_binaria_expoente: '^';
 
-OP_LOG_Comp: TK_OC_AND
-           | TK_OC_OR;
+op_binaria_logica: '|'
+	| '&';
 
-OP_BIN_Comp: '<'
-           | '>'
-           | TK_OC_LE
-           | TK_OC_GE
-           | TK_OC_EQ
-           | TK_OC_NE;
+op_logica_comparacao: TK_OC_AND
+	| TK_OC_OR;
 
-OP_Shift: TK_OC_SR
-        | TK_OC_SL;
+op_binaria_comparacao: '<'
+	| '>'
+	| TK_OC_LE
+	| TK_OC_GE
+	| TK_OC_EQ
+	| TK_OC_NE;
 
-MM: '+'
-  | '-'
-  | ;
+op_shift: TK_OC_SR
+	| TK_OC_SL;
+
+mais_menos: '+'
+	| '-'
+	| ;
 
 %%
 

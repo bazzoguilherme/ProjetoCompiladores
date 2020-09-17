@@ -114,6 +114,8 @@ int main () {
     i = *c * (3/2);
     i = &c + 2;
     b = true || 2;
+    b = ? b; 
+    b = ? (+b * 10); 
 
 
     /* Bloco */
