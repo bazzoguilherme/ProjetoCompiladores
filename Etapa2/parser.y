@@ -1,8 +1,9 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 
 int yylex(void);
-void yyerror (char const *s);
+int yyerror (char const *s);
 
 extern int get_line_number(void);
 %}
@@ -264,6 +265,7 @@ MM: '+'
 
 %%
 
-void yyerror (char const *s) {
-    printf("%5d | %s - error\n", get_line_number(), s); // ONLY DEBUG - depois remover print e *include de stdio*
+int yyerror (char const *s) {
+    printf("%5d | %s\n", get_line_number(), s); 
+	return 1;
 }
