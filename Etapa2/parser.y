@@ -53,6 +53,13 @@ extern int get_line_number(void);
 %token TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
+%left '+' '-'
+%left '*' '/' '%'
+%left '?' ':'
+%left '<' '>' '=' "!=" "<=" ">="
+%right '^'
+%right '&' '#'
+
 %%
 
 programa: declaracao_global programa
