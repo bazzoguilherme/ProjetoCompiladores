@@ -1,5 +1,22 @@
+
+%define parse.error custom
+%locations
+%define parse.lac full
+
 %{
+#ifndef YY_LOCATION_PRINT
+# if YYLTYPE_IS_TRIVIAL
+#  define YY_LOCATION_PRINT(File, Loc)                  \
+   fprintf (File, "%d.%d-%d.%d",                      \
+           (Loc).first_line, (Loc).first_column,     \
+           (Loc).last_line,  (Loc).last_column)
+# else
+#  define YY_LOCATION_PRINT(File, Loc) ((void) 0)
+# endif
+#endif
+
 #include <stdio.h>
+#include <stddef.h>
 
 int yylex(void);
 int yyerror (char const *s);
@@ -271,4 +288,33 @@ mais_menos: '+'
 int yyerror (char const *s) {
     printf("%5d | %s\n", get_line_number(), s); 
 	return 1;
+}
+
+static int yyreport_syntax_error (const yypcontext_t *ctx)
+{
+  int res = 0;
+  const YYLTYPE *loc = yypcontext_location (ctx);
+  YY_LOCATION_PRINT (stderr, *loc);
+  fprintf (stderr, ": syntax error");
+  // Report the tokens expected at this point.
+  {
+    enum { TOKENMAX = 5 };
+    yysymbol_kind_t expected[TOKENMAX];
+    int n = yypcontext_expected_tokens (ctx, expected, TOKENMAX);
+    if (n < 0)
+      // Forward errors to yyparse.
+      res = n;
+    else
+      for (int i = 0; i < n; ++i)
+        fprintf (stderr, "%s %s",
+                 i == 0 ? ": expected" : " or", yysymbol_name (expected[i]));
+  }
+  // Report the unexpected token.
+  {
+    yysymbol_kind_t lookahead = yypcontext_token (ctx);
+    if (lookahead != YYSYMBOL_YYEMPTY)
+      fprintf (stderr, " before %s", yysymbol_name (lookahead));
+  }
+  fprintf (stderr, "\n");
+  return res;
 }
