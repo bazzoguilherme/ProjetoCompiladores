@@ -211,10 +211,10 @@ comando: declaracao_local ';'
 	| retorno ';'
 	| continue ';'
 	| break ';'
-	| controle_fluxo
-	| while
-	| for
-	| bloco;
+	| controle_fluxo ';'
+	| while ';'
+	| for ';'
+	| bloco ';';
 
 controle_fluxo: TK_PR_IF '(' expressao ')' bloco
 	| TK_PR_IF '(' expressao ')' bloco TK_PR_ELSE bloco;
