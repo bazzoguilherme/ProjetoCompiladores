@@ -295,7 +295,7 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
   int res = 0;
   const YYLTYPE *loc = yypcontext_location (ctx);
   YY_LOCATION_PRINT (stderr, *loc);
-  fprintf (stderr, ": syntax error");
+  fprintf (stderr, "In line %d: syntax error", get_line_number());
   // Report the tokens expected at this point.
   {
     enum { TOKENMAX = 5 };
