@@ -31,7 +31,7 @@ int new_g[2];
 /* Funcao Principal */
 int main () {
     /* Declaracoes locais */
-    int i;
+    int i <= 1, i2;
     char c <= 'c';
     static string s <= "";
     float f <= -10.5e-1;

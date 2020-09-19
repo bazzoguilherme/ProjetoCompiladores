@@ -92,17 +92,17 @@ lista_var_global: ',' id_ou_vetor lista_var_global
 id_ou_vetor: TK_IDENTIFICADOR
 	| TK_IDENTIFICADOR '[' TK_LIT_INT ']';
 
-declaracao_local: TK_PR_STATIC id_local lista_var_local
-	| TK_PR_STATIC TK_PR_CONST id_local lista_var_local
-	| TK_PR_CONST id_local lista_var_local
-	| id_local lista_var_local;
+declaracao_local: TK_PR_STATIC tipo id_local lista_var_local
+	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local
+	| TK_PR_CONST tipo id_local lista_var_local
+	| tipo id_local lista_var_local;
 
 lista_var_local: ',' id_local lista_var_local
 	| ;
 
-id_local: tipo TK_IDENTIFICADOR
-	| tipo TK_IDENTIFICADOR assign literal
-	| tipo TK_IDENTIFICADOR assign TK_IDENTIFICADOR;
+id_local: TK_IDENTIFICADOR
+	| TK_IDENTIFICADOR assign literal
+	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR;
 
 assign: TK_OC_LE;
 
