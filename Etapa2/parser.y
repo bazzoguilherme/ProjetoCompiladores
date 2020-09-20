@@ -69,14 +69,6 @@ extern int get_line_number(void);
 %token TK_LIT_STRING
 %token TK_IDENTIFICADOR
 %token TOKEN_ERRO
-
-%left '+' '-'
-%left '*' '/' '%'
-%left '?' ':'
-%left '<' '>' '=' "!=" "<=" ">="
-%right '^'
-%right '&' '#'
-
 %%
 
 programa: declaracao_global programa
@@ -90,7 +82,7 @@ lista_var_global: ',' id_ou_vetor lista_var_global
 	| ';';
 
 id_ou_vetor: TK_IDENTIFICADOR
-	| TK_IDENTIFICADOR '[' TK_LIT_INT ']';
+	| TK_IDENTIFICADOR '[' int_positivo ']';
 
 declaracao_local: TK_PR_STATIC tipo id_local lista_var_local
 	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local
@@ -216,8 +208,10 @@ comando: declaracao_local ';'
 	| for ';'
 	| bloco ';';
 
-controle_fluxo: TK_PR_IF '(' expressao ')' bloco
-	| TK_PR_IF '(' expressao ')' bloco TK_PR_ELSE bloco;
+controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt;
+
+else_opt: TK_PR_ELSE bloco
+	| ;
 
 while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco;
 
@@ -241,8 +235,8 @@ lista_parametro_chamada_funcao: ',' parametro_chamada_funcao
 	| ;
 
 
-comando_shift: TK_IDENTIFICADOR op_shift TK_LIT_INT
-	| TK_IDENTIFICADOR '[' expressao ']' op_shift TK_LIT_INT;
+comando_shift: TK_IDENTIFICADOR op_shift int_positivo
+	| TK_IDENTIFICADOR '[' expressao ']' op_shift int_positivo;
 
 
 
@@ -289,6 +283,9 @@ op_shift: TK_OC_SR
 mais_menos: '+'
 	| '-'
 	| ;
+
+int_positivo: TK_LIT_INT
+	| '+' TK_LIT_INT;
 
 %%
 
