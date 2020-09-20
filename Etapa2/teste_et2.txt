@@ -3,6 +3,7 @@
 
 int var_global, cont_universal;
 char nome[20];
+char nome[+10];
 bool cond;
 static float media, mediana;
 static string user_name;
@@ -99,10 +100,13 @@ int main () {
 
     while (i % 2 != 0) do {
         i << 2;
+        i << +3;
+        break;
     };
 
     for (i = 0: i < 2: i=i-(-1)) {
         output i;
+        continue;
     };
 
     i = true ? i+0 : i+1;
