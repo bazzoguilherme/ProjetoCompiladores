@@ -323,5 +323,5 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
       fprintf (stderr, " before %s", yysymbol_name (lookahead));
   }
   fprintf (stderr, "\n");
-  return res;
+  return 1;
 }
