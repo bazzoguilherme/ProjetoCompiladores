@@ -16,13 +16,22 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stddef.h>
+#include "ast.h"
 
 int yylex(void);
 int yyerror (char const *s);
 
 extern int get_line_number(void);
+
+extern void *arvore;
+
 %}
+%union {
+	struct valor_lexico_t *valor_lexico;
+	struct AST *ast;
+}
 
 %token TK_PR_INT
 %token TK_PR_FLOAT
@@ -61,19 +70,20 @@ extern int get_line_number(void);
 %token TK_OC_SR
 %token TK_OC_FORWARD_PIPE
 %token TK_OC_BASH_PIPE
-%token TK_LIT_INT
-%token TK_LIT_FLOAT
-%token TK_LIT_FALSE
-%token TK_LIT_TRUE
-%token TK_LIT_CHAR
-%token TK_LIT_STRING
+%token<valor_lexico> TK_LIT_INT
+%token<valor_lexico> TK_LIT_FLOAT
+%token<valor_lexico> TK_LIT_FALSE
+%token<valor_lexico> TK_LIT_TRUE
+%token<valor_lexico> TK_LIT_CHAR
+%token<valor_lexico> TK_LIT_STRING
 %token TK_IDENTIFICADOR
 %token TOKEN_ERRO
 %%
 
 programa: declaracao_global programa
 	| declaracao_funcao programa
-	| ;
+	| 
+	;
 
 declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global 
 	| tipo id_ou_vetor lista_var_global;
@@ -164,14 +174,15 @@ expr_log_literal: TK_LIT_TRUE
 
 literal: mais_menos TK_LIT_INT
    | mais_menos TK_LIT_FLOAT
-   | TK_LIT_CHAR
-   | TK_LIT_STRING
+   | literal_char_str
    | TK_LIT_TRUE
    | TK_LIT_FALSE;
 
 
-literal_char_str: TK_LIT_CHAR
-	| TK_LIT_STRING;
+literal_char_str: 
+	  TK_LIT_CHAR  { printf("%c\n", yylval.valor_lexico->valor.val_char); }
+	| TK_LIT_STRING	{ printf("%s\n", yylval.valor_lexico->valor.val_str); }
+	;
 
 
 
@@ -239,9 +250,6 @@ comando_shift: TK_IDENTIFICADOR op_shift int_positivo
 	| TK_IDENTIFICADOR '[' expressao ']' op_shift int_positivo;
 
 
-
-
-
 op_unaria: '+'
 	| '-'
 	| '!'
@@ -284,8 +292,9 @@ mais_menos: '+'
 	| '-'
 	| ;
 
-int_positivo: TK_LIT_INT
-	| '+' TK_LIT_INT;
+int_positivo: TK_LIT_INT {  }
+	| '+' TK_LIT_INT {  }
+	;
 
 %%
 
@@ -321,4 +330,13 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
   }
   fprintf (stderr, "\n");
   return 1;
+}
+
+
+void exporta (void *arvore){
+
+}
+
+void libera (void *arvore){
+	
 }

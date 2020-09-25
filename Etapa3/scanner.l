@@ -1,7 +1,10 @@
 %{
 #include "parser.tab.h"
+#include "ast.h"
+
 int line_counter = 1;
 
+int get_line_number();
 %}
 %x comment 
 
@@ -88,23 +91,52 @@ escape_symbol ['"]
 ">>" { return TK_OC_SR ; }
 "<<" { return TK_OC_SL ; }
 
-"true" { return TK_LIT_TRUE; }
-"false" { return TK_LIT_FALSE; }
+"true" { 
+        yylval.valor_lexico = lex_bool(1, TK_LIT_TRUE, get_line_number());
+        return TK_LIT_TRUE; 
+    }
+"false" { 
+        yylval.valor_lexico = lex_bool(0, TK_LIT_FALSE, get_line_number());
+        return TK_LIT_FALSE; 
+    }
 
-{letra}+({digito}|{letra})* { return TK_IDENTIFICADOR; }
+{letra}+({digito}|{letra})* { 
+        yylval.valor_lexico = lex_id(yytext, TK_IDENTIFICADOR, get_line_number());
+        return TK_IDENTIFICADOR; 
+    }
 
-{digito}+ { return TK_LIT_INT; }
+{digito}+ {
+        yylval.valor_lexico = lex_int(atoi(yytext), TK_LIT_INT, get_line_number());
+        return TK_LIT_INT; 
+    }
+
 {digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
 
-{digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { return TK_LIT_FLOAT; }
+{digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { 
+        yylval.valor_lexico = lex_float(atof(yytext), TK_LIT_FLOAT, get_line_number());
+        return TK_LIT_FLOAT; 
+    }
+
 {digito}+"."({digito}*{letra}({digito}|{letra})*)? { return TOKEN_ERRO; }
 "."({digito}|{letra})* { return TOKEN_ERRO; }
 
-"\'"[^'"\n]"\'" { return TK_LIT_CHAR; }
-"\'\\"({escape_char}|{escape_symbol})"\'" { return TK_LIT_CHAR; }
+"\'"[^'"\n]"\'" { 
+        yylval.valor_lexico = lex_char(yytext[1], TK_LIT_CHAR, get_line_number());
+        return TK_LIT_CHAR; 
+    }
+
+"\'\\"({escape_char}|{escape_symbol})"\'" { 
+        yylval.valor_lexico->valor.val_char = yytext[1];
+        yylval.valor_lexico->linha = get_line_number();
+        return TK_LIT_CHAR; 
+    }
 "\'\'" { return TOKEN_ERRO; }
 
-\"("\\\""|[^\n])*\" { return TK_LIT_STRING; }
+
+\"("\\\""|[^\n])*\" { 
+        yylval.valor_lexico = lex_str(yytext, TK_LIT_STRING, get_line_number());
+        return TK_LIT_STRING; 
+    }
 
 {branco}+ { }
 \r { }

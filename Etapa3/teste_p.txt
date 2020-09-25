@@ -1,0 +1,7 @@
+int main() {
+    s = true;
+    s = false;
+    s = "str";
+    s = 'c';
+    s = 10;
+}

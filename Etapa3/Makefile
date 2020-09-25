@@ -1,19 +1,22 @@
-filename=etapa2
+filename=etapa3
 BISON=bison
 LEX=flex
 GCC=gcc
 
-proj: comp.o
-	$(GCC) -o $(filename) main.o lex.yy.o parser.tab.o -lfl
+all: comp.o
+	$(GCC) -o $(filename) main.o lex.yy.o parser.tab.o ast.o -lfl
 
-comp.o: main.c lex.yy.c parser.tab.c
-	$(GCC) -c main.c lex.yy.c parser.tab.c
+comp.o: main.c lex.yy.c parser.tab.c ast.c
+	$(GCC) -c main.c lex.yy.c parser.tab.c ast.c
 
 parser.tab.c: parser.y
 	$(BISON) -d parser.y
 
 lex.yy.c: scanner.l
 	$(LEX) scanner.l
+
+ast: ast.c ast.h
+	$(GCC) -c ast.c
 
 report: parser.y
 	$(BISON) --report-file="report.txt" parser.y
@@ -22,4 +25,4 @@ parser_table: parser.y
 	$(BISON) -v parser.y
 
 clean:
-	rm $(filename) lex.yy.* parser.tab.* main.o
+	rm $(filename) lex.yy.* parser.tab.* main.o ast.o
