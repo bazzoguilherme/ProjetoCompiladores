@@ -18,6 +18,7 @@ struct valor_lexico_t *lex_float(float float_val, int tipo_tk, int linha);
 struct valor_lexico_t *lex_char(char char_val, int tipo_tk, int linha);
 struct valor_lexico_t *lex_str(char *str_val, int tipo_tk, int linha);
 struct valor_lexico_t *lex_id(char *id_val, int tipo_tk, int linha);
+struct valor_lexico_t *lex_especial(char *esp_val, int tipo_tk, int linha);
 
 void remove_quotes(char *st);
 

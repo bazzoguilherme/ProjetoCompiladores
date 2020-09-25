@@ -44,6 +44,10 @@ struct valor_lexico_t *lex_id(char *id_val, int tipo_tk, int linha) {
     return lex_str(id_val, tipo_tk, linha);
 }
 
+struct valor_lexico_t *lex_especial(char *esp_val, int tipo_tk, int linha) {
+    return lex_str(esp_val, tipo_tk, linha);
+}
+
 void remove_quotes(char *st) {
     int len = strlen(st);
     int i, pos = 0;
