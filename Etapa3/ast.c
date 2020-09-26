@@ -49,7 +49,11 @@ struct valor_lexico_t *lex_id(char *id_val, Tipo_val_lex tipo_tk, int linha) {
 }
 
 struct valor_lexico_t *lex_especial(char *esp_val, Tipo_val_lex tipo_tk, int linha) {
-    return lex_str(esp_val, tipo_tk, linha);
+    struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
+    val_lex->valor.val_str = strdup(esp_val);
+    val_lex->tipo = tipo_tk;
+    val_lex->linha = linha;
+    return val_lex;
 }
 
 void remove_quotes(char *st) {
@@ -78,6 +82,10 @@ struct AST *create_LIT(Type ast_type, struct valor_lexico_t *val_lex) {
     return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
 }
 
+struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex) {
+    return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
+}
+
 struct AST *create_NODE(Type ast_type, struct AST *f1, struct AST *next) {
     return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, next);
 }
@@ -90,10 +98,23 @@ struct AST *create_COMANDO(Type ast_type, struct AST *f1, struct AST *next) {
     return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, next);
 }
 
-struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *next) {
-    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, next);
+struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2) {
+    return create_AST(ast_type, NULL, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_IO(Type ast_type, struct valor_lexico_t *val_lex) {
     return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
+}
+
+struct AST *create_CONT_BREAK(Type ast_type) {
+    return create_AST(ast_type, NULL, NULL, NULL, NULL, NULL, NULL);
+}
+
+struct AST *create_SHIFT(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2) {
+    return create_AST(ast_type, val_lex, f1, f2, NULL, NULL, NULL);
+}
+
+struct AST *create_VEC(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f2) {
+    struct AST* f1 = create_ID(AST_ID, val_lex);
+    return create_AST(ast_type, NULL, f1, f2, NULL, NULL, NULL);
 }

@@ -35,15 +35,18 @@ void remove_quotes(char *st);
 
 typedef enum Type {
     AST_LIT = 1,
+    AST_ID,
     AST_FUNCAO, // Funcao
     AST_NODE, // [;,] Prox Comando
     AST_VEC, // []
     AST_DECL_ASSING, // <=
     AST_ASSING, // =
-    AST_SL, // <<
-    AST_SR, // >>
     AST_IF, // if
-    AST_IO, // if
+    AST_IN, // input
+    AST_OUT, // output
+    AST_CONT, // continue
+    AST_BREAK, // break
+    AST_SHIFT, // break
 } Type;
 
 typedef struct AST {
@@ -57,13 +60,22 @@ struct AST *create_AST(Type ast_type, struct valor_lexico_t *val_lex, struct AST
 
 struct AST *create_LIT(Type ast_type, struct valor_lexico_t *val_lex);
 
+struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex);
+
 struct AST *create_NODE(Type ast_type, struct AST *f1, struct AST *next);
 
 struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
 
 struct AST *create_COMANDO(Type ast_type, struct AST *f1, struct AST *next);
 
-struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *next);
+struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2);
 
 struct AST *create_IO(Type ast_type, struct valor_lexico_t *val_lex);
+
+struct AST *create_CONT_BREAK(Type ast_type);
+
+struct AST *create_SHIFT(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
+
+struct AST *create_VEC(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f2);
+
 

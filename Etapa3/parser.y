@@ -88,10 +88,17 @@ extern void *arvore;
 %type<ast> io_dados
 %type<ast> entrada
 %type<ast> saida
+%type<ast> continue
+%type<ast> break
+%type<ast> comando_shift
+%type<ast> id_ou_vet_expr
+%type<ast> expressao
+%type<ast> expr
 
 %type<valor_lexico> declaracao_header
 %type<valor_lexico> literal
 %type<valor_lexico> literal_char_str
+%type<valor_lexico> op_shift
 
 %%
 
@@ -131,10 +138,10 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 io_dados: entrada { $$ = $1; }
 	| saida { $$ = $1; };
 
-entrada: TK_PR_INPUT TK_IDENTIFICADOR { $$ = create_IO(AST_IO, $2); };
+entrada: TK_PR_INPUT TK_IDENTIFICADOR { $$ = create_IO(AST_IN, $2); };
 
-saida: TK_PR_OUTPUT TK_IDENTIFICADOR { $$ = create_IO(AST_IO, $2); }
-    | TK_PR_OUTPUT literal { $$ = create_IO(AST_IO, $2); };
+saida: TK_PR_OUTPUT TK_IDENTIFICADOR { $$ = create_IO(AST_OUT, $2); }
+    | TK_PR_OUTPUT literal { $$ = create_IO(AST_OUT, $2); };
 
 tipo: TK_PR_INT
 	| TK_PR_FLOAT
@@ -142,7 +149,7 @@ tipo: TK_PR_INT
 	| TK_PR_CHAR
 	| TK_PR_STRING;
 
-expressao: expr;
+expressao: expr { $$ = $1; };
 
 expr: expr_log_comp
 	| expr_log_comp '?' expressao ':' expressao;
@@ -225,10 +232,10 @@ comando: declaracao_local ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL
 	| atribuicao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
 	| io_dados ';' { $$ = $1; }
 	| chamada_funcao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
-	| comando_shift ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| comando_shift ';' { $$ = $1; }
 	| retorno ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
-	| continue ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
-	| break ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| continue ';' { $$ = $1; }
+	| break ';' { $$ = $1; }
 	| controle_fluxo ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
 	| while ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
 	| for ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
@@ -246,9 +253,9 @@ for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco;
 retorno: TK_PR_RETURN expressao
    | TK_PR_RETURN literal_char_str;
 
-continue: TK_PR_CONTINUE;
+continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
 
-break: TK_PR_BREAK;
+break: TK_PR_BREAK { $$ = create_CONT_BREAK(AST_BREAK); };
 
 
 chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')';
@@ -261,9 +268,10 @@ lista_parametro_chamada_funcao: ',' parametro_chamada_funcao
 	| ;
 
 
-comando_shift: TK_IDENTIFICADOR op_shift int_positivo
-	| TK_IDENTIFICADOR '[' expressao ']' op_shift int_positivo;
+comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 
+id_ou_vet_expr: TK_IDENTIFICADOR { $$ = create_ID(AST_ID, $1); }
+	| TK_IDENTIFICADOR '[' expressao ']' { $$ = create_VEC(AST_VEC, $1, $3); };
 
 op_unaria: '+'
 	| '-'
@@ -300,8 +308,8 @@ op_binaria_comparacao: '<'
 	| TK_OC_EQ
 	| TK_OC_NE;
 
-op_shift: TK_OC_SR
-	| TK_OC_SL;
+op_shift: TK_OC_SR { $$ = $1; }
+	| TK_OC_SL { $$ = $1; };
 
 mais_menos: '+'
 	| '-'
