@@ -60,14 +60,14 @@ extern void *arvore;
 %token TK_PR_PROTECTED
 %token TK_PR_END
 %token TK_PR_DEFAULT
-%token TK_OC_LE
-%token TK_OC_GE
-%token TK_OC_EQ
-%token TK_OC_NE
-%token TK_OC_AND
-%token TK_OC_OR
-%token TK_OC_SL
-%token TK_OC_SR
+%token<valor_lexico> TK_OC_LE
+%token<valor_lexico> TK_OC_GE
+%token<valor_lexico> TK_OC_EQ
+%token<valor_lexico> TK_OC_NE
+%token<valor_lexico> TK_OC_AND
+%token<valor_lexico> TK_OC_OR
+%token<valor_lexico> TK_OC_SL
+%token<valor_lexico> TK_OC_SR
 %token TK_OC_FORWARD_PIPE
 %token TK_OC_BASH_PIPE
 %token<valor_lexico> TK_LIT_INT
@@ -76,13 +76,28 @@ extern void *arvore;
 %token<valor_lexico> TK_LIT_TRUE
 %token<valor_lexico> TK_LIT_CHAR
 %token<valor_lexico> TK_LIT_STRING
-%token TK_IDENTIFICADOR
+%token<valor_lexico> TK_IDENTIFICADOR
 %token TOKEN_ERRO
+
+%type<ast> programa
+%type<ast> declaracao_funcao
+%type<ast> bloco
+%type<ast> comando
+%type<ast> comandos
+%type<ast> int_positivo
+%type<ast> io_dados
+%type<ast> entrada
+%type<ast> saida
+
+%type<valor_lexico> declaracao_header
+%type<valor_lexico> literal
+%type<valor_lexico> literal_char_str
+
 %%
 
-programa: declaracao_global programa
-	| declaracao_funcao programa
-	| 
+programa: declaracao_global programa { $$ = $2; }
+	| declaracao_funcao programa { $$ = create_NODE(AST_FUNCAO, $1, $2); arvore = (void*) $$; }
+	| { }
 	;
 
 declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global 
@@ -113,13 +128,13 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	| TK_IDENTIFICADOR '[' expressao ']' '=' expressao
 	| TK_IDENTIFICADOR '[' expressao ']' '=' literal_char_str;
 
-io_dados: entrada
-	| saida;
+io_dados: entrada { $$ = $1; }
+	| saida { $$ = $1; };
 
-entrada: TK_PR_INPUT TK_IDENTIFICADOR;
+entrada: TK_PR_INPUT TK_IDENTIFICADOR { $$ = create_IO(AST_IO, $2); };
 
-saida: TK_PR_OUTPUT TK_IDENTIFICADOR
-    | TK_PR_OUTPUT literal;
+saida: TK_PR_OUTPUT TK_IDENTIFICADOR { $$ = create_IO(AST_IO, $2); }
+    | TK_PR_OUTPUT literal { $$ = create_IO(AST_IO, $2); };
 
 tipo: TK_PR_INT
 	| TK_PR_FLOAT
@@ -172,25 +187,25 @@ expr_arit_C: chamada_funcao ; // Chamada de funcao
 expr_log_literal: TK_LIT_TRUE
 	| TK_LIT_FALSE;
 
-literal: mais_menos TK_LIT_INT
-   | mais_menos TK_LIT_FLOAT
-   | literal_char_str
-   | TK_LIT_TRUE
-   | TK_LIT_FALSE;
+literal: mais_menos TK_LIT_INT { $$ = $2; }
+   | mais_menos TK_LIT_FLOAT { $$ = $2; }
+   | literal_char_str { $$ = $1; }
+   | TK_LIT_TRUE { $$ = $1; }
+   | TK_LIT_FALSE { $$ = $1; };
 
 
 literal_char_str: 
-	  TK_LIT_CHAR  { printf("%c\n", yylval.valor_lexico->valor.val_char); }
-	| TK_LIT_STRING	{ printf("%s\n", yylval.valor_lexico->valor.val_str); }
+	  TK_LIT_CHAR  { $$ = $1; }
+	| TK_LIT_STRING	{ $$ = $1; }
 	;
 
 
 
 
-declaracao_funcao: declaracao_header bloco;
+declaracao_funcao: declaracao_header bloco { $$ = create_FUNCAO(AST_FUNCAO, $1, $2); };
 
-declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR '(' parametro ')'
-	| tipo TK_IDENTIFICADOR '(' parametro ')';
+declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR '(' parametro ')' { $$ = $3; }
+	| tipo TK_IDENTIFICADOR '(' parametro ')' { $$ = $2; } ;
 
 tipo_const: TK_PR_CONST
 	| ;
@@ -201,23 +216,23 @@ parametro: tipo_const tipo TK_IDENTIFICADOR lista_parametro
 lista_parametro: ',' parametro
 	| ;
 
-bloco: '{' comandos '}';
+bloco: '{' comandos '}' { $$ = $2; };
 
-comandos: comando comandos
-	| ;
+comandos: comando comandos { $$ = create_NODE(AST_NODE, $1, $2); }
+	| { $$ = NULL; } ;
 
-comando: declaracao_local ';'
-	| atribuicao ';'
-	| io_dados ';'
-	| chamada_funcao ';'
-	| comando_shift ';'
-	| retorno ';'
-	| continue ';'
-	| break ';'
-	| controle_fluxo ';'
-	| while ';'
-	| for ';'
-	| bloco ';';
+comando: declaracao_local ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| atribuicao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| io_dados ';' { $$ = $1; }
+	| chamada_funcao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| comando_shift ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| retorno ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| continue ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| break ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| controle_fluxo ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| while ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| for ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| bloco ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); };
 
 controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt;
 
@@ -292,8 +307,8 @@ mais_menos: '+'
 	| '-'
 	| ;
 
-int_positivo: TK_LIT_INT {  }
-	| '+' TK_LIT_INT {  }
+int_positivo: TK_LIT_INT { $$ = create_LIT(AST_LIT, yylval.valor_lexico); }
+	| '+' TK_LIT_INT { $$ = create_LIT(AST_LIT, yylval.valor_lexico); }
 	;
 
 %%
@@ -334,7 +349,8 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
 
 
 void exporta (void *arvore){
-
+	struct AST *ast = (struct AST*) arvore;
+	printf("%p [label=\"%s\"]\n", ast, ast->children[0]->children[0]->children[0]->valor_lexico->valor.val_str);
 }
 
 void libera (void *arvore){

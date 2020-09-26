@@ -1,7 +1,4 @@
+int v1;
 int main() {
-    s = true;
-    s = false;
-    s = "str";
-    s = 'c';
-    s = 10;
+    output -5;
 }

@@ -82,41 +82,41 @@ escape_symbol ['"]
 "~" |
 "`" |
 "?" { 
-    yylval.valor_lexico = lex_especial(yytext, yytext[0], get_line_number());
+    yylval.valor_lexico = lex_especial(yytext, VAL_ESPECIAL, get_line_number());
     return yytext[0]; 
     }
-"<=" { yylval.valor_lexico = lex_especial(yytext, TK_OC_LE, get_line_number()); return TK_OC_LE ; }
-">=" { yylval.valor_lexico = lex_especial(yytext, TK_OC_GE, get_line_number()); return TK_OC_GE ; }
-"==" { yylval.valor_lexico = lex_especial(yytext, TK_OC_EQ, get_line_number()); return TK_OC_EQ ; }
-"!=" { yylval.valor_lexico = lex_especial(yytext, TK_OC_NE, get_line_number()); return TK_OC_NE ; }
-"&&" { yylval.valor_lexico = lex_especial(yytext, TK_OC_AND, get_line_number()); return TK_OC_AND;}
-"||" { yylval.valor_lexico = lex_especial(yytext, TK_OC_OR, get_line_number()); return TK_OC_OR ; }
-">>" { yylval.valor_lexico = lex_especial(yytext, TK_OC_SR, get_line_number()); return TK_OC_SR ; }
-"<<" { yylval.valor_lexico = lex_especial(yytext, TK_OC_SL, get_line_number()); return TK_OC_SL ; }
+"<=" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_LE ; }
+">=" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_GE ; }
+"==" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_EQ ; }
+"!=" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_NE ; }
+"&&" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_AND; }
+"||" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_OR ; }
+">>" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_SR ; }
+"<<" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_SL ; }
 
 "true" { 
-        yylval.valor_lexico = lex_bool(1, TK_LIT_TRUE, get_line_number());
+        yylval.valor_lexico = lex_bool(1, VAL_BOOL, get_line_number());
         return TK_LIT_TRUE; 
     }
 "false" { 
-        yylval.valor_lexico = lex_bool(0, TK_LIT_FALSE, get_line_number());
+        yylval.valor_lexico = lex_bool(0, VAL_BOOL, get_line_number());
         return TK_LIT_FALSE; 
     }
 
 {letra}+({digito}|{letra})* { 
-        yylval.valor_lexico = lex_id(yytext, TK_IDENTIFICADOR, get_line_number());
+        yylval.valor_lexico = lex_id(yytext, VAL_IDENTIFICADOR, get_line_number());
         return TK_IDENTIFICADOR; 
     }
 
 {digito}+ {
-        yylval.valor_lexico = lex_int(atoi(yytext), TK_LIT_INT, get_line_number());
+        yylval.valor_lexico = lex_int(atoi(yytext), VAL_INT, get_line_number());
         return TK_LIT_INT; 
     }
 
 {digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
 
 {digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { 
-        yylval.valor_lexico = lex_float(atof(yytext), TK_LIT_FLOAT, get_line_number());
+        yylval.valor_lexico = lex_float(atof(yytext), VAL_FLOAT, get_line_number());
         return TK_LIT_FLOAT; 
     }
 
@@ -124,20 +124,19 @@ escape_symbol ['"]
 "."({digito}|{letra})* { return TOKEN_ERRO; }
 
 "\'"[^'"\n]"\'" { 
-        yylval.valor_lexico = lex_char(yytext[1], TK_LIT_CHAR, get_line_number());
+        yylval.valor_lexico = lex_char(yytext[1], VAL_CHAR, get_line_number());
         return TK_LIT_CHAR; 
     }
 
 "\'\\"({escape_char}|{escape_symbol})"\'" { 
-        yylval.valor_lexico->valor.val_char = yytext[1];
-        yylval.valor_lexico->linha = get_line_number();
+        yylval.valor_lexico = lex_char(yytext[2], VAL_CHAR, get_line_number());
         return TK_LIT_CHAR; 
     }
 "\'\'" { return TOKEN_ERRO; }
 
 
 \"("\\\""|[^\n])*\" { 
-        yylval.valor_lexico = lex_str(yytext, TK_LIT_STRING, get_line_number());
+        yylval.valor_lexico = lex_str(yytext, VAL_STRING, get_line_number());
         return TK_LIT_STRING; 
     }
 

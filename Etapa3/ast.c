@@ -3,7 +3,7 @@
 #include <string.h>
 #include "ast.h"
 
-struct valor_lexico_t *lex_int(int int_value, int tipo_tk, int linha) {
+struct valor_lexico_t *lex_int(int int_value, Tipo_val_lex tipo_tk, int linha) {
     struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
     val_lex->valor.val_int = int_value;
     val_lex->tipo = tipo_tk;
@@ -11,11 +11,11 @@ struct valor_lexico_t *lex_int(int int_value, int tipo_tk, int linha) {
     return val_lex;
 }
 
-struct valor_lexico_t *lex_bool(int bool_val, int tipo_tk, int linha) {
+struct valor_lexico_t *lex_bool(int bool_val, Tipo_val_lex tipo_tk, int linha) {
     return lex_int(bool_val, tipo_tk, linha);
 }
 
-struct valor_lexico_t *lex_float(float float_val, int tipo_tk, int linha) {
+struct valor_lexico_t *lex_float(float float_val, Tipo_val_lex tipo_tk, int linha) {
     struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
     val_lex->valor.val_float = float_val;
     val_lex->tipo = tipo_tk;
@@ -23,7 +23,7 @@ struct valor_lexico_t *lex_float(float float_val, int tipo_tk, int linha) {
     return val_lex;
 }
 
-struct valor_lexico_t *lex_char(char char_val, int tipo_tk, int linha) {
+struct valor_lexico_t *lex_char(char char_val, Tipo_val_lex tipo_tk, int linha) {
     struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
     val_lex->valor.val_char = char_val;
     val_lex->tipo = tipo_tk;
@@ -31,7 +31,7 @@ struct valor_lexico_t *lex_char(char char_val, int tipo_tk, int linha) {
     return val_lex;
 }
 
-struct valor_lexico_t *lex_str(char *str_val, int tipo_tk, int linha) {
+struct valor_lexico_t *lex_str(char *str_val, Tipo_val_lex tipo_tk, int linha) {
     struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
     val_lex->valor.val_str = strdup(str_val);
     remove_quotes(val_lex->valor.val_str);
@@ -40,11 +40,15 @@ struct valor_lexico_t *lex_str(char *str_val, int tipo_tk, int linha) {
     return val_lex;
 }
 
-struct valor_lexico_t *lex_id(char *id_val, int tipo_tk, int linha) {
-    return lex_str(id_val, tipo_tk, linha);
+struct valor_lexico_t *lex_id(char *id_val, Tipo_val_lex tipo_tk, int linha) {
+    struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
+    val_lex->valor.val_str = strdup(id_val);
+    val_lex->tipo = tipo_tk;
+    val_lex->linha = linha;
+    return val_lex;
 }
 
-struct valor_lexico_t *lex_especial(char *esp_val, int tipo_tk, int linha) {
+struct valor_lexico_t *lex_especial(char *esp_val, Tipo_val_lex tipo_tk, int linha) {
     return lex_str(esp_val, tipo_tk, linha);
 }
 
@@ -56,4 +60,40 @@ void remove_quotes(char *st) {
             st[pos++] = st[i];
     }
     st[pos] = '\0';
+}
+
+struct AST *create_AST(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4, struct AST *next_node) {
+    struct AST *new_node = (struct AST*) malloc (sizeof(struct AST));
+    new_node->tipo = ast_type;
+    new_node->valor_lexico = val_lex;
+    new_node->children[0] = f1;
+    new_node->children[1] = f2;
+    new_node->children[2] = f3;
+    new_node->children[3] = f4;
+    new_node->prox = next_node;
+    return new_node;
+}
+
+struct AST *create_LIT(Type ast_type, struct valor_lexico_t *val_lex) {
+    return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
+}
+
+struct AST *create_NODE(Type ast_type, struct AST *f1, struct AST *next) {
+    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, next);
+}
+
+struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1) {
+    return create_AST(ast_type, val_lex, f1, NULL, NULL, NULL, NULL);
+}
+
+struct AST *create_COMANDO(Type ast_type, struct AST *f1, struct AST *next) {
+    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, next);
+}
+
+struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *next) {
+    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, next);
+}
+
+struct AST *create_IO(Type ast_type, struct valor_lexico_t *val_lex) {
+    return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
 }
