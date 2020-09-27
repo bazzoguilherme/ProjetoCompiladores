@@ -38,9 +38,9 @@ typedef enum Type {
     AST_ID,
     AST_FUNCAO, // Funcao
     AST_NODE, // [;,] Prox Comando
-    AST_VEC, // []
     AST_DECL_ASSIGN, // <=
     AST_ASSIGN, // =
+    AST_VEC, // []
     AST_IN, // input
     AST_OUT, // output
     AST_CONT, // continue

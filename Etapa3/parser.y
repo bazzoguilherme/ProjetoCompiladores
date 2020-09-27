@@ -26,6 +26,7 @@ int yyerror (char const *s);
 extern int get_line_number(void);
 
 extern void *arvore;
+extern void exporta(void *arvore);
 
 %}
 %union {
@@ -266,7 +267,7 @@ comandos: comando comandos { $$ = create_NODE(AST_NODE, $1, $2); }
 comando: declaracao_local ';' { $$ = $1; }
 	| atribuicao ';' { $$ = $1; }
 	| io_dados ';' { $$ = $1; }
-	| chamada_funcao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| chamada_funcao ';' { $$ = $1; }
 	| comando_shift ';' { $$ = $1; }
 	| retorno ';' { $$ = $1; }
 	| continue ';' { $$ = $1; }
@@ -390,12 +391,6 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
   }
   fprintf (stderr, "\n");
   return 1;
-}
-
-
-void exporta (void *arvore){
-	struct AST *ast = (struct AST*) arvore;
-	printf("%p [label=\"%s\"]\n", ast, ast->children[0]->valor_lexico->valor.val_str);
 }
 
 void libera (void *arvore){

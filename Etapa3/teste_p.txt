@@ -1,9 +1,13 @@
 int v1;
 int main() {
-    ident[1] << 10;
+    int ident <= 10;
+    int ia, ib <= 1;
+    i[2] = 5;
 
+    i << 10;
+    
     if (10) {
-        output 5;
+        input i;
     };
 
     return 3+(2*false);
