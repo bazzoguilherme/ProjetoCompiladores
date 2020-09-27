@@ -239,17 +239,19 @@ literal_char_str:
 
 declaracao_funcao: declaracao_header bloco { $$ = create_FUNCAO(AST_FUNCAO, $1, $2); };
 
-declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR '(' parametro ')' { $$ = $3; }
-	| tipo TK_IDENTIFICADOR '(' parametro ')' { $$ = $2; } ;
+declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR '(' parametros ')' { $$ = $3; }
+	| tipo TK_IDENTIFICADOR '(' parametros ')' { $$ = $2; } ;
 
 tipo_const: TK_PR_CONST
 	| ;
 
-parametro: tipo_const tipo TK_IDENTIFICADOR lista_parametro
+parametros: lista_parametro
 	| ;
 
-lista_parametro: ',' parametro
-	| ;
+lista_parametro: parametro ',' lista_parametro
+	| parametro ;
+
+parametro: tipo_const tipo TK_IDENTIFICADOR;
 
 bloco: '{' comandos '}' { $$ = $2; };
 
