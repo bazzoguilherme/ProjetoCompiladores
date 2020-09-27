@@ -44,6 +44,22 @@ void print_ast(struct AST *ast) {
     case AST_OUT:
         print_IO(ast);
         break;
+    case AST_BREAK:
+    case AST_CONT:
+        print_BR_CONT(ast);
+        break;
+    case AST_RETURN:
+        print_RETURN(ast);
+        break;
+    case AST_IF:
+        print_IF(ast);
+        break;
+    case AST_WHILE:
+        print_WHILE(ast);
+        break;
+    case AST_FOR:
+        print_FOR(ast);
+        break;
     default:
         break;
     }
@@ -86,9 +102,7 @@ void print_FUNCAO(struct AST *ast) {
 }
 
 void print_DECL_ASSIGN(struct AST *ast) {
-    print_LIT(ast);
-    print_ast(ast->children[0]);
-    print_ast(ast->children[1]);
+    print_OP_BIN(ast);
 }
 
 void print_ASSIGN(struct AST *ast) {
@@ -105,12 +119,51 @@ void print_VEC(struct AST *ast) {
 
 
 void print_SHIFT(struct AST *ast) {
-    print_LIT(ast);
-    print_ast(ast->children[0]);
-    print_ast(ast->children[1]);
+    print_OP_BIN(ast);
 }
 
 void print_IO(struct AST *ast) {
     printf("%p [label=\"%s\"];\n", ast, (ast->tipo == AST_IN ? "input" : "output"));
     print_ast(ast->children[0]);
+}
+
+void print_BR_CONT(struct AST *ast) {
+    printf("%p [label=\"%s\"];\n", ast, (ast->tipo == AST_BREAK ? "break" : "continue"));
+}
+
+void print_RETURN(struct AST *ast) {
+    printf("%p [label=\"%s\"];\n", ast, "return");
+    print_ast(ast->children[0]);
+}
+
+
+void print_IF(struct AST *ast) {
+    printf("%p [label=\"%s\"];\n", ast, "if");
+    print_ast(ast->children[0]);
+    print_ast(ast->children[1]);
+    print_ast(ast->children[2]);
+}
+
+
+void print_WHILE(struct AST *ast) {
+    printf("%p [label=\"%s\"];\n", ast, "while");
+    print_ast(ast->children[0]);
+    print_ast(ast->children[1]);
+}
+
+
+void print_FOR(struct AST *ast) {
+    printf("%p [label=\"%s\"];\n", ast, "for");
+    print_ast(ast->children[0]);
+    print_ast(ast->children[1]);
+    print_ast(ast->children[2]);
+    print_ast(ast->children[3]);
+}
+
+
+
+void print_OP_BIN(struct AST *ast) {
+    print_LIT(ast);
+    print_ast(ast->children[0]);
+    print_ast(ast->children[1]);
 }

@@ -5,10 +5,19 @@ int main() {
     i[2] = 5;
 
     i << 10;
-    
+    i >> 10;
+
     if (10) {
-        input i;
+        return 10;
     };
 
-    return 3+(2*false);
+    while (i) do {
+        i << 2;
+        break;
+    };
+
+    for (i = 0: i < 2: i=3) {
+        continue;
+    };
+
 }
