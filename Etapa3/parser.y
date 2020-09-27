@@ -107,6 +107,14 @@ extern void *arvore;
 %type<ast> expr_log_literal
 %type<ast> literal
 %type<ast> literal_char_str
+%type<ast> id_local
+%type<ast> lista_var_local
+%type<ast> declaracao_local
+%type<ast> atribuicao
+%type<ast> controle_fluxo
+%type<ast> else_opt
+%type<ast> while
+%type<ast> for
 
 %type<valor_lexico> declaracao_header
 %type<valor_lexico> op_shift
@@ -119,6 +127,7 @@ extern void *arvore;
 %type<valor_lexico> mais_menos
 %type<valor_lexico> op_unaria
 %type<valor_lexico> op_unaria_prio_dir
+%type<valor_lexico> assign
 
 %%
 
@@ -136,24 +145,23 @@ lista_var_global: ',' id_ou_vetor lista_var_global
 id_ou_vetor: TK_IDENTIFICADOR
 	| TK_IDENTIFICADOR '[' int_positivo ']';
 
-declaracao_local: TK_PR_STATIC tipo id_local lista_var_local
-	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local
-	| TK_PR_CONST tipo id_local lista_var_local
-	| tipo id_local lista_var_local;
+declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $3, $4); }
+	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $4, $5); }
+	| TK_PR_CONST tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $3, $4); }
+	| tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $2, $3); };
 
-lista_var_local: ',' id_local lista_var_local
-	| ;
+lista_var_local: ',' id_local lista_var_local { $$ = create_NODE(AST_NODE, $2, $3); }
+	| { $$ = NULL; };
 
-id_local: TK_IDENTIFICADOR
-	| TK_IDENTIFICADOR assign literal
-	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR;
+id_local: TK_IDENTIFICADOR { }
+	| TK_IDENTIFICADOR assign literal { $$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
+	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { $$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
-assign: TK_OC_LE;
+assign: TK_OC_LE { $$ = $1; };
 
-atribuicao: TK_IDENTIFICADOR '=' expressao
-	| TK_IDENTIFICADOR '=' literal_char_str
-	| TK_IDENTIFICADOR '[' expressao ']' '=' expressao
-	| TK_IDENTIFICADOR '[' expressao ']' '=' literal_char_str;
+atribuicao: id_ou_vet_expr '=' expressao { $$ = create_ASSIGN(AST_ASSIGN, $1, $3); }
+	| id_ou_vet_expr '=' literal_char_str { $$ = create_ASSIGN(AST_ASSIGN, $1, $3); };
+
 
 io_dados: entrada { $$ = $1; }
 	| saida { $$ = $1; }
@@ -248,27 +256,28 @@ bloco: '{' comandos '}' { $$ = $2; };
 comandos: comando comandos { $$ = create_NODE(AST_NODE, $1, $2); }
 	| { $$ = NULL; } ;
 
-comando: declaracao_local ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
-	| atribuicao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+comando: declaracao_local ';' { $$ = $1; }
+	| atribuicao ';' { $$ = $1; }
 	| io_dados ';' { $$ = $1; }
 	| chamada_funcao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
 	| comando_shift ';' { $$ = $1; }
 	| retorno ';' { $$ = $1; }
 	| continue ';' { $$ = $1; }
 	| break ';' { $$ = $1; }
-	| controle_fluxo ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
-	| while ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
-	| for ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| controle_fluxo ';' { $$ = $1; }
+	| while ';' { $$ = $1; }
+	| for ';' { $$ = $1; }
 	| bloco ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); };
 
-controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt;
+controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt { $$ = create_IF(AST_IF, $3, $5, $6); };
 
-else_opt: TK_PR_ELSE bloco
-	| ;
+else_opt: TK_PR_ELSE bloco { $$ = $2; }
+	| { $$ = NULL; } ;
 
-while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco;
+while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco { $$ = create_WHILE(AST_WHILE, $3, $6); };
 
-for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco;
+for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco 
+	{ $$ = create_FOR(AST_FOR, $3, $5, $7, $9); } ;
 
 retorno: TK_PR_RETURN expressao { $$ = create_RETURN(AST_RETURN, $2); }
    | TK_PR_RETURN literal_char_str { $$ = create_RETURN(AST_RETURN, $2); };
@@ -378,7 +387,7 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
 
 void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
-	printf("%p [label=\"%s\"]\n", ast, ast->children[0]->children[0]->prox->children[0]->children[0]->valor_lexico->valor.val_str);
+	printf("%p [label=\"%s\"]\n", ast, ast->children[0]->valor_lexico->valor.val_str);
 }
 
 void libera (void *arvore){

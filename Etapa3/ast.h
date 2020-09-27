@@ -39,9 +39,8 @@ typedef enum Type {
     AST_FUNCAO, // Funcao
     AST_NODE, // [;,] Prox Comando
     AST_VEC, // []
-    AST_DECL_ASSING, // <=
-    AST_ASSING, // =
-    AST_IF, // if
+    AST_DECL_ASSIGN, // <=
+    AST_ASSIGN, // =
     AST_IN, // input
     AST_OUT, // output
     AST_CONT, // continue
@@ -51,6 +50,9 @@ typedef enum Type {
     AST_TERNARIO, // op Ternario
     AST_OP_BIN, // Op Binaria (f1 op f2)
     AST_OP_UN, // Op Unaria (op f1)
+    AST_IF, // if
+    AST_FOR, // For
+    AST_WHILE, // While
 } Type;
 
 typedef struct AST {
@@ -88,4 +90,14 @@ struct AST *create_SHIFT(Type ast_type, struct valor_lexico_t *val_lex, struct A
 struct AST *create_VEC(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f2);
 
 struct AST *create_TERNARIO(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3);
+
+struct AST *create_ASSIGN(Type ast_type, struct AST *f1, struct AST *f2);
+
+struct AST *create_DECL_ASSIGN(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct AST *f2);
+struct AST *create_DECL_ASSIGN_id(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct valor_lexico_t *id2);
+
+struct AST *create_IF(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3);
+struct AST *create_WHILE(Type ast_type, struct AST *f1, struct AST *f2);
+struct AST *create_FOR(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4);
+
 

@@ -139,3 +139,32 @@ struct AST *create_VEC(Type ast_type, struct valor_lexico_t *val_lex, struct AST
 struct AST *create_TERNARIO(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3) {
     return create_AST(ast_type, NULL, f1, f2, f3, NULL, NULL);
 }
+
+struct AST *create_ASSIGN(Type ast_type, struct AST *f1, struct AST *f2) {
+    return create_AST(ast_type, NULL, f1, f2, NULL, NULL, NULL);
+}
+
+struct AST *create_DECL_ASSIGN(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct AST *f2) {
+    struct AST* f1 = create_ID(AST_ID, id);
+    return create_AST(ast_type, val_lex, f1, f2, NULL, NULL, NULL);
+}
+
+struct AST *create_DECL_ASSIGN_id(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct valor_lexico_t *id2) {
+    struct AST* f1 = create_ID(AST_ID, id);
+    struct AST* f2 = create_ID(AST_ID, id2);
+    return create_AST(ast_type, val_lex, f1, f2, NULL, NULL, NULL);
+}
+
+struct AST *create_IF(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3) {
+    return create_AST(ast_type, NULL, f1, f2, f3, NULL, NULL);
+}
+
+struct AST *create_WHILE(Type ast_type, struct AST *f1, struct AST *f2) {
+    return create_AST(ast_type, NULL, f1, f2, NULL, NULL, NULL);
+}
+
+struct AST *create_FOR(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4) {
+    return create_AST(ast_type, NULL, f1, f2, f3, f4, NULL);
+}
+
+
