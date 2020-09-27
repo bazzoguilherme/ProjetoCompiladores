@@ -291,13 +291,14 @@ break: TK_PR_BREAK { $$ = create_CONT_BREAK(AST_BREAK); };
 
 chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')';
 
-parametro_chamada_funcao: expressao lista_parametro_chamada_funcao
-	| literal_char_str lista_parametro_chamada_funcao
+parametro_chamada_funcao: lista_parametro_chamada_funcao
 	| ;
 
-lista_parametro_chamada_funcao: ',' parametro_chamada_funcao
-	| ;
+lista_parametro_chamada_funcao: possivel_parametro ',' parametro_chamada_funcao
+	| possivel_parametro;
 
+possivel_parametro: expressao 
+	| literal_char_str;
 
 comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 
