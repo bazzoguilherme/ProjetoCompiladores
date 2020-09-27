@@ -104,6 +104,7 @@ extern void *arvore;
 %type<ast> F
 %type<ast> expr_arit
 %type<ast> expr_arit_B
+%type<ast> expr_arit_C
 %type<ast> expr_log_literal
 %type<ast> literal
 %type<ast> literal_char_str
@@ -115,6 +116,10 @@ extern void *arvore;
 %type<ast> else_opt
 %type<ast> while
 %type<ast> for
+%type<ast> possivel_parametro
+%type<ast> lista_parametro_chamada_funcao
+%type<ast> parametro_chamada_funcao
+%type<ast> chamada_funcao
 
 %type<valor_lexico> declaracao_header
 %type<valor_lexico> op_shift
@@ -217,7 +222,7 @@ expr_arit: id_ou_vet_expr { $$ = $1; }
 expr_arit_B: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
 	| TK_LIT_FLOAT { $$ = create_LIT(AST_LIT, $1); } ;
 
-expr_arit_C: chamada_funcao ; // Chamada de funcao
+expr_arit_C: chamada_funcao { $$ = $1; }; // Chamada de funcao
 
 expr_log_literal: TK_LIT_TRUE { $$ = create_LIT(AST_LIT, $1); }
 	| TK_LIT_FALSE { $$ = create_LIT(AST_LIT, $1); };
@@ -289,16 +294,16 @@ continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
 break: TK_PR_BREAK { $$ = create_CONT_BREAK(AST_BREAK); };
 
 
-chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')';
+chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' { $$ = create_FUN_CALL(AST_FUN_CALL, $1, $3); };
 
-parametro_chamada_funcao: lista_parametro_chamada_funcao
-	| ;
+parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}
+	| { $$ = NULL; };
 
-lista_parametro_chamada_funcao: possivel_parametro ',' parametro_chamada_funcao
-	| possivel_parametro;
+lista_parametro_chamada_funcao: possivel_parametro ',' parametro_chamada_funcao { $$ = create_NODE(AST_NODE, $1, $3); }
+	| possivel_parametro { $$ = $1; };
 
-possivel_parametro: expressao 
-	| literal_char_str;
+possivel_parametro: expressao {$$ = $1;}
+	| literal_char_str { $$ = $1; } ;
 
 comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 

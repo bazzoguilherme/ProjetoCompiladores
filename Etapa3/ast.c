@@ -167,4 +167,6 @@ struct AST *create_FOR(Type ast_type, struct AST *f1, struct AST *f2, struct AST
     return create_AST(ast_type, NULL, f1, f2, f3, f4, NULL);
 }
 
-
+struct AST *create_FUN_CALL(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1) {
+    return create_AST(ast_type, val_lex, f1, NULL, NULL, NULL, NULL);
+}

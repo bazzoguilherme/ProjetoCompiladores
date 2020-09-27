@@ -53,6 +53,7 @@ typedef enum Type {
     AST_IF, // if
     AST_FOR, // For
     AST_WHILE, // While
+    AST_FUN_CALL, // Chamada de Funcao
 } Type;
 
 typedef struct AST {
@@ -100,4 +101,5 @@ struct AST *create_IF(Type ast_type, struct AST *f1, struct AST *f2, struct AST 
 struct AST *create_WHILE(Type ast_type, struct AST *f1, struct AST *f2);
 struct AST *create_FOR(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4);
 
+struct AST *create_FUN_CALL(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
 
