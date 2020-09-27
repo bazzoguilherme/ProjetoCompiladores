@@ -102,12 +102,29 @@ struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2) {
     return create_AST(ast_type, NULL, f1, f2, NULL, NULL, NULL);
 }
 
-struct AST *create_IO(Type ast_type, struct valor_lexico_t *val_lex) {
-    return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
+struct AST *create_EXPRESSAO_BIN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2) {
+    return create_AST(ast_type, val_lex, f1, f2, NULL, NULL, NULL);
+}
+
+struct AST *create_EXPRESSAO_UN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1) {
+    return create_AST(ast_type, val_lex, f1, NULL, NULL, NULL, NULL);
+}
+
+struct AST *create_IO(Type ast_type, struct AST *f1) {
+    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, NULL);
+}
+
+struct AST *create_IO_id(Type ast_type, struct valor_lexico_t *val_lex) {
+    struct AST *f1 = create_LIT(AST_LIT, val_lex);
+    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_CONT_BREAK(Type ast_type) {
     return create_AST(ast_type, NULL, NULL, NULL, NULL, NULL, NULL);
+}
+
+struct AST *create_RETURN(Type ast_type, struct AST *f1) {
+    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_SHIFT(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2) {
@@ -117,4 +134,8 @@ struct AST *create_SHIFT(Type ast_type, struct valor_lexico_t *val_lex, struct A
 struct AST *create_VEC(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f2) {
     struct AST* f1 = create_ID(AST_ID, val_lex);
     return create_AST(ast_type, NULL, f1, f2, NULL, NULL, NULL);
+}
+
+struct AST *create_TERNARIO(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3) {
+    return create_AST(ast_type, NULL, f1, f2, f3, NULL, NULL);
 }

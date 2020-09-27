@@ -1,4 +1,5 @@
 int v1;
 int main() {
-    output -5;
+    ident[1] << 10;
+    return 3+(2*false);
 }

@@ -90,15 +90,35 @@ extern void *arvore;
 %type<ast> saida
 %type<ast> continue
 %type<ast> break
+%type<ast> retorno
 %type<ast> comando_shift
 %type<ast> id_ou_vet_expr
 %type<ast> expressao
 %type<ast> expr
+%type<ast> expr_log_comp
+%type<ast> expr_log
+%type<ast> expr_comp
+%type<ast> expr_soma
+%type<ast> expr_produto
+%type<ast> expr_expoente
+%type<ast> F
+%type<ast> expr_arit
+%type<ast> expr_arit_B
+%type<ast> expr_log_literal
+%type<ast> literal
+%type<ast> literal_char_str
 
 %type<valor_lexico> declaracao_header
-%type<valor_lexico> literal
-%type<valor_lexico> literal_char_str
 %type<valor_lexico> op_shift
+%type<valor_lexico> op_logica_comparacao
+%type<valor_lexico> op_binaria_logica
+%type<valor_lexico> op_binaria_soma
+%type<valor_lexico> op_binaria_produto
+%type<valor_lexico> op_binaria_expoente
+%type<valor_lexico> op_binaria_comparacao
+%type<valor_lexico> mais_menos
+%type<valor_lexico> op_unaria
+%type<valor_lexico> op_unaria_prio_dir
 
 %%
 
@@ -136,12 +156,14 @@ atribuicao: TK_IDENTIFICADOR '=' expressao
 	| TK_IDENTIFICADOR '[' expressao ']' '=' literal_char_str;
 
 io_dados: entrada { $$ = $1; }
-	| saida { $$ = $1; };
+	| saida { $$ = $1; }
+	;
 
-entrada: TK_PR_INPUT TK_IDENTIFICADOR { $$ = create_IO(AST_IN, $2); };
+entrada: TK_PR_INPUT TK_IDENTIFICADOR { $$ = create_IO_id(AST_IN, $2); };
 
-saida: TK_PR_OUTPUT TK_IDENTIFICADOR { $$ = create_IO(AST_OUT, $2); }
-    | TK_PR_OUTPUT literal { $$ = create_IO(AST_OUT, $2); };
+saida: TK_PR_OUTPUT TK_IDENTIFICADOR { $$ = create_IO_id(AST_OUT, $2); }
+    | TK_PR_OUTPUT literal { $$ = create_IO(AST_OUT, $2); }
+	;
 
 tipo: TK_PR_INT
 	| TK_PR_FLOAT
@@ -151,59 +173,57 @@ tipo: TK_PR_INT
 
 expressao: expr { $$ = $1; };
 
-expr: expr_log_comp
-	| expr_log_comp '?' expressao ':' expressao;
+expr: expr_log_comp { $$ = $1; }
+	| expr_log_comp '?' expressao ':' expressao { $$ = create_TERNARIO(AST_TERNARIO, $1, $3, $5); }
+	;
 
-expr_log_comp: expr_log_comp op_logica_comparacao expr_log
-	| expr_log;
+expr_log_comp: expr_log_comp op_logica_comparacao expr_log { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+	| expr_log { $$ = $1; };
 
-expr_log: expr_log op_binaria_logica expr_comp
-	| expr_comp;
+expr_log: expr_log op_binaria_logica expr_comp { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+	| expr_comp { $$ = $1; };
         
-expr_comp: expr_comp op_binaria_comparacao expr_soma
-	| expr_soma;
+expr_comp: expr_comp op_binaria_comparacao expr_soma { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+	| expr_soma { $$ = $1; };
 
-expr_soma: expr_soma op_binaria_soma expr_produto
-	| expr_produto;
+expr_soma: expr_soma op_binaria_soma expr_produto { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+	| expr_produto { $$ = $1; };
 
-expr_produto: expr_produto op_binaria_produto expr_expoente
-	| expr_expoente;
+expr_produto: expr_produto op_binaria_produto expr_expoente { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+	| expr_expoente { $$ = $1; };
 
-expr_expoente: expr_expoente op_binaria_expoente F
-	| F;
+expr_expoente: expr_expoente op_binaria_expoente F { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+	| F { $$ = $1; };
 
-F: '(' expressao ')'
-	| expr_arit
-	| expr_log_literal
-	| op_unaria expr_arit
-	| op_unaria expr_log_literal
-	| op_unaria_prio_dir '(' expressao ')';
+F: '(' expressao ')' { $$ = $2; }
+	| expr_arit { $$ = $1;}
+	| expr_log_literal { $$ = $1; }
+	| op_unaria expr_arit { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
+	| op_unaria expr_log_literal { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
+	| op_unaria_prio_dir '(' expressao ')' { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $3); };
 
-expr_arit: expr_arit_A
-	| expr_arit_B
+expr_arit: id_ou_vet_expr { $$ = $1; }
+	| expr_arit_B { $$ = $1; }
 	| expr_arit_C;
 
-expr_arit_A: TK_IDENTIFICADOR
-	| TK_IDENTIFICADOR '[' expressao ']';
-
-expr_arit_B: TK_LIT_INT
-	| TK_LIT_FLOAT;
+expr_arit_B: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
+	| TK_LIT_FLOAT { $$ = create_LIT(AST_LIT, $1); } ;
 
 expr_arit_C: chamada_funcao ; // Chamada de funcao
 
-expr_log_literal: TK_LIT_TRUE
-	| TK_LIT_FALSE;
+expr_log_literal: TK_LIT_TRUE { $$ = create_LIT(AST_LIT, $1); }
+	| TK_LIT_FALSE { $$ = create_LIT(AST_LIT, $1); };
 
-literal: mais_menos TK_LIT_INT { $$ = $2; }
-   | mais_menos TK_LIT_FLOAT { $$ = $2; }
+literal: mais_menos TK_LIT_INT { $$ = create_LIT(AST_LIT, $2); }
+   | mais_menos TK_LIT_FLOAT { $$ = create_LIT(AST_LIT, $2); }
    | literal_char_str { $$ = $1; }
-   | TK_LIT_TRUE { $$ = $1; }
-   | TK_LIT_FALSE { $$ = $1; };
+   | TK_LIT_TRUE { $$ = create_LIT(AST_LIT, $1); }
+   | TK_LIT_FALSE { $$ = create_LIT(AST_LIT, $1); };
 
 
 literal_char_str: 
-	  TK_LIT_CHAR  { $$ = $1; }
-	| TK_LIT_STRING	{ $$ = $1; }
+	  TK_LIT_CHAR  { $$ = create_LIT(AST_LIT, $1); }
+	| TK_LIT_STRING	{ $$ = create_LIT(AST_LIT, $1); }
 	;
 
 
@@ -233,7 +253,7 @@ comando: declaracao_local ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL
 	| io_dados ';' { $$ = $1; }
 	| chamada_funcao ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
 	| comando_shift ';' { $$ = $1; }
-	| retorno ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
+	| retorno ';' { $$ = $1; }
 	| continue ';' { $$ = $1; }
 	| break ';' { $$ = $1; }
 	| controle_fluxo ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); }
@@ -250,8 +270,8 @@ while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco;
 
 for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco;
 
-retorno: TK_PR_RETURN expressao
-   | TK_PR_RETURN literal_char_str;
+retorno: TK_PR_RETURN expressao { $$ = create_RETURN(AST_RETURN, $2); }
+   | TK_PR_RETURN literal_char_str { $$ = create_RETURN(AST_RETURN, $2); };
 
 continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
 
@@ -273,50 +293,50 @@ comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIF
 id_ou_vet_expr: TK_IDENTIFICADOR { $$ = create_ID(AST_ID, $1); }
 	| TK_IDENTIFICADOR '[' expressao ']' { $$ = create_VEC(AST_VEC, $1, $3); };
 
-op_unaria: '+'
-	| '-'
-	| '!'
-	| '&'
-	| '*'
-	| '?'
-	| '#';
+op_unaria: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); }
+	| '!' { $$ = lex_especial("!", VAL_ESPECIAL, get_line_number()); }
+	| '&' { $$ = lex_especial("&", VAL_ESPECIAL, get_line_number()); }
+	| '*' { $$ = lex_especial("*", VAL_ESPECIAL, get_line_number()); }
+	| '?' { $$ = lex_especial("?", VAL_ESPECIAL, get_line_number()); }
+	| '#' { $$ = lex_especial("#", VAL_ESPECIAL, get_line_number()); };
 
-op_unaria_prio_dir: '+'
-	| '-'
-	| '!'
-	| '?';
+op_unaria_prio_dir: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); }
+	| '!' { $$ = lex_especial("!", VAL_ESPECIAL, get_line_number()); }
+	| '?' { $$ = lex_especial("?", VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_soma: '+'
-	| '-';
+op_binaria_soma: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_produto: '*'
-	| '/'
-	| '%';
+op_binaria_produto: '*' { $$ = lex_especial("*", VAL_ESPECIAL, get_line_number()); }
+	| '/' { $$ = lex_especial("/", VAL_ESPECIAL, get_line_number()); }
+	| '%' { $$ = lex_especial("%", VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_expoente: '^';
+op_binaria_expoente: '^' { $$ = lex_especial("^", VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_logica: '|'
-	| '&';
+op_binaria_logica: '|' { $$ = lex_especial("|", VAL_ESPECIAL, get_line_number()); }
+	| '&' { $$ = lex_especial("&", VAL_ESPECIAL, get_line_number()); };
 
-op_logica_comparacao: TK_OC_AND
-	| TK_OC_OR;
+op_logica_comparacao: TK_OC_AND { $$ = $1; }
+	| TK_OC_OR { $$ = $1; };
 
-op_binaria_comparacao: '<'
-	| '>'
-	| TK_OC_LE
-	| TK_OC_GE
-	| TK_OC_EQ
-	| TK_OC_NE;
+op_binaria_comparacao: '<' { $$ = lex_especial("<", VAL_ESPECIAL, get_line_number()); }
+	| '>' { $$ = lex_especial(">", VAL_ESPECIAL, get_line_number()); }
+	| TK_OC_LE { $$ = $1; }
+	| TK_OC_GE { $$ = $1; }
+	| TK_OC_EQ { $$ = $1; }
+	| TK_OC_NE { $$ = $1; };
 
 op_shift: TK_OC_SR { $$ = $1; }
 	| TK_OC_SL { $$ = $1; };
 
-mais_menos: '+'
-	| '-'
-	| ;
+mais_menos: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); }
+	| { $$ = NULL; };
 
-int_positivo: TK_LIT_INT { $$ = create_LIT(AST_LIT, yylval.valor_lexico); }
-	| '+' TK_LIT_INT { $$ = create_LIT(AST_LIT, yylval.valor_lexico); }
+int_positivo: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
+	| '+' TK_LIT_INT { $$ = create_LIT(AST_LIT, $2); }
 	;
 
 %%
@@ -358,7 +378,7 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
 
 void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
-	printf("%p [label=\"%s\"]\n", ast, ast->children[0]->children[0]->children[0]->valor_lexico->valor.val_str);
+	printf("%p [label=\"%s\"]\n", ast, ast->children[0]->children[0]->prox->children[0]->children[0]->valor_lexico->valor.val_str);
 }
 
 void libera (void *arvore){

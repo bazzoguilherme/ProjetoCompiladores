@@ -46,7 +46,11 @@ typedef enum Type {
     AST_OUT, // output
     AST_CONT, // continue
     AST_BREAK, // break
-    AST_SHIFT, // break
+    AST_RETURN, // return
+    AST_SHIFT, // shift
+    AST_TERNARIO, // op Ternario
+    AST_OP_BIN, // Op Binaria (f1 op f2)
+    AST_OP_UN, // Op Unaria (op f1)
 } Type;
 
 typedef struct AST {
@@ -69,13 +73,19 @@ struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct 
 struct AST *create_COMANDO(Type ast_type, struct AST *f1, struct AST *next);
 
 struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2);
+struct AST *create_EXPRESSAO_BIN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
+struct AST *create_EXPRESSAO_UN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
 
-struct AST *create_IO(Type ast_type, struct valor_lexico_t *val_lex);
+struct AST *create_IO(Type ast_type, struct AST *f1);
+struct AST *create_IO_id(Type ast_type, struct valor_lexico_t *val_lex);
 
 struct AST *create_CONT_BREAK(Type ast_type);
+
+struct AST *create_RETURN(Type ast_type, struct AST *f1);
 
 struct AST *create_SHIFT(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
 
 struct AST *create_VEC(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f2);
 
+struct AST *create_TERNARIO(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3);
 
