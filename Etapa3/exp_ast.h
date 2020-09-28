@@ -16,4 +16,6 @@ void print_RETURN(struct AST *ast);
 void print_IF(struct AST *ast);
 void print_WHILE(struct AST *ast);
 void print_FOR(struct AST *ast);
+void print_TERNARIO(struct AST *ast);
 void print_OP_BIN(struct AST *ast);
+void print_OP_UN(struct AST *ast);

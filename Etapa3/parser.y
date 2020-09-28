@@ -138,8 +138,8 @@ extern void exporta(void *arvore);
 %%
 
 programa: declaracao_global programa { $$ = $2; }
-	| declaracao_funcao programa { $$ = create_NODE(AST_FUNCAO, $1, $2); arvore = (void*) $$; }
-	| { }
+	| declaracao_funcao programa { $$ = create_NODE(AST_NODE, $1, $2); arvore = (void*) $$; }
+	| { $$ = NULL; }
 	;
 
 declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global 
@@ -275,7 +275,7 @@ comando: declaracao_local ';' { $$ = $1; }
 	| controle_fluxo ';' { $$ = $1; }
 	| while ';' { $$ = $1; }
 	| for ';' { $$ = $1; }
-	| bloco ';' { $$ = create_AST(AST_NODE, NULL, NULL, NULL, NULL,NULL, NULL); };
+	| bloco ';' { };
 
 controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt { $$ = create_IF(AST_IF, $3, $5, $6); };
 

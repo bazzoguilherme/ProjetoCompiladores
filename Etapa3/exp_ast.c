@@ -11,7 +11,7 @@ void print_ast(struct AST *ast) {
     if (ast == NULL) {
         return;
     }
-    printf("Print - tipo: %d\n", ast->tipo);
+    // printf("Print - tipo: %d\n", ast->tipo);
     switch (ast->tipo)
     {
     case AST_LIT:
@@ -22,7 +22,6 @@ void print_ast(struct AST *ast) {
         break;
     case AST_FUNCAO:
         print_FUNCAO(ast);
-        print_ast(ast->prox);
         break;
     case AST_NODE:
         print_ast(ast->children[0]);
@@ -60,6 +59,15 @@ void print_ast(struct AST *ast) {
     case AST_FOR:
         print_FOR(ast);
         break;
+    case AST_TERNARIO:
+        print_TERNARIO(ast);
+        break;
+    case AST_OP_BIN:
+        print_OP_BIN(ast);
+        break;
+    case AST_OP_UN:
+        print_OP_UN(ast);
+        break;
     default:
         break;
     }
@@ -93,12 +101,12 @@ void print_LIT(struct AST *ast) {
 }
 
 void print_ID(struct AST *ast) {
-    printf("%p [label=\"%s\"];\n", ast, ast->valor_lexico->valor.val_str);
+    print_LIT(ast);
 }
 
 void print_FUNCAO(struct AST *ast) {
-    printf("%p [label=\"%s\"];\n", ast, ast->children[0]->valor_lexico->valor.val_str);
-    print_ast(ast->children[0]->children[0]);
+    print_LIT(ast);
+    print_ast(ast->children[0]);
 }
 
 void print_DECL_ASSIGN(struct AST *ast) {
@@ -162,8 +170,20 @@ void print_FOR(struct AST *ast) {
 
 
 
+void print_TERNARIO(struct AST *ast) {
+    printf("%p [label=\"%s\"];\n", ast, "?:");
+    print_ast(ast->children[0]);
+    print_ast(ast->children[1]);
+    print_ast(ast->children[2]);
+}
+
 void print_OP_BIN(struct AST *ast) {
     print_LIT(ast);
     print_ast(ast->children[0]);
     print_ast(ast->children[1]);
+}
+
+void print_OP_UN(struct AST *ast) {
+    print_LIT(ast);
+    print_ast(ast->children[0]);
 }
