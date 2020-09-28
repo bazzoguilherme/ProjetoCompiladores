@@ -1,5 +1,9 @@
 #include "ast.h"
 
+void libera (void *arvore);
+void libera_ast (struct AST *ast);
+
+
 void exporta (void *arvore);
 void print_ast (struct AST *ast);
 

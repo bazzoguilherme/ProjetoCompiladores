@@ -27,6 +27,7 @@ extern int get_line_number(void);
 
 extern void *arvore;
 extern void exporta(void *arvore);
+extern void libera(void *arvore);
 
 %}
 %union {
@@ -159,7 +160,7 @@ declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { $$ = create_NODE(
 lista_var_local: ',' id_local lista_var_local { $$ = create_NODE(AST_NODE, $2, $3); }
 	| { $$ = NULL; };
 
-id_local: TK_IDENTIFICADOR { }
+id_local: TK_IDENTIFICADOR { $$ = NULL; }
 	| TK_IDENTIFICADOR assign literal { $$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { $$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
@@ -391,8 +392,4 @@ static int yyreport_syntax_error (const yypcontext_t *ctx)
   }
   fprintf (stderr, "\n");
   return 1;
-}
-
-void libera (void *arvore){
-	
 }

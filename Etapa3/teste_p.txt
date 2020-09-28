@@ -1,7 +1,12 @@
 int v1;
+
+int minha_funcao() {
+    minha_var = "um literal string";
+}
+
 int main() {
-    int ident <= 10;
-    int ia, ib <= 1;
+    int var <= 10;
+    int ia, ib <= 1, ic;
     i[2] = 5;
 
     i << 10;

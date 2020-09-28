@@ -82,7 +82,7 @@ escape_symbol ['"]
 "~" |
 "`" |
 "?" { 
-    yylval.valor_lexico = lex_especial(yytext, VAL_ESPECIAL, get_line_number());
+    // yylval.valor_lexico = lex_especial(yytext, VAL_ESPECIAL, get_line_number());
     return yytext[0]; 
     }
 "<=" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_LE ; }
