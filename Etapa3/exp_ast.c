@@ -16,8 +16,8 @@ void libera_ast(struct AST *ast) {
         libera_ast(ast->prox);
     
     if (ast->valor_lexico != NULL) {
-        printf("FREEEEE - in\n");
-        free(ast->valor_lexico->valor.val_str);
+        // printf("FREEEEE - in\n");
+        // free(ast->valor_lexico->valor.val_str);
         free(ast->valor_lexico);
     }
     printf("FREEEEEEEEEEEEEE\n");
