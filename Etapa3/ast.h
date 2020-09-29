@@ -71,7 +71,7 @@ struct AST *create_LIT(Type ast_type, struct valor_lexico_t *val_lex);
 
 struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex);
 
-void create_NODE(struct AST *f1, struct AST *next);
+struct AST *create_NODE(struct AST *f1, struct AST *next);
 
 struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
 

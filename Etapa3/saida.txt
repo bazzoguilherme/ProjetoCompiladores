@@ -1,114 +1,120 @@
-0x55d5b41fc6b0, 0x55d5b41fc670
-0x55d5b41fc6b0, 0x55d5b41fdb30
-0x55d5b41fc670, 0x55d5b41fc610
-0x55d5b41fc670, 0x55d5b41fc5d0
-0x55d5b41fdb30, 0x55d5b41fc850
-0x55d5b41fdb30, 0x55d5b41fdd10
-0x55d5b41fc850, 0x55d5b41fc810
-0x55d5b41fc850, 0x55d5b41fc7d0
-0x55d5b41fc850, 0x55d5b41fca10
-0x55d5b41fca10, 0x55d5b41fc970
-0x55d5b41fca10, 0x55d5b41fc9d0
-0x55d5b41fca10, 0x55d5b41fcb30
-0x55d5b41fc970, 0x55d5b41fc930
-0x55d5b41fc970, 0x55d5b41fc8f0
-0x55d5b41fc970, 0x55d5b41fc930
-0x55d5b41fc970, 0x55d5b41fc8f0
-0x55d5b41fcb30, 0x55d5b41fca90
-0x55d5b41fcb30, 0x55d5b41fcaf0
-0x55d5b41fcb30, 0x55d5b41fcc90
-0x55d5b41fcc90, 0x55d5b41fcbf0
-0x55d5b41fcc90, 0x55d5b41fcc50
-0x55d5b41fcc90, 0x55d5b41fcdf0
-0x55d5b41fcdf0, 0x55d5b41fcd50
-0x55d5b41fcdf0, 0x55d5b41fcdb0
-0x55d5b41fcdf0, 0x55d5b41fce90
-0x55d5b41fce90, 0x55d5b41fce50
-0x55d5b41fce90, 0x55d5b41fcfb0
-0x55d5b41fcfb0, 0x55d5b41fcf70
-0x55d5b41fcfb0, 0x55d5b41fd250
-0x55d5b41fcf70, 0x55d5b41fcf30
-0x55d5b41fd250, 0x55d5b41fd170
-0x55d5b41fd250, 0x55d5b41fd210
-0x55d5b41fd250, 0x55d5b41fd4b0
-0x55d5b41fd170, 0x55d5b41fd010
-0x55d5b41fd170, 0x55d5b41fd130
-0x55d5b41fd170, 0x55d5b41fd010
-0x55d5b41fd170, 0x55d5b41fd130
-0x55d5b41fd4b0, 0x55d5b41fd2d0
-0x55d5b41fd4b0, 0x55d5b41fd430
-0x55d5b41fd4b0, 0x55d5b41fd8d0
-0x55d5b41fd8d0, 0x55d5b41fd5d0
-0x55d5b41fd8d0, 0x55d5b41fd730
-0x55d5b41fd8d0, 0x55d5b41fd850
-0x55d5b41fd8d0, 0x55d5b41fd890
-0x55d5b41fd8d0, 0x55d5b41fdaf0
-0x55d5b41fd5d0, 0x55d5b41fd530
-0x55d5b41fd5d0, 0x55d5b41fd590
-0x55d5b41fd5d0, 0x55d5b41fd530
-0x55d5b41fd5d0, 0x55d5b41fd590
-0x55d5b41fd5d0, 0x55d5b41fd530
-0x55d5b41fd5d0, 0x55d5b41fd590
-0x55d5b41fd5d0, 0x55d5b41fd530
-0x55d5b41fd5d0, 0x55d5b41fd590
-0x55d5b41fdaf0, 0x55d5b41fd950
-0x55d5b41fdaf0, 0x55d5b41fdab0
-0x55d5b41fdd10, 0x55d5b41fdcd0
-0x55d5b41fdcd0, 0x55d5b41fdc90
-0x55d5b41fdcd0, 0x55d5b41fdc50
-0x55d5b41fc6b0 [label="minha_funcao"];
-0x55d5b41fc670 [label="="];
-0x55d5b41fc610 [label="minha_var"];
-0x55d5b41fc5d0 [label="um literal string"];
-0x55d5b41fdb30 [label="main"];
-0x55d5b41fc850 [label="<="];
-0x55d5b41fc810 [label="var"];
-0x55d5b41fc7d0 [label="10"];
-0x55d5b41fca10 [label="="];
-0x55d5b41fc970 [label="[]"];
-0x55d5b41fc930 [label="i"];
-0x55d5b41fc8f0 [label="2"];
-0x55d5b41fc9d0 [label="5"];
-0x55d5b41fcb30 [label="="];
-0x55d5b41fca90 [label="i"];
-0x55d5b41fcaf0 [label="10"];
-0x55d5b41fcc90 [label="<<"];
-0x55d5b41fcbf0 [label="i"];
-0x55d5b41fcc50 [label="10"];
-0x55d5b41fcdf0 [label=">>"];
-0x55d5b41fcd50 [label="i"];
-0x55d5b41fcdb0 [label="10"];
-0x55d5b41fd250 [label="if"];
-0x55d5b41fd170 [label="||"];
-0x55d5b41fd010 [label="10"];
-0x55d5b41fd130 [label="+"];
-0x55d5b41fd0f0 [label="5"];
-0x55d5b41fd210 [label="return"];
-0x55d5b41fd1d0 [label="10"];
-0x55d5b41fd4b0 [label="while"];
-0x55d5b41fd2d0 [label="i"];
-0x55d5b41fd430 [label="<<"];
-0x55d5b41fd390 [label="i"];
-0x55d5b41fd3f0 [label="2"];
-0x55d5b41fd470 [label="break"];
-0x55d5b41fd8d0 [label="for"];
-0x55d5b41fd5d0 [label="="];
-0x55d5b41fd530 [label="i"];
-0x55d5b41fd590 [label="0"];
-0x55d5b41fd730 [label="<"];
-0x55d5b41fd650 [label="i"];
-0x55d5b41fd6f0 [label="2"];
-0x55d5b41fd850 [label="="];
-0x55d5b41fd7b0 [label="i"];
-0x55d5b41fd810 [label="3"];
-0x55d5b41fd890 [label="continue"];
-0x55d5b41fdaf0 [label="="];
-0x55d5b41fd950 [label="i"];
-0x55d5b41fdab0 [label="?:"];
-0x55d5b41fd9b0 [label="false"];
-0x55d5b41fda10 [label="10"];
-0x55d5b41fda70 [label="5"];
-0x55d5b41fdd10 [label="f1"];
-0x55d5b41fdcd0 [label="<="];
-0x55d5b41fdc90 [label="i"];
-0x55d5b41fdc50 [label="9"];
+0 - 0x563ba65f96b0, 0x563ba65f9670
+prox 0x563ba65f96b0, 0x563ba65fac90
+0 - 0x563ba65f9670, 0x563ba65f9610
+1 - 0x563ba65f9670, 0x563ba65f95d0
+0 - 0x563ba65fac90, 0x563ba65f9850
+prox 0x563ba65fac90, 0x563ba65fae70
+0 - 0x563ba65f9850, 0x563ba65f9810
+1 - 0x563ba65f9850, 0x563ba65f97d0
+prox 0x563ba65f9850, 0x563ba65f99b0
+0 - 0x563ba65f99b0, 0x563ba65f9970
+1 - 0x563ba65f99b0, 0x563ba65f9930
+prox 0x563ba65f99b0, 0x563ba65f9b70
+0 - 0x563ba65f9b70, 0x563ba65f9ad0
+1 - 0x563ba65f9b70, 0x563ba65f9b30
+prox 0x563ba65f9b70, 0x563ba65f9c90
+0 - 0x563ba65f9ad0, 0x563ba65f9a90
+1 - 0x563ba65f9ad0, 0x563ba65f9a50
+0 - 0x563ba65f9ad0, 0x563ba65f9a90
+1 - 0x563ba65f9ad0, 0x563ba65f9a50
+0 - 0x563ba65f9c90, 0x563ba65f9bf0
+1 - 0x563ba65f9c90, 0x563ba65f9c50
+prox 0x563ba65f9c90, 0x563ba65f9df0
+0 - 0x563ba65f9df0, 0x563ba65f9d50
+1 - 0x563ba65f9df0, 0x563ba65f9db0
+prox 0x563ba65f9df0, 0x563ba65f9f50
+0 - 0x563ba65f9f50, 0x563ba65f9eb0
+1 - 0x563ba65f9f50, 0x563ba65f9f10
+prox 0x563ba65f9f50, 0x563ba65f9ff0
+0 - 0x563ba65f9ff0, 0x563ba65f9fb0
+prox 0x563ba65f9ff0, 0x563ba65fa110
+0 - 0x563ba65fa110, 0x563ba65fa0d0
+prox 0x563ba65fa110, 0x563ba65fa3b0
+0 - 0x563ba65fa0d0, 0x563ba65fa090
+0 - 0x563ba65fa3b0, 0x563ba65fa2d0
+1 - 0x563ba65fa3b0, 0x563ba65fa370
+prox 0x563ba65fa3b0, 0x563ba65fa610
+0 - 0x563ba65fa2d0, 0x563ba65fa170
+1 - 0x563ba65fa2d0, 0x563ba65fa290
+0 - 0x563ba65fa2d0, 0x563ba65fa170
+1 - 0x563ba65fa2d0, 0x563ba65fa290
+0 - 0x563ba65fa610, 0x563ba65fa430
+1 - 0x563ba65fa610, 0x563ba65fa590
+prox 0x563ba65fa610, 0x563ba65faa30
+0 - 0x563ba65faa30, 0x563ba65fa730
+1 - 0x563ba65faa30, 0x563ba65fa890
+2 - 0x563ba65faa30, 0x563ba65fa9b0
+3 - 0x563ba65faa30, 0x563ba65fa9f0
+prox 0x563ba65faa30, 0x563ba65fac50
+0 - 0x563ba65fa730, 0x563ba65fa690
+1 - 0x563ba65fa730, 0x563ba65fa6f0
+0 - 0x563ba65fa730, 0x563ba65fa690
+1 - 0x563ba65fa730, 0x563ba65fa6f0
+0 - 0x563ba65fa730, 0x563ba65fa690
+1 - 0x563ba65fa730, 0x563ba65fa6f0
+0 - 0x563ba65fa730, 0x563ba65fa690
+1 - 0x563ba65fa730, 0x563ba65fa6f0
+0 - 0x563ba65fac50, 0x563ba65faab0
+1 - 0x563ba65fac50, 0x563ba65fac10
+0 - 0x563ba65fae70, 0x563ba65fae30
+0 - 0x563ba65fae30, 0x563ba65fadf0
+1 - 0x563ba65fae30, 0x563ba65fadb0
+0x563ba65f96b0 [label="minha_funcao"];
+0x563ba65f9670 [label="="];
+0x563ba65f9610 [label="minha_var"];
+0x563ba65f95d0 [label="um literal string"];
+0x563ba65fac90 [label="main"];
+0x563ba65f9850 [label="<="];
+0x563ba65f9810 [label="var"];
+0x563ba65f97d0 [label="10"];
+0x563ba65f99b0 [label="<="];
+0x563ba65f9970 [label="ib"];
+0x563ba65f9930 [label="1"];
+0x563ba65f9b70 [label="="];
+0x563ba65f9ad0 [label="[]"];
+0x563ba65f9a90 [label="i"];
+0x563ba65f9a50 [label="2"];
+0x563ba65f9b30 [label="5"];
+0x563ba65f9c90 [label="="];
+0x563ba65f9bf0 [label="i"];
+0x563ba65f9c50 [label="10"];
+0x563ba65f9df0 [label="<<"];
+0x563ba65f9d50 [label="i"];
+0x563ba65f9db0 [label="10"];
+0x563ba65f9f50 [label=">>"];
+0x563ba65f9eb0 [label="i"];
+0x563ba65f9f10 [label="10"];
+0x563ba65fa3b0 [label="if"];
+0x563ba65fa2d0 [label="||"];
+0x563ba65fa170 [label="10"];
+0x563ba65fa290 [label="+"];
+0x563ba65fa250 [label="5"];
+0x563ba65fa370 [label="return"];
+0x563ba65fa330 [label="10"];
+0x563ba65fa610 [label="while"];
+0x563ba65fa430 [label="i"];
+0x563ba65fa590 [label="<<"];
+0x563ba65fa4f0 [label="i"];
+0x563ba65fa550 [label="2"];
+0x563ba65fa5d0 [label="break"];
+0x563ba65faa30 [label="for"];
+0x563ba65fa730 [label="="];
+0x563ba65fa690 [label="i"];
+0x563ba65fa6f0 [label="0"];
+0x563ba65fa890 [label="<"];
+0x563ba65fa7b0 [label="i"];
+0x563ba65fa850 [label="2"];
+0x563ba65fa9b0 [label="="];
+0x563ba65fa910 [label="i"];
+0x563ba65fa970 [label="3"];
+0x563ba65fa9f0 [label="continue"];
+0x563ba65fac50 [label="="];
+0x563ba65faab0 [label="i"];
+0x563ba65fac10 [label="?:"];
+0x563ba65fab10 [label="false"];
+0x563ba65fab70 [label="10"];
+0x563ba65fabd0 [label="5"];
+0x563ba65fae70 [label="f1"];
+0x563ba65fae30 [label="<="];
+0x563ba65fadf0 [label="i"];
+0x563ba65fadb0 [label="9"];

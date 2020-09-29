@@ -7,7 +7,7 @@ int minha_funcao() {
 
 int main() {
     int var <= 10;
-    //int ia, ib <= 1, ic;
+    int ia, ib <= 1, ic;
     i[2] = 5;
 
     {

@@ -86,8 +86,12 @@ struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex) {
     return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
 }
 
-void create_NODE(struct AST *f1, struct AST *next) {
+struct AST *create_NODE(struct AST *f1, struct AST *next) {
+    if (f1 == NULL){
+        return next;
+    }
     f1->prox = next;
+    return f1;
 }
 
 struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1) {
