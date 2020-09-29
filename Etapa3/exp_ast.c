@@ -28,7 +28,6 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 }
 
 
-// printf("%p [label=\"%s\"]\n", ast, ast->children[0]->valor_lexico->valor.val_str);
 void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
     print_ast(ast);
@@ -62,10 +61,10 @@ void print_ast(struct AST *ast) {
     case AST_SHIFT:
         print_SHIFT(ast);
         break;
-    case AST_IN:
-    case AST_OUT:
-        print_IO(ast);
-        break;
+    // case AST_IN:
+    // case AST_OUT:
+    //     print_IO(ast);
+    //     break;
     case AST_BREAK:
     case AST_CONT:
         print_BR_CONT(ast);
