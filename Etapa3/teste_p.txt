@@ -3,10 +3,11 @@ int v1[+10];
 int minha_funcao() {
     minha_var = "um literal string";
 }
+//int main() {}
 
 int main() {
     int var <= 10;
-    int ia, ib <= 1, ic;
+    //int ia, ib <= 1, ic;
     i[2] = 5;
 
     {

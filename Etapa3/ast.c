@@ -86,12 +86,16 @@ struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex) {
     return create_AST(ast_type, val_lex, NULL, NULL, NULL, NULL, NULL);
 }
 
-struct AST *create_NODE(Type ast_type, struct AST *f1, struct AST *next) {
-    return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, next);
+void create_NODE(struct AST *f1, struct AST *next) {
+    f1->prox = next;
 }
 
 struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1) {
     return create_AST(ast_type, val_lex, f1, NULL, NULL, NULL, NULL);
+}
+
+void atualiza_FUNCAO(struct AST* current, struct AST *next_f) {
+    current->prox = next_f;
 }
 
 struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2) {

@@ -140,7 +140,7 @@ extern void libera(void *arvore);
 %%
 
 programa: declaracao_global programa { $$ = $2; }
-	| declaracao_funcao programa { $$ = create_NODE(AST_NODE, $1, $2); arvore = (void*) $$; }
+	| declaracao_funcao programa { create_NODE($1, $2); $$ = $1; arvore = (void*) $$; }
 	| { $$ = NULL; }
 	;
 
@@ -153,15 +153,15 @@ lista_var_global: ',' id_ou_vetor lista_var_global
 id_ou_vetor: TK_IDENTIFICADOR { free_val_lex($1); }
 	| TK_IDENTIFICADOR '[' int_positivo ']' { free_val_lex($1); libera_ast($3); } ;
 
-declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $3, $4); }
-	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $4, $5); }
-	| TK_PR_CONST tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $3, $4); }
-	| tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $2, $3); };
+declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { create_NODE($3, $4); $$ = $3; }
+	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { create_NODE($4, $5); $$ = $4; }
+	| TK_PR_CONST tipo id_local lista_var_local { create_NODE($3, $4); $$ = $3; }
+	| tipo id_local lista_var_local { create_NODE($2, $3); $$ = $2; };
 
-lista_var_local: ',' id_local lista_var_local { $$ = create_NODE(AST_NODE, $2, $3); }
+lista_var_local: ',' id_local lista_var_local { create_NODE($2, $3); $$ = $2; }
 	| { $$ = NULL; };
 
-id_local: TK_IDENTIFICADOR { $$ = NULL; free_val_lex($1); }
+id_local: TK_IDENTIFICADOR { $$ = $$; free_val_lex($1); }
 	| TK_IDENTIFICADOR assign literal { $$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { $$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
@@ -261,7 +261,7 @@ parametro: tipo_const tipo TK_IDENTIFICADOR { free_val_lex($3); };
 
 bloco: '{' comandos '}' { $$ = $2; };
 
-comandos: comando comandos { $$ = create_NODE(AST_NODE, $1, $2); }
+comandos: comando comandos { create_NODE($1, $2); $$ = $1; }
 	| { $$ = NULL; } ;
 
 comando: declaracao_local ';' { $$ = $1; }
@@ -300,7 +300,7 @@ chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' { $$ = create_
 parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}
 	| { $$ = NULL; };
 
-lista_parametro_chamada_funcao: possivel_parametro ',' parametro_chamada_funcao { $$ = create_NODE(AST_NODE, $1, $3); }
+lista_parametro_chamada_funcao: possivel_parametro ',' parametro_chamada_funcao { create_NODE($1, $3); $$ = $1; }
 	| possivel_parametro { $$ = $1; };
 
 possivel_parametro: expressao {$$ = $1;}

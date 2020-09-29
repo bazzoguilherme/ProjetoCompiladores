@@ -50,10 +50,6 @@ void print_ast(struct AST *ast) {
     case AST_FUNCAO:
         print_FUNCAO(ast);
         break;
-    case AST_NODE:
-        print_ast(ast->children[0]);
-        print_ast(ast->prox);
-        break;
     case AST_DECL_ASSIGN:
         print_DECL_ASSIGN(ast);
         break;
@@ -101,6 +97,7 @@ void print_ast(struct AST *ast) {
     default:
         break;
     }
+    print_ast(ast->prox);
 }
 
 
