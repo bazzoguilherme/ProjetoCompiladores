@@ -27,6 +27,7 @@ void print_FOR(struct AST *ast);
 void print_TERNARIO(struct AST *ast);
 void print_OP_BIN(struct AST *ast);
 void print_OP_UN(struct AST *ast);
+void print_FUN_CALL(struct AST *ast);
 
 
 #endif

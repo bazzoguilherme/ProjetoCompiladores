@@ -95,6 +95,9 @@ void print_ast(struct AST *ast) {
     case AST_OP_UN:
         print_OP_UN(ast);
         break;
+    case AST_FUN_CALL:
+        print_FUN_CALL(ast);
+        break;
     default:
         break;
     }
@@ -117,7 +120,7 @@ void print_LIT(struct AST *ast) {
         printf("%p [label=\"%d\"];\n", ast, ast->valor_lexico->valor.val_int);
         break;
     case VAL_FLOAT:
-        printf("%p [label=\"%f\"];\n", ast, ast->valor_lexico->valor.val_float);
+        printf("%p [label=\"%g\"];\n", ast, ast->valor_lexico->valor.val_float);
         break;
     case VAL_BOOL:
         printf("%p [label=\"%s\"];\n", ast, (ast->valor_lexico->valor.val_int ? "true" : "false"));
@@ -195,8 +198,6 @@ void print_FOR(struct AST *ast) {
     print_ast(ast->children[3]);
 }
 
-
-
 void print_TERNARIO(struct AST *ast) {
     printf("%p [label=\"%s\"];\n", ast, "?:");
     print_ast(ast->children[0]);
@@ -212,5 +213,10 @@ void print_OP_BIN(struct AST *ast) {
 
 void print_OP_UN(struct AST *ast) {
     print_LIT(ast);
+    print_ast(ast->children[0]);
+}
+
+void print_FUN_CALL(struct AST *ast) {
+    printf("%p [label=\"call %s\"];\n", ast, ast->valor_lexico->valor.val_str);
     print_ast(ast->children[0]);
 }
