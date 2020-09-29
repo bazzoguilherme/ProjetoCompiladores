@@ -220,7 +220,7 @@ F: '(' expressao ')' { $$ = $2; }
 
 expr_arit: id_ou_vet_expr { $$ = $1; }
 	| expr_arit_B { $$ = $1; }
-	| expr_arit_C;
+	| expr_arit_C { $$ = $1; };
 
 expr_arit_B: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
 	| TK_LIT_FLOAT { $$ = create_LIT(AST_LIT, $1); } ;
@@ -243,8 +243,6 @@ literal_char_str:
 	;
 
 
-
-
 declaracao_funcao: declaracao_header bloco { $$ = create_FUNCAO(AST_FUNCAO, $1, $2); };
 
 declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR '(' parametros ')' { $$ = $3; }
@@ -259,7 +257,7 @@ parametros: lista_parametro
 lista_parametro: parametro ',' lista_parametro
 	| parametro ;
 
-parametro: tipo_const tipo TK_IDENTIFICADOR;
+parametro: tipo_const tipo TK_IDENTIFICADOR { free_val_lex($3); };
 
 bloco: '{' comandos '}' { $$ = $2; };
 
@@ -277,7 +275,7 @@ comando: declaracao_local ';' { $$ = $1; }
 	| controle_fluxo ';' { $$ = $1; }
 	| while ';' { $$ = $1; }
 	| for ';' { $$ = $1; }
-	| bloco ';' { };
+	| bloco ';' { libera_ast($1); $$ = NULL; };
 
 controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt { $$ = create_IF(AST_IF, $3, $5, $6); };
 
