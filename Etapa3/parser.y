@@ -275,7 +275,7 @@ comando: declaracao_local ';' { $$ = $1; }
 	| controle_fluxo ';' { $$ = $1; }
 	| while ';' { $$ = $1; }
 	| for ';' { $$ = $1; }
-	| bloco ';' { libera_ast($1); $$ = NULL; };
+	| bloco ';' { $$ = $1; };
 
 controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt { $$ = create_IF(AST_IF, $3, $5, $6); };
 
