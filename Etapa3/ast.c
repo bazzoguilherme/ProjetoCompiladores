@@ -94,10 +94,6 @@ struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct 
     return create_AST(ast_type, val_lex, f1, NULL, NULL, NULL, NULL);
 }
 
-void atualiza_FUNCAO(struct AST* current, struct AST *next_f) {
-    current->prox = next_f;
-}
-
 struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2) {
     return create_AST(ast_type, NULL, f1, f2, NULL, NULL, NULL);
 }

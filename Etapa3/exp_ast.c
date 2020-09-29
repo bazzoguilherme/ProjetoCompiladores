@@ -30,7 +30,25 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 
 void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
+    print_pointers(ast);
     print_ast(ast);
+}
+
+void print_pointers(struct AST *ast) {
+    int i = 0;
+    if (ast != NULL) {
+        for (i = 0; i < MAX_FILHOS && ast->children[i] != NULL; i++) {
+            printf("%p, %p\n", ast, ast->children[i]);
+        }
+        if (ast->prox != NULL)
+            printf("%p, %p\n", ast, ast->prox);
+
+        for (i = 0; i < MAX_FILHOS && ast->children[i] != NULL; i++) {
+            print_pointers(ast->children[0]);
+        }
+        if (ast->prox != NULL)
+            print_pointers(ast->prox);
+    }
 }
 
 void print_ast(struct AST *ast) {

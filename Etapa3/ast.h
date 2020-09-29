@@ -74,7 +74,6 @@ struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex);
 void create_NODE(struct AST *f1, struct AST *next);
 
 struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
-void atualiza_FUNCAO(struct AST* current, struct AST *next_f);
 
 struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2);
 struct AST *create_EXPRESSAO_BIN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
