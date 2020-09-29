@@ -1,4 +1,7 @@
 
+#ifndef AST_H
+#define AST_H
+
 #define MAX_FILHOS 4
 
 typedef enum Tipo_val_lex {
@@ -76,6 +79,7 @@ struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct 
 struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2);
 struct AST *create_EXPRESSAO_BIN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
 struct AST *create_EXPRESSAO_UN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
+struct AST *create_EXPRESSAO_UN_LIT(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *lit);
 
 struct AST *create_IO(Type ast_type, struct AST *f1);
 struct AST *create_IO_id(Type ast_type, struct valor_lexico_t *val_lex);
@@ -101,3 +105,4 @@ struct AST *create_FOR(Type ast_type, struct AST *f1, struct AST *f2, struct AST
 
 struct AST *create_FUN_CALL(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
 
+#endif

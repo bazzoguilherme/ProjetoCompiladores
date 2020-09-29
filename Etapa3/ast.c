@@ -106,6 +106,14 @@ struct AST *create_EXPRESSAO_UN(Type ast_type, struct valor_lexico_t *val_lex, s
     return create_AST(ast_type, val_lex, f1, NULL, NULL, NULL, NULL);
 }
 
+struct AST *create_EXPRESSAO_UN_LIT(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *lit) {
+    struct AST *f1 = create_LIT(AST_LIT, lit);
+    if (val_lex != NULL) {
+        return create_AST(ast_type, val_lex, f1, NULL, NULL, NULL, NULL);
+    }
+    return f1;
+}
+
 struct AST *create_IO(Type ast_type, struct AST *f1) {
     return create_AST(ast_type, NULL, f1, NULL, NULL, NULL, NULL);
 }

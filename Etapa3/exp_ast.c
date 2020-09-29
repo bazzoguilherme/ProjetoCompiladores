@@ -15,14 +15,18 @@ void libera_ast(struct AST *ast) {
     if (ast->prox != NULL)
         libera_ast(ast->prox);
     
-    if (ast->valor_lexico != NULL) {
-        // printf("FREEEEE - in\n");
-        // free(ast->valor_lexico->valor.val_str);
-        free(ast->valor_lexico);
-    }
-    printf("FREEEEEEEEEEEEEE\n");
+    free_val_lex(ast->valor_lexico);
     free(ast);
 }
+
+void free_val_lex(struct valor_lexico_t *val_lex) {
+    if (val_lex != NULL){
+        if (val_lex->tipo == VAL_ESPECIAL || val_lex->tipo == VAL_OP_COMPOSTO || val_lex->tipo == VAL_IDENTIFICADOR || val_lex->tipo == VAL_STRING) 
+            free(val_lex->valor.val_str);
+        free(val_lex);
+    }
+}
+
 
 // printf("%p [label=\"%s\"]\n", ast, ast->children[0]->valor_lexico->valor.val_str);
 void exporta (void *arvore){

@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include "ast.h"
+#include "exp_ast.h"
 
 int yylex(void);
 int yyerror (char const *s);
@@ -149,8 +150,8 @@ declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global
 lista_var_global: ',' id_ou_vetor lista_var_global
 	| ';';
 
-id_ou_vetor: TK_IDENTIFICADOR
-	| TK_IDENTIFICADOR '[' int_positivo ']';
+id_ou_vetor: TK_IDENTIFICADOR { free_val_lex($1); }
+	| TK_IDENTIFICADOR '[' int_positivo ']' { free_val_lex($1); libera_ast($3); } ;
 
 declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $3, $4); }
 	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { $$ = create_NODE(AST_NODE, $4, $5); }
@@ -160,7 +161,7 @@ declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { $$ = create_NODE(
 lista_var_local: ',' id_local lista_var_local { $$ = create_NODE(AST_NODE, $2, $3); }
 	| { $$ = NULL; };
 
-id_local: TK_IDENTIFICADOR { $$ = NULL; }
+id_local: TK_IDENTIFICADOR { $$ = NULL; free_val_lex($1); }
 	| TK_IDENTIFICADOR assign literal { $$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { $$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
@@ -229,8 +230,8 @@ expr_arit_C: chamada_funcao { $$ = $1; }; // Chamada de funcao
 expr_log_literal: TK_LIT_TRUE { $$ = create_LIT(AST_LIT, $1); }
 	| TK_LIT_FALSE { $$ = create_LIT(AST_LIT, $1); };
 
-literal: mais_menos TK_LIT_INT { $$ = create_LIT(AST_LIT, $2); }
-   | mais_menos TK_LIT_FLOAT { $$ = create_LIT(AST_LIT, $2); }
+literal: mais_menos TK_LIT_INT { $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
+   | mais_menos TK_LIT_FLOAT { $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
    | literal_char_str { $$ = $1; }
    | TK_LIT_TRUE { $$ = create_LIT(AST_LIT, $1); }
    | TK_LIT_FALSE { $$ = create_LIT(AST_LIT, $1); };
@@ -355,7 +356,10 @@ mais_menos: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
 	| { $$ = NULL; };
 
 int_positivo: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
-	| '+' TK_LIT_INT { $$ = create_LIT(AST_LIT, $2); }
+	| '+' TK_LIT_INT { 
+		struct valor_lexico_t *val_lex = lex_especial("+", VAL_ESPECIAL, get_line_number());
+		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, val_lex, $2); 
+		}
 	;
 
 %%
