@@ -5,11 +5,27 @@ int minha_funcao() {
 }
 //int main() {}
 
+int foo(const int a, const float b, const char c, const bool d, const string e){
+	static const int var;
+	static int var;
+	int var;
+	int var_a <= 0;
+	static const float var <= 'c';
+	static float var <= var_2;
+	static const int a, b, c, d <= 10, e, f <= b;
+    i = 99;
+	int d2 <= 10, e, f3 <= b;
+    if (10 || +5) {
+        return 10;
+    };
+}
+
+
 int main() {
     int var <= 10;
     int ia, ib <= 1, ic;
     i[2] = 5;
-
+    int var1 <= var;
     {
         i = 10;
     };

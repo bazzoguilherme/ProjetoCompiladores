@@ -9,14 +9,16 @@ void libera(void *arvore) {
 
 void libera_ast(struct AST *ast) {
     int i;
-    for ( i = 0; i < MAX_FILHOS && ast->children[i] != NULL; i++) {
-        libera_ast (ast->children[i]);
+    if (ast != NULL) {
+        for ( i = 0; i < MAX_FILHOS && ast->children[i] != NULL; i++) {
+            libera_ast (ast->children[i]);
+        }
+        if (ast->prox != NULL)
+            libera_ast(ast->prox);
+        
+        free_val_lex(ast->valor_lexico);
+        free(ast);
     }
-    if (ast->prox != NULL)
-        libera_ast(ast->prox);
-    
-    free_val_lex(ast->valor_lexico);
-    free(ast);
 }
 
 void free_val_lex(struct valor_lexico_t *val_lex) {

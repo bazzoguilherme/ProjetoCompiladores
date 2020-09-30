@@ -89,8 +89,15 @@ struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex) {
 struct AST *create_NODE(struct AST *f1, struct AST *next) {
     if (f1 == NULL){
         return next;
+    } else if (f1->tipo == AST_DECL_ASSIGN) {
+        struct AST *aux = f1;
+        while (aux->prox != NULL) {
+            aux = aux->prox;
+        }
+        aux->prox = next;
+    } else {
+        f1->prox = next;
     }
-    f1->prox = next;
     return f1;
 }
 
