@@ -311,36 +311,36 @@ comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIF
 id_ou_vet_expr: TK_IDENTIFICADOR { $$ = create_ID(AST_ID, $1); }
 	| TK_IDENTIFICADOR '[' expressao ']' { $$ = create_VEC(AST_VEC, $1, $3); };
 
-op_unaria: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
-	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); }
-	| '!' { $$ = lex_especial("!", VAL_ESPECIAL, get_line_number()); }
-	| '&' { $$ = lex_especial("&", VAL_ESPECIAL, get_line_number()); }
-	| '*' { $$ = lex_especial("*", VAL_ESPECIAL, get_line_number()); }
-	| '?' { $$ = lex_especial("?", VAL_ESPECIAL, get_line_number()); }
-	| '#' { $$ = lex_especial("#", VAL_ESPECIAL, get_line_number()); };
+op_unaria: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial('-', VAL_ESPECIAL, get_line_number()); }
+	| '!' { $$ = lex_especial('!', VAL_ESPECIAL, get_line_number()); }
+	| '&' { $$ = lex_especial('&', VAL_ESPECIAL, get_line_number()); }
+	| '*' { $$ = lex_especial('*', VAL_ESPECIAL, get_line_number()); }
+	| '?' { $$ = lex_especial('?', VAL_ESPECIAL, get_line_number()); }
+	| '#' { $$ = lex_especial('#', VAL_ESPECIAL, get_line_number()); };
 
-op_unaria_prio_dir: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
-	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); }
-	| '!' { $$ = lex_especial("!", VAL_ESPECIAL, get_line_number()); }
-	| '?' { $$ = lex_especial("?", VAL_ESPECIAL, get_line_number()); };
+op_unaria_prio_dir: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial('-', VAL_ESPECIAL, get_line_number()); }
+	| '!' { $$ = lex_especial('!', VAL_ESPECIAL, get_line_number()); }
+	| '?' { $$ = lex_especial('?', VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_soma: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
-	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); };
+op_binaria_soma: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial('-', VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_produto: '*' { $$ = lex_especial("*", VAL_ESPECIAL, get_line_number()); }
-	| '/' { $$ = lex_especial("/", VAL_ESPECIAL, get_line_number()); }
-	| '%' { $$ = lex_especial("%", VAL_ESPECIAL, get_line_number()); };
+op_binaria_produto: '*' { $$ = lex_especial('*', VAL_ESPECIAL, get_line_number()); }
+	| '/' { $$ = lex_especial('/', VAL_ESPECIAL, get_line_number()); }
+	| '%' { $$ = lex_especial('%', VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_expoente: '^' { $$ = lex_especial("^", VAL_ESPECIAL, get_line_number()); };
+op_binaria_expoente: '^' { $$ = lex_especial('^', VAL_ESPECIAL, get_line_number()); };
 
-op_binaria_logica: '|' { $$ = lex_especial("|", VAL_ESPECIAL, get_line_number()); }
-	| '&' { $$ = lex_especial("&", VAL_ESPECIAL, get_line_number()); };
+op_binaria_logica: '|' { $$ = lex_especial('|', VAL_ESPECIAL, get_line_number()); }
+	| '&' { $$ = lex_especial('&', VAL_ESPECIAL, get_line_number()); };
 
 op_logica_comparacao: TK_OC_AND { $$ = $1; }
 	| TK_OC_OR { $$ = $1; };
 
-op_binaria_comparacao: '<' { $$ = lex_especial("<", VAL_ESPECIAL, get_line_number()); }
-	| '>' { $$ = lex_especial(">", VAL_ESPECIAL, get_line_number()); }
+op_binaria_comparacao: '<' { $$ = lex_especial('<', VAL_ESPECIAL, get_line_number()); }
+	| '>' { $$ = lex_especial('>', VAL_ESPECIAL, get_line_number()); }
 	| TK_OC_LE { $$ = $1; }
 	| TK_OC_GE { $$ = $1; }
 	| TK_OC_EQ { $$ = $1; }
@@ -349,13 +349,13 @@ op_binaria_comparacao: '<' { $$ = lex_especial("<", VAL_ESPECIAL, get_line_numbe
 op_shift: TK_OC_SR { $$ = $1; }
 	| TK_OC_SL { $$ = $1; };
 
-mais_menos: '+' { $$ = lex_especial("+", VAL_ESPECIAL, get_line_number()); }
-	| '-' { $$ = lex_especial("-", VAL_ESPECIAL, get_line_number()); }
+mais_menos: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
+	| '-' { $$ = lex_especial('-', VAL_ESPECIAL, get_line_number()); }
 	| { $$ = NULL; };
 
 int_positivo: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
 	| '+' TK_LIT_INT { 
-		struct valor_lexico_t *val_lex = lex_especial("+", VAL_ESPECIAL, get_line_number());
+		struct valor_lexico_t *val_lex = lex_especial('+', VAL_ESPECIAL, get_line_number());
 		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, val_lex, $2); 
 		}
 	;

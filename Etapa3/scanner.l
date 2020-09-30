@@ -84,14 +84,14 @@ escape_symbol ['"]
 "?" { 
     return yytext[0]; 
     }
-"<=" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_LE ; }
-">=" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_GE ; }
-"==" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_EQ ; }
-"!=" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_NE ; }
-"&&" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_AND; }
-"||" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_OR ; }
-">>" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_SR ; }
-"<<" { yylval.valor_lexico = lex_especial(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_SL ; }
+"<=" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_LE ; }
+">=" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_GE ; }
+"==" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_EQ ; }
+"!=" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_NE ; }
+"&&" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_AND; }
+"||" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_OR ; }
+">>" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_SR ; }
+"<<" { yylval.valor_lexico = lex_composto(yytext, VAL_OP_COMPOSTO, get_line_number()); return TK_OC_SL ; }
 
 "true" { 
         yylval.valor_lexico = lex_bool(1, VAL_BOOL, get_line_number());

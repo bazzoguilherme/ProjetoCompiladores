@@ -23,7 +23,7 @@ void libera_ast(struct AST *ast) {
 
 void free_val_lex(struct valor_lexico_t *val_lex) {
     if (val_lex != NULL){
-        if (val_lex->tipo == VAL_ESPECIAL || val_lex->tipo == VAL_OP_COMPOSTO || val_lex->tipo == VAL_IDENTIFICADOR || val_lex->tipo == VAL_STRING) 
+        if (val_lex->tipo == VAL_OP_COMPOSTO || val_lex->tipo == VAL_IDENTIFICADOR || val_lex->tipo == VAL_STRING) 
             free(val_lex->valor.val_str);
         free(val_lex);
     }
@@ -123,12 +123,12 @@ void print_ast(struct AST *ast) {
 void print_LIT(struct AST *ast) {
     switch (ast->valor_lexico->tipo)
     {
-    case VAL_ESPECIAL:
     case VAL_OP_COMPOSTO:
     case VAL_IDENTIFICADOR:
     case VAL_STRING:
         printf("%p [label=\"%s\"];\n", ast, ast->valor_lexico->valor.val_str);
         break;
+    case VAL_ESPECIAL:
     case VAL_CHAR:
         printf("%p [label=\"%c\"];\n", ast, ast->valor_lexico->valor.val_char);
         break;
