@@ -81,10 +81,10 @@ void print_ast(struct AST *ast) {
     case AST_SHIFT:
         print_SHIFT(ast);
         break;
-    // case AST_IN:
-    // case AST_OUT:
-    //     print_IO(ast);
-    //     break;
+    case AST_IN:
+    case AST_OUT:
+        print_IO(ast);
+        break;
     case AST_BREAK:
     case AST_CONT:
         print_BR_CONT(ast);
