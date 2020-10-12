@@ -1,0 +1,57 @@
+int v1[+10];
+
+int minha_funcao() {
+    minha_var = "um literal string";
+}
+//int main() {}
+
+int foo(const int a, const float b, const char c, const bool d, const string e){
+	static const int var;
+	static int var;
+	int var;
+	int var_a <= 0;
+	static const float var <= 'c';
+	static float var <= var_2;
+	static const int a, b, c, d <= 10, e, f <= b;
+    i = 99;
+	int d2 <= 10, e, f3 <= b;
+    if (10 || +5) {
+        return 10;
+    };
+}
+
+
+int main() {
+    int var <= 10;
+    int ia, ib <= 1, ic;
+    i[2] = 5;
+    int var1 <= var;
+    {
+        i = 10;
+    };
+
+    i << 10;
+    i >> 10;
+
+    output 10;
+    output -10;
+
+    if (10 || +5) {
+        return 10;
+    };
+
+    while (i) do {
+        i << 2;
+        break;
+    };
+
+    for (i = 0: i < 2: i=3) {
+        continue;
+    };
+
+    i = false ? 10 : 5;
+}
+
+int f1 () {
+    int i <= 9;
+}
