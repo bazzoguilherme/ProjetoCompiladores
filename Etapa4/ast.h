@@ -5,14 +5,14 @@
 #define MAX_FILHOS 4
 
 typedef enum Tipo_val_lex {
-    VAL_ESPECIAL = 1,
-    VAL_OP_COMPOSTO,
-    VAL_IDENTIFICADOR,
-    VAL_INT,
+    VAL_INT = 1,
     VAL_FLOAT,
     VAL_CHAR,
     VAL_STRING,
     VAL_BOOL,
+    VAL_ESPECIAL,
+    VAL_OP_COMPOSTO,
+    VAL_IDENTIFICADOR,
 } Tipo_val_lex;
 
 struct valor_lexico_t {
@@ -59,7 +59,17 @@ typedef enum Type_Exp {
     AST_FUN_CALL, // Chamada de Funcao
 } Type_Exp;
 
+typedef enum Type_Node {
+    NODE_NO_VAL = 0,
+    NODE_INT = 1,
+    NODE_FLOAT,
+    NODE_CHAR,
+    NODE_STRING,
+    NODE_BOOL,
+} Type_Node;
+
 typedef struct AST {
+    Type_Node tipo;
     Type_Exp tipo_exp;
     struct valor_lexico_t *valor_lexico;
     struct AST *children[MAX_FILHOS];
