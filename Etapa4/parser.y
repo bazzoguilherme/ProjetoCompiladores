@@ -157,7 +157,7 @@ id_ou_vetor: TK_IDENTIFICADOR {
 		if (stack_table == NULL) {
 			stack_table = escopo_global();
 		} 
-		insere_simbolo(stack_table, yylval.valor_lexico->valor.val_str);
+		insere_simbolo(stack_table, $1, NAT_variavel);
 		free_val_lex($1); }
 	| TK_IDENTIFICADOR '[' int_positivo ']' { free_val_lex($1); libera_ast($3); } ;
 

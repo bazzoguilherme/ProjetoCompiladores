@@ -60,12 +60,12 @@ typedef enum Type_Exp {
 } Type_Exp;
 
 typedef enum Type {
-    NODE_NO_VAL = 0,
-    NODE_INT = 1,
-    NODE_FLOAT,
-    NODE_CHAR,
-    NODE_STRING,
-    NODE_BOOL,
+    TYPE_NO_VAL = 0,
+    TYPE_INT = 1,
+    TYPE_FLOAT,
+    TYPE_CHAR,
+    TYPE_STRING,
+    TYPE_BOOL,
 } Type;
 
 typedef struct AST {

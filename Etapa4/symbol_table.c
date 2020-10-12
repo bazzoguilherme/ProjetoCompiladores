@@ -2,6 +2,28 @@
 #include <string.h>
 #include "symbol_table.h"
 
+int tamanho_byte(Type tipo_v){
+    switch (tipo_v)
+    {
+    case TYPE_INT:
+        return 4;
+        break;
+    case TYPE_FLOAT:
+        return 8;
+        break;
+    case TYPE_CHAR:
+    case TYPE_STRING:
+        return 1;
+        break;
+    case TYPE_BOOL:
+        return 1;
+        break;
+    
+    default:
+        break;
+    }
+}
+
 struct symbol_table *new_table() {
     return (struct symbol_table *) malloc (sizeof(struct symbol_table));
 }
@@ -31,20 +53,23 @@ struct stack_symbol_table *delete_stack(struct stack_symbol_table *current_stack
 }
 
 
-void insere_simbolo(struct stack_symbol_table *stack, char *symbol){
+void insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat){
     struct symbol_table *escopo_atual = stack->topo;
 
     if (escopo_atual == NULL) {
         escopo_atual = new_table();
-        escopo_atual->key = strdup(symbol);
+        escopo_atual->key = symbol->valor.val_str;
+        escopo_atual->localizacao = symbol->linha;
+        escopo_atual->natureza = nat;
         stack->topo = escopo_atual;
     } else {
-        // struct symbol_table *aux = escopo_atual;
         while(escopo_atual->next_elem != NULL) {
             escopo_atual = escopo_atual->next_elem;
         }
         struct symbol_table *aux = new_table();
-        aux->key = strdup(symbol);
+        aux->key = symbol->valor.val_str;
+        aux->localizacao = symbol->linha;
+        aux->natureza = nat;
         escopo_atual->next_elem = aux;
     }
 }

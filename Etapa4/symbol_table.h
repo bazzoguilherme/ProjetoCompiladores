@@ -3,12 +3,15 @@
 #ifndef SYM_TABLE
 #define SYM_TABLE
 
+
 // Definido por nós - valores a rever
 typedef enum Type_Natureza {
-    literal = 1,
-    variavel,
-    funcao,
+    NAT_literal = 1,
+    NAT_variavel,
+    NAT_funcao,
 } Type_Natureza;
+
+int tamanho_byte(Type tipo_v);
 
 // Linked-list para implementar tabela de simbolos
 // Lista de valores dentro de tabela
@@ -36,6 +39,6 @@ struct stack_symbol_table *escopo_global();
 struct stack_symbol_table *new_escopo(struct stack_symbol_table *stack_antigo);
 struct stack_symbol_table *delete_stack();
 
-void insere_simbolo(struct stack_symbol_table *stack, char *symbol);
+void insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat);
 
 #endif
