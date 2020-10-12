@@ -58,7 +58,7 @@ void print_ast(struct AST *ast) {
         return;
     }
     // printf("Print - tipo: %d\n", ast->tipo);
-    switch (ast->tipo)
+    switch (ast->tipo_exp)
     {
     case AST_LIT:
         print_LIT(ast);
@@ -177,12 +177,12 @@ void print_SHIFT(struct AST *ast) {
 }
 
 void print_IO(struct AST *ast) {
-    printf("%p [label=\"%s\"];\n", ast, (ast->tipo == AST_IN ? "input" : "output"));
+    printf("%p [label=\"%s\"];\n", ast, (ast->tipo_exp == AST_IN ? "input" : "output"));
     print_ast(ast->children[0]);
 }
 
 void print_BR_CONT(struct AST *ast) {
-    printf("%p [label=\"%s\"];\n", ast, (ast->tipo == AST_BREAK ? "break" : "continue"));
+    printf("%p [label=\"%s\"];\n", ast, (ast->tipo_exp == AST_BREAK ? "break" : "continue"));
 }
 
 void print_RETURN(struct AST *ast) {

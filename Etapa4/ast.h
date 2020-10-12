@@ -37,7 +37,7 @@ struct valor_lexico_t *lex_composto(char *op_comp_val, Tipo_val_lex tipo_tk, int
 
 void remove_quotes(char *st);
 
-typedef enum Type {
+typedef enum Type_Exp {
     AST_LIT = 1,
     AST_ID,
     AST_FUNCAO, // Funcao
@@ -57,52 +57,52 @@ typedef enum Type {
     AST_FOR, // For
     AST_WHILE, // While
     AST_FUN_CALL, // Chamada de Funcao
-} Type;
+} Type_Exp;
 
 typedef struct AST {
-    Type tipo;
+    Type_Exp tipo_exp;
     struct valor_lexico_t *valor_lexico;
     struct AST *children[MAX_FILHOS];
     struct AST *prox;
 } AST;
 
-struct AST *create_AST(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4, struct AST *next);
+struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4, struct AST *next);
 
-struct AST *create_LIT(Type ast_type, struct valor_lexico_t *val_lex);
+struct AST *create_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex);
 
-struct AST *create_ID(Type ast_type, struct valor_lexico_t *val_lex);
+struct AST *create_ID(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex);
 
 struct AST *create_NODE(struct AST *f1, struct AST *next);
 
-struct AST *create_FUNCAO(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
+struct AST *create_FUNCAO(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1);
 
-struct AST *create_EXPRESSAO(Type ast_type, struct AST *f1, struct AST *f2);
-struct AST *create_EXPRESSAO_BIN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
-struct AST *create_EXPRESSAO_UN(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
-struct AST *create_EXPRESSAO_UN_LIT(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *lit);
+struct AST *create_EXPRESSAO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2);
+struct AST *create_EXPRESSAO_BIN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
+struct AST *create_EXPRESSAO_UN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1);
+struct AST *create_EXPRESSAO_UN_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *lit);
 
-struct AST *create_IO(Type ast_type, struct AST *f1);
-struct AST *create_IO_id(Type ast_type, struct valor_lexico_t *val_lex);
+struct AST *create_IO(Type_Exp ast_type_exp, struct AST *f1);
+struct AST *create_IO_id(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex);
 
-struct AST *create_CONT_BREAK(Type ast_type);
+struct AST *create_CONT_BREAK(Type_Exp ast_type_exp);
 
-struct AST *create_RETURN(Type ast_type, struct AST *f1);
+struct AST *create_RETURN(Type_Exp ast_type_exp, struct AST *f1);
 
-struct AST *create_SHIFT(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
+struct AST *create_SHIFT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2);
 
-struct AST *create_VEC(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f2);
+struct AST *create_VEC(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f2);
 
-struct AST *create_TERNARIO(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3);
+struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3);
 
-struct AST *create_ASSIGN(Type ast_type, struct AST *f1, struct AST *f2);
+struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2);
 
-struct AST *create_DECL_ASSIGN(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct AST *f2);
-struct AST *create_DECL_ASSIGN_id(Type ast_type, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct valor_lexico_t *id2);
+struct AST *create_DECL_ASSIGN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct AST *f2);
+struct AST *create_DECL_ASSIGN_id(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct valor_lexico_t *id2);
 
-struct AST *create_IF(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3);
-struct AST *create_WHILE(Type ast_type, struct AST *f1, struct AST *f2);
-struct AST *create_FOR(Type ast_type, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4);
+struct AST *create_IF(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3);
+struct AST *create_WHILE(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2);
+struct AST *create_FOR(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4);
 
-struct AST *create_FUN_CALL(Type ast_type, struct valor_lexico_t *val_lex, struct AST *f1);
+struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1);
 
 #endif
