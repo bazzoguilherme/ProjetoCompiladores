@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include "ast.h"
 #include "exp_ast.h"
+#include "symbol_table.h"
 
 int yylex(void);
 int yyerror (char const *s);
@@ -29,6 +30,8 @@ extern int get_line_number(void);
 extern void *arvore;
 extern void exporta(void *arvore);
 extern void libera(void *arvore);
+
+struct stack_symbol_table *stack_table = NULL;
 
 %}
 %union {
@@ -150,7 +153,12 @@ declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global
 lista_var_global: ',' id_ou_vetor lista_var_global
 	| ';';
 
-id_ou_vetor: TK_IDENTIFICADOR { free_val_lex($1); }
+id_ou_vetor: TK_IDENTIFICADOR { 
+		if (stack_table == NULL) {
+			stack_table = escopo_global();
+		} 
+		insere_simbolo(stack_table, yylval.valor_lexico->valor.val_str);
+		free_val_lex($1); }
 	| TK_IDENTIFICADOR '[' int_positivo ']' { free_val_lex($1); libera_ast($3); } ;
 
 declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { $$ = create_NODE($3, $4); }

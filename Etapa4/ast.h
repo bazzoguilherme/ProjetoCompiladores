@@ -59,17 +59,17 @@ typedef enum Type_Exp {
     AST_FUN_CALL, // Chamada de Funcao
 } Type_Exp;
 
-typedef enum Type_Node {
+typedef enum Type {
     NODE_NO_VAL = 0,
     NODE_INT = 1,
     NODE_FLOAT,
     NODE_CHAR,
     NODE_STRING,
     NODE_BOOL,
-} Type_Node;
+} Type;
 
 typedef struct AST {
-    Type_Node tipo;
+    Type tipo;
     Type_Exp tipo_exp;
     struct valor_lexico_t *valor_lexico;
     struct AST *children[MAX_FILHOS];
