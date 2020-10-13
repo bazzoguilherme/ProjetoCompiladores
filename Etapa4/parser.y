@@ -33,10 +33,13 @@ extern void libera(void *arvore);
 
 struct stack_symbol_table *stack_table = NULL;
 
+struct elem_table *lista_aux = NULL;
+
 %}
 %union {
 	struct valor_lexico_t *valor_lexico;
 	struct AST *ast;
+	int tipo_valor;
 }
 
 %token TK_PR_INT
@@ -87,7 +90,8 @@ struct stack_symbol_table *stack_table = NULL;
 
 %type<ast> programa
 %type<ast> declaracao_funcao
-%type<ast> bloco
+%type<ast> bloco_end
+%type<ast> bloco_funcao
 %type<ast> comando
 %type<ast> comandos
 %type<ast> int_positivo
@@ -140,6 +144,8 @@ struct stack_symbol_table *stack_table = NULL;
 %type<valor_lexico> op_unaria_prio_dir
 %type<valor_lexico> assign
 
+%type<tipo_valor> tipo
+
 %%
 
 programa: declaracao_global programa { $$ = $2; }
@@ -147,31 +153,54 @@ programa: declaracao_global programa { $$ = $2; }
 	| { $$ = NULL; }
 	;
 
-declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global 
-	| tipo id_ou_vetor lista_var_global;
+declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global {
+		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
+		lista_aux = NULL;
+	}
+	| tipo id_ou_vetor lista_var_global {
+		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $1);
+		lista_aux = NULL;
+	};
 
 lista_var_global: ',' id_ou_vetor lista_var_global
 	| ';';
 
 id_ou_vetor: TK_IDENTIFICADOR { 
-		if (stack_table == NULL) {
-			stack_table = escopo_global();
-		} 
-		insere_simbolo(stack_table, $1, NAT_variavel);
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
 		free_val_lex($1); }
-	| TK_IDENTIFICADOR '[' int_positivo ']' { free_val_lex($1); libera_ast($3); } ;
+	| TK_IDENTIFICADOR '[' int_positivo ']' { 
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_vetor, return_size($3));
+		free_val_lex($1); libera_ast($3); } ;
 
-declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { $$ = create_NODE($3, $4); }
-	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { $$ = create_NODE($4, $5); }
-	| TK_PR_CONST tipo id_local lista_var_local { $$ = create_NODE($3, $4); }
-	| tipo id_local lista_var_local { $$ = create_NODE($2, $3); };
+declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { 
+		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
+		lista_aux = NULL;
+		$$ = create_NODE($3, $4); }
+	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { 
+		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $3);
+		lista_aux = NULL;
+		$$ = create_NODE($4, $5); }
+	| TK_PR_CONST tipo id_local lista_var_local { 
+		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
+		lista_aux = NULL;
+		$$ = create_NODE($3, $4); }
+	| tipo id_local lista_var_local { 
+		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $1);
+		lista_aux = NULL;
+		$$ = create_NODE($2, $3); };
 
 lista_var_local: ',' id_local lista_var_local { $$ = create_NODE($2, $3); }
 	| { $$ = NULL; };
 
-id_local: TK_IDENTIFICADOR { $$ = NULL; free_val_lex($1); }
-	| TK_IDENTIFICADOR assign literal { $$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
-	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { $$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
+id_local: TK_IDENTIFICADOR { 
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		$$ = NULL; free_val_lex($1); }
+	| TK_IDENTIFICADOR assign literal { 
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		$$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
+	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
 assign: TK_OC_LE { $$ = $1; };
 
@@ -189,11 +218,11 @@ saida: TK_PR_OUTPUT TK_IDENTIFICADOR { $$ = create_IO_id(AST_OUT, $2); }
     | TK_PR_OUTPUT literal { $$ = create_IO(AST_OUT, $2); }
 	;
 
-tipo: TK_PR_INT
-	| TK_PR_FLOAT
-	| TK_PR_BOOL
-	| TK_PR_CHAR
-	| TK_PR_STRING;
+tipo: TK_PR_INT { $$ = TYPE_INT; }
+	| TK_PR_FLOAT { $$ = TYPE_FLOAT; }
+	| TK_PR_BOOL { $$ = TYPE_BOOL; }
+	| TK_PR_CHAR { $$ = TYPE_CHAR; }
+	| TK_PR_STRING { $$ = TYPE_STRING; } ;
 
 expressao: expr { $$ = $1; };
 
@@ -251,13 +280,19 @@ literal_char_str:
 	;
 
 
-declaracao_funcao: declaracao_header bloco { $$ = create_FUNCAO(AST_FUNCAO, $1, $2); };
+declaracao_funcao: declaracao_header bloco_funcao { $$ = create_FUNCAO(AST_FUNCAO, $1, $2); };
 
-declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR '(' parametros ')' { $$ = $3; }
-	| tipo TK_IDENTIFICADOR '(' parametros ')' { $$ = $2; } ;
+declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR decl_header_parametros { $$ = $3; }
+	| tipo TK_IDENTIFICADOR decl_header_parametros { $$ = $2; } ;
 
 tipo_const: TK_PR_CONST
 	| ;
+
+decl_header_parametros: decl_header_param_init decl_header_param_end ;
+
+decl_header_param_init: '(' { stack_table = new_escopo(stack_table); };
+
+decl_header_param_end: parametros ')';
 
 parametros: lista_parametro
 	| ;
@@ -265,9 +300,15 @@ parametros: lista_parametro
 lista_parametro: parametro ',' lista_parametro
 	| parametro ;
 
-parametro: tipo_const tipo TK_IDENTIFICADOR { free_val_lex($3); };
+parametro: tipo_const tipo TK_IDENTIFICADOR { 
+	stack_table = insere_simbolo(stack_table, $3, NAT_variavel, $2);
+	free_val_lex($3); };
 
-bloco: '{' comandos '}' { $$ = $2; };
+
+bloco_init: '{' { stack_table = new_escopo(stack_table); }; 
+bloco_end: comandos '}' { $$ = $1; stack_table = delete_stack(stack_table); };
+
+bloco_funcao: '{' bloco_end { $$ = $2; };
 
 comandos: comando comandos { $$ = create_NODE($1, $2); }
 	| { $$ = NULL; } ;
@@ -283,17 +324,17 @@ comando: declaracao_local ';' { $$ = $1; }
 	| controle_fluxo ';' { $$ = $1; }
 	| while ';' { $$ = $1; }
 	| for ';' { $$ = $1; }
-	| bloco ';' { $$ = $1; };
+	| bloco_init bloco_end ';' { $$ = $2; };
 
-controle_fluxo: TK_PR_IF '(' expressao ')' bloco else_opt { $$ = create_IF(AST_IF, $3, $5, $6); };
+controle_fluxo: TK_PR_IF '(' expressao ')' bloco_init bloco_end else_opt { $$ = create_IF(AST_IF, $3, $6, $7); };
 
-else_opt: TK_PR_ELSE bloco { $$ = $2; }
+else_opt: TK_PR_ELSE bloco_init bloco_end { $$ = $3; }
 	| { $$ = NULL; } ;
 
-while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco { $$ = create_WHILE(AST_WHILE, $3, $6); };
+while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco_init bloco_end { $$ = create_WHILE(AST_WHILE, $3, $7); };
 
-for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco 
-	{ $$ = create_FOR(AST_FOR, $3, $5, $7, $9); } ;
+for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco_init bloco_end
+	{ $$ = create_FOR(AST_FOR, $3, $5, $7, $10); } ;
 
 retorno: TK_PR_RETURN expressao { $$ = create_RETURN(AST_RETURN, $2); }
    | TK_PR_RETURN literal_char_str { $$ = create_RETURN(AST_RETURN, $2); };

@@ -191,11 +191,11 @@ struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_le
 }
 
 int return_size(struct AST *f1)  {
-    if (f1->Type_Exp == AST_LIT)
+    if (f1->tipo_exp == AST_LIT)
     {
         return f1->valor_lexico->valor.val_int;
     }
-    else if (f1->Type_Exp == AST_OP_UN)
+    else if (f1->tipo_exp == AST_OP_UN)
     {
         return f1->children[0]->valor_lexico->valor.val_int;
     }

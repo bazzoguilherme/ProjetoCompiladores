@@ -1,2 +1,6 @@
-int a;
+int a, b, c;
 static float c;
+
+int main(int gus) {
+    int a;
+}
