@@ -53,7 +53,7 @@ struct stack_symbol_table *delete_stack(struct stack_symbol_table *current_stack
 }
 
 
-void insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat){
+struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo, struct AST *tamanho){
     struct symbol_table *escopo_atual = stack->topo;
 
     if (escopo_atual == NULL) {
@@ -67,6 +67,8 @@ void insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *sym
             escopo_atual = escopo_atual->next_elem;
         }
         struct symbol_table *aux = new_table();
+
+        aux->tamanho = return_size(tamanho) * tamanho_byte(tipo);
         aux->key = symbol->valor.val_str;
         aux->localizacao = symbol->linha;
         aux->natureza = nat;

@@ -9,6 +9,7 @@ typedef enum Type_Natureza {
     NAT_literal = 1,
     NAT_variavel,
     NAT_funcao,
+    NAT_vetor,
 } Type_Natureza;
 
 int tamanho_byte(Type tipo_v);
@@ -39,6 +40,6 @@ struct stack_symbol_table *escopo_global();
 struct stack_symbol_table *new_escopo(struct stack_symbol_table *stack_antigo);
 struct stack_symbol_table *delete_stack();
 
-void insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat);
+struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat);
 
 #endif
