@@ -227,6 +227,16 @@ void print_table(struct elem_table *table) {
 }
 
 
+/* Verifica se variavei ja existe em utilizacao
+ * e.g. int a <= b; (verifica b)
+ * e.g. a = 10; (verifica a)
+ */
+void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
+    if (encontra_elemento_stack(stack, dado->valor.val_str) == NULL) { // achou elemento - pode user
+        erro_semantico(ERR_UNDECLARED);
+    }
+}
+
 
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
