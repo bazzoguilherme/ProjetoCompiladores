@@ -1,7 +1,8 @@
-#include "ast.h"
 
 #ifndef SYM_TABLE
 #define SYM_TABLE
+
+#include "ast.h"
 
 
 // Definido por nós - valores a rever
@@ -56,7 +57,7 @@ void adiciona_argumentos_funcao(struct stack_symbol_table *stack);
 void print_stack_elements(struct stack_symbol_table *stack);
 void print_table(struct elem_table *table);
 
-void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
+void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat);
 
 int erro_semantico(int err);
 

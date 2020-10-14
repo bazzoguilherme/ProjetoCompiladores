@@ -20,7 +20,7 @@ union val_lex {
     float val_float;
     char *val_str;
     char val_char;
-} val_lex;
+};
 
 struct valor_lexico_t {
     int linha;

@@ -4,4 +4,5 @@ static float gus_aca_lo;
 int main(int gus_aca_lo, int gui, char xnhor) {
     int a;
 }
+
 int gg;

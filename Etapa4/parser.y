@@ -199,7 +199,7 @@ id_local: TK_IDENTIFICADOR {
 		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
-		verifica_existencia(stack_table, $3);
+		verifica_existencia(stack_table, $3, NAT_variavel);
 		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 

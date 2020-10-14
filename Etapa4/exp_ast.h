@@ -1,7 +1,7 @@
-#include "ast.h"
 
 #ifndef EXT_AST_H
 #define EXT_AST_H
+#include "ast.h"
 
 void libera (void *arvore);
 void libera_ast (struct AST *ast);

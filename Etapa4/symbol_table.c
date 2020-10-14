@@ -32,8 +32,17 @@ struct elem_table *new_elem_table() {
 
 
 struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, char *key) {
-    while ( tabela_atual != NULL && strcmp(tabela_atual->key, key) != 0) {
+    // enquanto n for nulo, n for a key que queremos COM nat = literal
+    while ( tabela_atual != NULL && !(strcmp(tabela_atual->key, key) == 0 && 1 != tabela_atual->natureza)) {
         tabela_atual = tabela_atual->next_elem;
+    }
+    if(tabela_atual != NULL)
+    {
+        printf("%s\n",tabela_atual->key);
+        printf("Procurando %s e parou em %s com nat %d\n", key, tabela_atual->key, tabela_atual->natureza);
+    }
+    else{
+        printf("Nao encontrei nenhum %s\n", key);
     }
     return tabela_atual;
 }
@@ -231,7 +240,7 @@ void print_table(struct elem_table *table) {
  * e.g. int a <= b; (verifica b)
  * e.g. a = 10; (verifica a)
  */
-void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
+void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat) {
     if (encontra_elemento_stack(stack, dado->valor.val_str) == NULL) { // achou elemento - pode user
         erro_semantico(ERR_UNDECLARED);
     }
