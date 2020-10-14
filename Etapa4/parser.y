@@ -166,10 +166,10 @@ lista_var_global: ',' id_ou_vetor lista_var_global
 	| ';';
 
 id_ou_vetor: TK_IDENTIFICADOR { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		free_val_lex($1); }
 	| TK_IDENTIFICADOR '[' int_positivo ']' { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_vetor, return_size($3));
+		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_vetor, return_size($3));
 		free_val_lex($1); libera_ast($3); } ;
 
 declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { 
@@ -193,13 +193,13 @@ lista_var_local: ',' id_local lista_var_local { $$ = create_NODE($2, $3); }
 	| { $$ = NULL; };
 
 id_local: TK_IDENTIFICADOR { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = NULL; free_val_lex($1); }
 	| TK_IDENTIFICADOR assign literal { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
 assign: TK_OC_LE { $$ = $1; };
@@ -280,15 +280,21 @@ literal_char_str:
 	;
 
 
-declaracao_funcao: declaracao_header bloco_funcao { $$ = create_FUNCAO(AST_FUNCAO, $1, $2); };
+declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao { $$ = create_FUNCAO(AST_FUNCAO, $1, $3); };
 
-declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR decl_header_parametros { $$ = $3; }
-	| tipo TK_IDENTIFICADOR decl_header_parametros { $$ = $2; } ;
+declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR { 
+		stack_table = insere_simbolo(stack_table, $3, NAT_funcao, $2);
+		$$ = $3; }
+	| tipo TK_IDENTIFICADOR { 
+		stack_table = insere_simbolo(stack_table, $2, NAT_funcao, $1);
+		$$ = $2; } ;
 
 tipo_const: TK_PR_CONST
 	| ;
 
-decl_header_parametros: decl_header_param_init decl_header_param_end ;
+decl_header_parametros: decl_header_param_init decl_header_param_end 
+	{ adiciona_argumentos_funcao(stack_table); }
+;
 
 decl_header_param_init: '(' { stack_table = new_escopo(stack_table); };
 

@@ -15,15 +15,17 @@ typedef enum Tipo_val_lex {
     VAL_IDENTIFICADOR,
 } Tipo_val_lex;
 
+union val_lex {
+    int val_int;
+    float val_float;
+    char *val_str;
+    char val_char;
+} val_lex;
+
 struct valor_lexico_t {
     int linha;
     Tipo_val_lex tipo;
-    union {
-        int val_int;
-        float val_float;
-        char *val_str;
-        char val_char;
-    } valor;
+    union val_lex valor;
 };
 
 struct valor_lexico_t *lex_int(int int_value, Tipo_val_lex tipo_tk, int linha);
