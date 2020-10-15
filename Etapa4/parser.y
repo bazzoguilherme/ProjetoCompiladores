@@ -199,7 +199,7 @@ id_local: TK_IDENTIFICADOR {
 		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
-		verifica_existencia(stack_table, $3, NAT_variavel);
+		verifica_existencia(stack_table, $3);
 		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
@@ -213,9 +213,13 @@ io_dados: entrada { $$ = $1; }
 	| saida { $$ = $1; }
 	;
 
-entrada: TK_PR_INPUT TK_IDENTIFICADOR { $$ = create_IO_id(AST_IN, $2); };
+entrada: TK_PR_INPUT TK_IDENTIFICADOR { 
+	verifica_existencia(stack_table, $2);
+	$$ = create_IO_id(AST_IN, $2); };
 
-saida: TK_PR_OUTPUT TK_IDENTIFICADOR { $$ = create_IO_id(AST_OUT, $2); }
+saida: TK_PR_OUTPUT TK_IDENTIFICADOR { 
+		verifica_existencia(stack_table, $2);
+		$$ = create_IO_id(AST_OUT, $2); }
     | TK_PR_OUTPUT literal { $$ = create_IO(AST_OUT, $2); }
 	;
 
@@ -282,7 +286,8 @@ literal: mais_menos TK_LIT_INT {
    | mais_menos TK_LIT_FLOAT { 
 	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_FLOAT);
 	   $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
-   | literal_char_str { $$ = $1; }
+   | literal_char_str { 
+	   $$ = $1; }
    | TK_LIT_TRUE { 
 	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
 	   $$ = create_LIT(AST_LIT, $1); }
@@ -371,7 +376,9 @@ continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
 break: TK_PR_BREAK { $$ = create_CONT_BREAK(AST_BREAK); };
 
 
-chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' { $$ = create_FUN_CALL(AST_FUN_CALL, $1, $3); };
+chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' { 
+	verifica_existencia(stack_table, $1);
+	$$ = create_FUN_CALL(AST_FUN_CALL, $1, $3); };
 
 parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}
 	| { $$ = NULL; };
@@ -384,8 +391,12 @@ possivel_parametro: expressao {$$ = $1;}
 
 comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 
-id_ou_vet_expr: TK_IDENTIFICADOR { $$ = create_ID(AST_ID, $1); }
-	| TK_IDENTIFICADOR '[' expressao ']' { $$ = create_VEC(AST_VEC, $1, $3); };
+id_ou_vet_expr: TK_IDENTIFICADOR { 
+		verifica_existencia(stack_table, $1);
+		$$ = create_ID(AST_ID, $1); }
+	| TK_IDENTIFICADOR '[' expressao ']' { 
+		verifica_existencia(stack_table, $1);
+		$$ = create_VEC(AST_VEC, $1, $3); };
 
 op_unaria: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
 	| '-' { $$ = lex_especial('-', VAL_ESPECIAL, get_line_number()); }

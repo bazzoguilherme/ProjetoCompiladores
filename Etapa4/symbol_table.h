@@ -63,8 +63,11 @@ char *literal_key(struct valor_lexico_t* literal);
 void print_stack_elements(struct stack_symbol_table *stack);
 void print_table(struct elem_table *table);
 
-void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat);
+void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
 
 int erro_semantico(int err);
+
+void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl);
+void erro_nao_declaracao(int err, char *var_nome, int linha_atual);
 
 #endif

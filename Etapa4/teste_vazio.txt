@@ -9,6 +9,7 @@ int main(int gus_aca_lo, int gui, char xnhor) {
     a = 10.9E10;
     a = false;
     a = true;
+    int c <= zxxz;
 }
 
 int gg;

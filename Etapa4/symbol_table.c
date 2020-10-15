@@ -117,11 +117,13 @@ struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, stru
         stack = new_stack();
     }
     
-    if (stack != NULL && encontra_elemento_tabela(stack->topo, symbol->valor.val_str) != NULL) {
-        erro_semantico(ERR_DECLARED);
+    struct elem_table *elemento = NULL;
+    
+    if (stack != NULL && (elemento = encontra_elemento_tabela(stack->topo, symbol->valor.val_str)) != NULL) {
+        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha, elemento->localizacao);
     }
 
-    struct elem_table *elemento = stack->topo;
+    elemento = stack->topo;
 
     if (elemento == NULL) {
         elemento = new_elem_table();
@@ -221,8 +223,10 @@ struct stack_symbol_table *adiciona_lista_elem_comTipo(struct stack_symbol_table
 struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_) {
     struct elem_table *aux;
 
-    if (stack != NULL && encontra_elemento_tabela(stack->topo, symbol->valor.val_str) != NULL) {
-        erro_semantico(ERR_DECLARED);
+    struct elem_table *elemento = NULL;
+    
+    if (stack != NULL && (elemento = encontra_elemento_tabela(stack->topo, symbol->valor.val_str)) != NULL) {
+        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha, elemento->localizacao);
     }
 
     if (lista_aux == NULL) {
@@ -330,14 +334,24 @@ void print_table(struct elem_table *table) {
  * e.g. int a <= b; (verifica b)
  * e.g. a = 10; (verifica a)
  */
-void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat) {
+void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
     if (encontra_elemento_stack(stack, dado->valor.val_str) == NULL) { // achou elemento - pode user
-        erro_semantico(ERR_UNDECLARED);
+        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str, dado->linha);
     }
 }
 
 
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
+    exit(err);
+}
+
+void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl) {
+    printf("In line %2d | Previous declaration of variable \"%s\" in line %d.\n", linha_atual, var_nome, linha_decl);
+    exit(err);
+}
+
+void erro_nao_declaracao(int err, char *var_nome, int linha_atual) {
+    printf("In line %2d | Variable \"%s\" was not declared.\n", linha_atual, var_nome);
     exit(err);
 }
