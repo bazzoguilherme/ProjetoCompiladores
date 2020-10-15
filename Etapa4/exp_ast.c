@@ -164,13 +164,13 @@ void print_DECL_ASSIGN(struct AST *ast) {
 }
 
 void print_ASSIGN(struct AST *ast) {
-    printf("%p [label=\"=\"] - tipo:%d;\n", ast, ast->tipo);
+    printf("%p [label=\"=\"];\n", ast);
     print_ast(ast->children[0]);
     print_ast(ast->children[1]);
 }
 
 void print_VEC(struct AST *ast) {
-    printf("%p [label=\"[]\"] - tipo:%d;\n", ast, ast->tipo);
+    printf("%p [label=\"[]\"];\n", ast);
     print_ast(ast->children[0]);
     print_ast(ast->children[1]);
 }

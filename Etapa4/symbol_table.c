@@ -348,7 +348,7 @@ void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct val
         erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str, dado->linha);
     }
     if (nat_utilizacao != elemento->natureza) {
-        erro_uso_incorreto(uso_incorreto_erro(elemento->natureza), dado->linha, elemento->key, nome_tipo(nat_utilizacao), nome_tipo(elemento->natureza), elemento->localizacao);
+        erro_uso_incorreto(uso_incorreto_erro(elemento->natureza), dado->linha, elemento->key, nome_tipo_nat(nat_utilizacao), nome_tipo_nat(elemento->natureza), elemento->localizacao);
     }
 }
 
@@ -360,7 +360,31 @@ Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lex
     return elemento->tipo;
 }
 
-char *nome_tipo(Type_Natureza nat) {
+char *nome_tipo(Type tipo) {
+    switch (tipo) {
+    case TYPE_INT:
+        return "int";
+        break;
+    case TYPE_FLOAT:
+        return "float";
+        break;
+    case TYPE_CHAR:
+        return "char";
+        break;
+    case TYPE_STRING:
+        return "string";
+        break;
+    case TYPE_BOOL:
+        return "bool";
+        break;
+    
+    default:
+        break;
+    }
+    return "Undeclared Type";
+}
+
+char *nome_tipo_nat(Type_Natureza nat) {
     switch (nat) {
     case NAT_variavel:
         return "Variavel";
@@ -395,6 +419,22 @@ int uso_incorreto_erro(Type_Natureza nat) {
     }
 }
 
+Type define_tipo_expr(Type expr1, Type expr2, int linha) {
+    if (expr1 == expr2) { // int-int, float-float, bool-bool (aceita char-char e string-string)
+        return expr1;
+    } else if (expr1 == TYPE_STRING || expr2 == TYPE_STRING) {
+        erro_converte_string_char(ERR_STRING_TO_X, linha, TYPE_STRING, (expr1 != TYPE_STRING ? expr1 : expr2));
+    } else if (expr1 == TYPE_CHAR || expr2 == TYPE_CHAR) {
+        erro_converte_string_char(ERR_CHAR_TO_X, linha, TYPE_CHAR, (expr1 != TYPE_CHAR ? expr1 : expr2));
+    } else if (expr1 == TYPE_FLOAT || expr2 == TYPE_FLOAT) {
+        return TYPE_FLOAT;
+    } else if (expr1 == TYPE_INT || expr2 == TYPE_INT) {
+        return TYPE_INT;
+    } else {
+        return TYPE_BOOL;
+    }
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);
@@ -412,5 +452,10 @@ void erro_nao_declaracao(int err, char *var_nome, int linha_atual) {
 
 void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl) {
     printf("In line %2d | Identifier \"%s\" been used as %s, but declared as %s in line %d.\n", linha_erro, nome_id, tipo_utilizacao, tipo_decl, linha_decl);
+    exit(err);
+}
+
+void erro_converte_string_char(int err, int linha, Type tipo_atual, Type convertendo_para) {
+    printf("In line %2d | Error in conversion of type %s to type %s.\n", linha, nome_tipo(tipo_atual), nome_tipo(convertendo_para));
     exit(err);
 }
