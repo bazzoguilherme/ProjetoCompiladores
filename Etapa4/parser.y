@@ -205,8 +205,7 @@ id_local: TK_IDENTIFICADOR {
 
 assign: TK_OC_LE { $$ = $1; };
 
-atribuicao: id_ou_vet_expr '=' expressao { $$ = create_ASSIGN(AST_ASSIGN, $1, $3); }
-	| id_ou_vet_expr '=' literal_char_str { $$ = create_ASSIGN(AST_ASSIGN, $1, $3); };
+atribuicao: id_ou_vet_expr '=' expressao { $$ = create_ASSIGN(AST_ASSIGN, $1, $3); };
 
 
 io_dados: entrada { $$ = $1; }
@@ -256,8 +255,10 @@ expr_expoente: expr_expoente op_binaria_expoente F { $$ = create_EXPRESSAO_BIN(A
 F: '(' expressao ')' { $$ = $2; }
 	| expr_arit { $$ = $1;}
 	| expr_log_literal { $$ = $1; }
+	| literal_char_str { $$ = $1; }
 	| op_unaria expr_arit { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
 	| op_unaria expr_log_literal { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
+	| op_unaria literal_char_str { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
 	| op_unaria_prio_dir '(' expressao ')' { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $3); };
 
 expr_arit: id_ou_vet_expr { $$ = $1; }
@@ -368,8 +369,7 @@ while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco_init bloco_end { $$ = create
 for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco_init bloco_end
 	{ $$ = create_FOR(AST_FOR, $3, $5, $7, $10); } ;
 
-retorno: TK_PR_RETURN expressao { $$ = create_RETURN(AST_RETURN, $2); }
-   | TK_PR_RETURN literal_char_str { $$ = create_RETURN(AST_RETURN, $2); };
+retorno: TK_PR_RETURN expressao { $$ = create_RETURN(AST_RETURN, $2); };
 
 continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
 
@@ -386,8 +386,7 @@ parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}
 lista_parametro_chamada_funcao: possivel_parametro ',' parametro_chamada_funcao { $$ = create_NODE($1, $3); }
 	| possivel_parametro { $$ = $1; };
 
-possivel_parametro: expressao {$$ = $1;}
-	| literal_char_str { $$ = $1; } ;
+possivel_parametro: expressao {$$ = $1;};
 
 comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 

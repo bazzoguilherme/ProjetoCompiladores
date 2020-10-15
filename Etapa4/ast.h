@@ -78,7 +78,7 @@ typedef struct AST {
     struct AST *prox;
 } AST;
 
-struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4, struct AST *next);
+struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, Type tipo_nodo, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4, struct AST *next);
 
 struct AST *create_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex);
 
@@ -118,4 +118,7 @@ struct AST *create_FOR(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, st
 struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1);
 
 int return_size(struct AST *f1);
+
+Type tipo_de_valor(struct valor_lexico_t *valor);
+
 #endif

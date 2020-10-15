@@ -66,6 +66,8 @@ void print_table(struct elem_table *table);
 void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
 void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat_utilizacao);
 
+Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
+
 char *nome_tipo(Type_Natureza nat);
 
 int uso_incorreto_erro(Type_Natureza nat);

@@ -115,7 +115,9 @@ escape_symbol ['"]
 {digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
 
 {digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { 
+        printf("FLOAT\n");
         yylval.valor_lexico = lex_float(atof(yytext), VAL_FLOAT, get_line_number());
+        printf("VAL: %f\n", atof(yytext));
         return TK_LIT_FLOAT; 
     }
 
@@ -134,7 +136,7 @@ escape_symbol ['"]
 "\'\'" { return TOKEN_ERRO; }
 
 
-\"("\\\""|[^\n])*\" { 
+\"("\\\""|[^\n\""])*\" { 
         yylval.valor_lexico = lex_str(yytext, VAL_STRING, get_line_number());
         return TK_LIT_STRING; 
     }

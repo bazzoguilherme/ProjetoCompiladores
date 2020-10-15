@@ -4,14 +4,15 @@ char v[10];
 
 int main(int gus_aca_lo, int gui, char xnhor) {
     int a;
-    a = "stringg";
+    a = "stringg" + 10 + "a" ;
     a = 'c';
+    a = "stringg";
     a = 99;
-    a = 10.9E10;
+    b = 11.5e10;
     a = false;
     a = true;
     // int c <= zxxz;
-    v = 'c';
+    //v = 'c';
 }
 
 int gg;

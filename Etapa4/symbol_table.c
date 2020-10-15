@@ -303,9 +303,11 @@ char *literal_key(struct valor_lexico_t* literal) {
         new_key = ((literal->valor.val_int == 1) ? "true" : "false");
         break;
     case VAL_INT:
+        new_key = (char *) malloc (12);
         sprintf(new_key, "%d", literal->valor.val_int);
         break;
     case VAL_FLOAT:
+        new_key = (char *) malloc (60);
         sprintf(new_key, "%g", literal->valor.val_float);
         break;
     default:
@@ -350,6 +352,13 @@ void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct val
     }
 }
 
+Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
+    struct elem_table *elemento = NULL;
+    if ((elemento = encontra_elemento_stack(stack, dado->valor.val_str)) == NULL) { // achou elemento - pode user
+        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str, dado->linha);
+    }
+    return elemento->tipo;
+}
 
 char *nome_tipo(Type_Natureza nat) {
     switch (nat) {

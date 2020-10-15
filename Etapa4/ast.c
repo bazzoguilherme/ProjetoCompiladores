@@ -3,6 +3,10 @@
 #include <string.h>
 #include "ast.h"
 
+#include "symbol_table.h"
+
+extern struct stack_symbol_table *stack_table;
+
 struct valor_lexico_t *lex_int(int int_value, Tipo_val_lex tipo_tk, int linha) {
     struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
     val_lex->valor.val_int = int_value;
@@ -70,10 +74,11 @@ void remove_quotes(char *st) {
     st[pos] = '\0';
 }
 
-struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4, struct AST *next_node) {
+struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, Type tipo_nodo, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4, struct AST *next_node) {
     struct AST *new_node = (struct AST*) malloc (sizeof(struct AST));
     new_node->tipo_exp = ast_type_exp;
     new_node->valor_lexico = val_lex;
+    new_node->tipo = tipo_nodo;
     new_node->children[0] = f1;
     new_node->children[1] = f2;
     new_node->children[2] = f3;
@@ -83,11 +88,11 @@ struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, st
 }
 
 struct AST *create_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
-    return create_AST(ast_type_exp, val_lex, NULL, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, tipo_de_valor(val_lex), NULL, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_ID(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
-    return create_AST(ast_type_exp, val_lex, NULL, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), NULL, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_NODE(struct AST *f1, struct AST *next) {
@@ -106,88 +111,89 @@ struct AST *create_NODE(struct AST *f1, struct AST *next) {
 }
 
 struct AST *create_FUNCAO(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {
-    return create_AST(ast_type_exp, val_lex, f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), f1, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_EXPRESSAO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
-    return create_AST(ast_type_exp, NULL, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, TYPE_NO_VAL, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_EXPRESSAO_BIN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2) {
-    return create_AST(ast_type_exp, val_lex, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, TYPE_NO_VAL, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_EXPRESSAO_UN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {
-    return create_AST(ast_type_exp, val_lex, f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, f1->tipo, f1, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_EXPRESSAO_UN_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *lit) {
     struct AST *f1 = create_LIT(AST_LIT, lit);
     if (val_lex != NULL) {
-        return create_AST(ast_type_exp, val_lex, f1, NULL, NULL, NULL, NULL);
+        return create_AST(ast_type_exp, val_lex, f1->tipo, f1, NULL, NULL, NULL, NULL);
     }
     return f1;
 }
 
 struct AST *create_IO(Type_Exp ast_type_exp, struct AST *f1) {
-    return create_AST(ast_type_exp, NULL, f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, f1->tipo, f1, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_IO_id(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
     struct AST *f1 = create_LIT(AST_LIT, val_lex);
-    return create_AST(ast_type_exp, NULL, f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, f1->tipo, f1, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_CONT_BREAK(Type_Exp ast_type_exp) {
-    return create_AST(ast_type_exp, NULL, NULL, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, TYPE_NO_VAL, NULL, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_RETURN(Type_Exp ast_type_exp, struct AST *f1) {
-    return create_AST(ast_type_exp, NULL, f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, f1->tipo, f1, NULL, NULL, NULL, NULL);
 }
 
 struct AST *create_SHIFT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2) {
-    return create_AST(ast_type_exp, val_lex, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_VEC(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f2) {
     struct AST* f1 = create_ID(AST_ID, val_lex);
-    return create_AST(ast_type_exp, NULL, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
 
+// CHECK dois retornos possiveis
 struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3) {
-    return create_AST(ast_type_exp, NULL, f1, f2, f3, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, f2->tipo, f1, f2, f3, NULL, NULL);
 }
 
 struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
-    return create_AST(ast_type_exp, NULL, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_DECL_ASSIGN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct AST *f2) {
     struct AST* f1 = create_ID(AST_ID, id);
-    return create_AST(ast_type_exp, val_lex, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_DECL_ASSIGN_id(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct valor_lexico_t *id2) {
     struct AST* f1 = create_ID(AST_ID, id);
     struct AST* f2 = create_ID(AST_ID, id2);
-    return create_AST(ast_type_exp, val_lex, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_IF(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3) {
-    return create_AST(ast_type_exp, NULL, f1, f2, f3, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, TYPE_NO_VAL, f1, f2, f3, NULL, NULL);
 }
 
 struct AST *create_WHILE(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
-    return create_AST(ast_type_exp, NULL, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, TYPE_NO_VAL, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_FOR(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3, struct AST *f4) {
-    return create_AST(ast_type_exp, NULL, f1, f2, f3, f4, NULL);
+    return create_AST(ast_type_exp, NULL, TYPE_NO_VAL, f1, f2, f3, f4, NULL);
 }
 
 struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {
-    return create_AST(ast_type_exp, val_lex, f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), f1, NULL, NULL, NULL, NULL);
 }
 
 int return_size(struct AST *f1)  {
@@ -198,5 +204,29 @@ int return_size(struct AST *f1)  {
     else if (f1->tipo_exp == AST_OP_UN)
     {
         return f1->children[0]->valor_lexico->valor.val_int;
+    }
+}
+
+Type tipo_de_valor(struct valor_lexico_t *valor){
+    switch (valor->tipo) {
+    case VAL_INT:
+        return TYPE_INT;
+        break;
+    case VAL_FLOAT:
+        return TYPE_FLOAT;
+        break;
+    case VAL_CHAR:
+        return TYPE_CHAR;
+        break;
+    case VAL_STRING:
+        return TYPE_STRING;
+        break;
+    case VAL_BOOL:
+        return TYPE_BOOL;
+        break;
+    
+    default:
+        return TYPE_NO_VAL;
+        break;
     }
 }
