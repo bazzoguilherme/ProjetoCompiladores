@@ -40,6 +40,8 @@ struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, cha
 struct elem_table *encontra_elemento_stack(struct stack_symbol_table *stack, char *key);
 struct elem_table *recupera_ultimo_elemento(struct elem_table *tabela_atual);
 
+struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char *key, Type tipo_lit);
+struct elem_table *encontra_literal_stack(struct stack_symbol_table *stack, char *key, Type tipo_lit);
 
 struct stack_symbol_table *new_stack();
 struct stack_symbol_table *escopo_global();
@@ -47,12 +49,16 @@ struct stack_symbol_table *new_escopo(struct stack_symbol_table *stack_antigo);
 struct stack_symbol_table *delete_stack();
 
 struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
+struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
 
 struct stack_symbol_table *adiciona_lista_elem_comTipo(struct stack_symbol_table *stack, struct elem_table *lista_aux, Type tipo_);
 
 struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_);
 
 void adiciona_argumentos_funcao(struct stack_symbol_table *stack);
+
+char *literal_key(struct valor_lexico_t* literal);
+
 
 void print_stack_elements(struct stack_symbol_table *stack);
 void print_table(struct elem_table *table);

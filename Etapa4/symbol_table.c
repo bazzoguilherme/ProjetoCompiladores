@@ -33,7 +33,7 @@ struct elem_table *new_elem_table() {
 
 struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, char *key) {
     // enquanto n for nulo, n for a key que queremos COM nat = literal
-    while ( tabela_atual != NULL && !(strcmp(tabela_atual->key, key) == 0 && 1 != tabela_atual->natureza)) {
+    while ( tabela_atual != NULL && !(strcmp(tabela_atual->key, key) == 0 && NAT_literal != tabela_atual->natureza)) {
         tabela_atual = tabela_atual->next_elem;
     }
     if(tabela_atual != NULL)
@@ -65,6 +65,25 @@ struct elem_table *recupera_ultimo_elemento(struct elem_table *tabela_atual) {
         tabela_atual = tabela_atual->next_elem;
     }
     return tabela_atual;
+}
+
+
+struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char *key, Type tipo_lit) {
+    while ( tabela_atual != NULL && !(strcmp(tabela_atual->key, key) == 0 && tipo_lit != tabela_atual->natureza)) {
+        tabela_atual = tabela_atual->next_elem;
+    }
+    return tabela_atual;
+}
+
+struct elem_table *encontra_literal_stack(struct stack_symbol_table *stack, char *key, Type tipo_lit) {
+        struct elem_table *elemento = NULL;
+
+    while ( stack != NULL && elemento == NULL ) {
+        elemento = encontra_literal_tabela(stack->topo, key, tipo_lit);
+        stack = stack->down_table;
+    }
+    
+    return elemento;
 }
 
 
@@ -127,6 +146,50 @@ struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, stru
         aux->dado = symbol->valor;
         elemento->next_elem = aux;
     }
+    return stack;
+}
+
+struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, struct valor_lexico_t *literal, Type_Natureza nat, Type tipo) {
+    if (stack == NULL) {
+        stack = new_stack();
+    }
+    
+
+    struct elem_table *elemento = stack->topo;
+    struct elem_table *busca_lit = NULL;
+
+    char *key_lit = literal_key(literal);
+
+    if ((busca_lit = encontra_literal_tabela(stack->topo, key_lit, tipo)) != NULL) {
+       // Atualiza elemento 
+       busca_lit->localizacao = literal->linha;
+    } else {
+
+        if (elemento == NULL) {
+            elemento = new_elem_table();
+            elemento->key = key_lit;
+            elemento->localizacao = literal->linha;
+            elemento->tamanho = tamanho_byte(tipo);
+            elemento->natureza = nat;
+            elemento->tipo = tipo;
+            elemento->dado = literal->valor;
+            stack->topo = elemento;
+        } else {
+            while(elemento->next_elem != NULL) {
+                elemento = elemento->next_elem;
+            }
+            struct elem_table *aux = new_elem_table();
+
+            aux->key = key_lit;
+            aux->localizacao = literal->linha;
+            aux->tamanho = tamanho_byte(tipo);
+            aux->natureza = nat;
+            aux->tipo = tipo;
+            aux->dado = literal->valor;
+            elemento->next_elem = aux;
+        }
+    }
+
     return stack;
 }
 
@@ -219,6 +282,33 @@ void adiciona_argumentos_funcao(struct stack_symbol_table *stack) {
 }
 
 
+char *literal_key(struct valor_lexico_t* literal) {
+    char *new_key;
+    switch (literal->tipo)
+    {
+    case VAL_STRING:
+        new_key = strdup(literal->valor.val_str);
+        break;
+    case VAL_CHAR:
+        new_key = (char *) malloc (2);
+        new_key[0] = literal->valor.val_char;
+        new_key[1] = '\0';
+        break;
+    case VAL_BOOL:
+        new_key = (char *) malloc (6);
+        new_key = ((literal->valor.val_int == 1) ? "true" : "false");
+        break;
+    case VAL_INT:
+        sprintf(new_key, "%d", literal->valor.val_int);
+        break;
+    case VAL_FLOAT:
+        sprintf(new_key, "%g", literal->valor.val_float);
+        break;
+    default:
+        break;
+    }
+    return new_key;
+}
 
 
 void print_stack_elements(struct stack_symbol_table *stack) {

@@ -3,6 +3,12 @@ static float gus_aca_lo;
 
 int main(int gus_aca_lo, int gui, char xnhor) {
     int a;
+    a = "stringg";
+    a = 'c';
+    a = 99;
+    a = 10.9E10;
+    a = false;
+    a = true;
 }
 
 int gg;

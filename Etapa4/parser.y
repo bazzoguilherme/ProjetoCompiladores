@@ -260,24 +260,44 @@ expr_arit: id_ou_vet_expr { $$ = $1; }
 	| expr_arit_B { $$ = $1; }
 	| expr_arit_C { $$ = $1; };
 
-expr_arit_B: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
-	| TK_LIT_FLOAT { $$ = create_LIT(AST_LIT, $1); } ;
+expr_arit_B: TK_LIT_INT { 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_INT);
+		$$ = create_LIT(AST_LIT, $1); }
+	| TK_LIT_FLOAT { 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_FLOAT);
+		$$ = create_LIT(AST_LIT, $1); } ;
 
 expr_arit_C: chamada_funcao { $$ = $1; }; // Chamada de funcao
 
-expr_log_literal: TK_LIT_TRUE { $$ = create_LIT(AST_LIT, $1); }
-	| TK_LIT_FALSE { $$ = create_LIT(AST_LIT, $1); };
+expr_log_literal: TK_LIT_TRUE { 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+		$$ = create_LIT(AST_LIT, $1); }
+	| TK_LIT_FALSE { 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+		$$ = create_LIT(AST_LIT, $1); };
 
-literal: mais_menos TK_LIT_INT { $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
-   | mais_menos TK_LIT_FLOAT { $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
+literal: mais_menos TK_LIT_INT { 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_INT);
+		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
+   | mais_menos TK_LIT_FLOAT { 
+	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_FLOAT);
+	   $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
    | literal_char_str { $$ = $1; }
-   | TK_LIT_TRUE { $$ = create_LIT(AST_LIT, $1); }
-   | TK_LIT_FALSE { $$ = create_LIT(AST_LIT, $1); };
+   | TK_LIT_TRUE { 
+	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+	   $$ = create_LIT(AST_LIT, $1); }
+   | TK_LIT_FALSE { 
+	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+	   $$ = create_LIT(AST_LIT, $1); };
 
 
 literal_char_str: 
-	  TK_LIT_CHAR  { $$ = create_LIT(AST_LIT, $1); }
-	| TK_LIT_STRING	{ $$ = create_LIT(AST_LIT, $1); }
+	  TK_LIT_CHAR  { 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_CHAR);
+		$$ = create_LIT(AST_LIT, $1); }
+	| TK_LIT_STRING	{ 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_STRING);
+		$$ = create_LIT(AST_LIT, $1); }
 	;
 
 
@@ -313,7 +333,7 @@ parametro: tipo_const tipo TK_IDENTIFICADOR {
 
 
 bloco_init: '{' { stack_table = new_escopo(stack_table); }; 
-bloco_end: comandos '}' { $$ = $1; stack_table = delete_stack(stack_table); };
+bloco_end: comandos '}' { $$ = $1; print_table(stack_table->topo); stack_table = delete_stack(stack_table); };
 
 bloco_funcao: '{' bloco_end { $$ = $2; };
 
@@ -409,8 +429,11 @@ mais_menos: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
 	| '-' { $$ = lex_especial('-', VAL_ESPECIAL, get_line_number()); }
 	| { $$ = NULL; };
 
-int_positivo: TK_LIT_INT { $$ = create_LIT(AST_LIT, $1); }
+int_positivo: TK_LIT_INT { 
+		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_INT);
+		$$ = create_LIT(AST_LIT, $1); }
 	| '+' TK_LIT_INT { 
+		stack_table = insere_literal(stack_table, $2, NAT_literal, TYPE_INT);
 		struct valor_lexico_t *val_lex = lex_especial('+', VAL_ESPECIAL, get_line_number());
 		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, val_lex, $2); 
 		}
