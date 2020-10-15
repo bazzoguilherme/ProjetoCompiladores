@@ -36,14 +36,14 @@ struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, cha
     while ( tabela_atual != NULL && !(strcmp(tabela_atual->key, key) == 0 && NAT_literal != tabela_atual->natureza)) {
         tabela_atual = tabela_atual->next_elem;
     }
-    if(tabela_atual != NULL)
-    {
-        printf("%s\n",tabela_atual->key);
-        printf("Procurando %s e parou em %s com nat %d\n", key, tabela_atual->key, tabela_atual->natureza);
-    }
-    else{
-        printf("Nao encontrei nenhum %s\n", key);
-    }
+    // if(tabela_atual != NULL)
+    // {
+    //     printf("%s\n",tabela_atual->key);
+    //     printf("Procurando %s e parou em %s com nat %d\n", key, tabela_atual->key, tabela_atual->natureza);
+    // }
+    // else{
+    //     printf("Nao encontrei nenhum %s\n", key);
+    // }
     return tabela_atual;
 }
 
@@ -340,6 +340,51 @@ void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t
     }
 }
 
+void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat_utilizacao) {
+    struct elem_table *elemento = NULL;
+    if ((elemento = encontra_elemento_stack(stack, dado->valor.val_str)) == NULL) { // achou elemento - pode user
+        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str, dado->linha);
+    }
+    if (nat_utilizacao != elemento->natureza) {
+        erro_uso_incorreto(uso_incorreto_erro(elemento->natureza), dado->linha, elemento->key, nome_tipo(nat_utilizacao), nome_tipo(elemento->natureza), elemento->localizacao);
+    }
+}
+
+
+char *nome_tipo(Type_Natureza nat) {
+    switch (nat) {
+    case NAT_variavel:
+        return "Variavel";
+        break;
+    case NAT_vetor:
+        return "Vetor";
+        break;
+    case NAT_funcao:
+        return "Funcao";
+        break;
+    
+    default:
+        break;
+    }
+    return "Undeclared Type";
+}
+
+int uso_incorreto_erro(Type_Natureza nat) {
+    switch (nat) {
+    case NAT_variavel:
+        return ERR_VARIABLE;
+        break;
+    case NAT_vetor:
+        return ERR_VECTOR;
+        break;
+    case NAT_funcao:
+        return ERR_FUNCTION;
+        break;
+    
+    default:
+        break;
+    }
+}
 
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
@@ -353,5 +398,10 @@ void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl) {
 
 void erro_nao_declaracao(int err, char *var_nome, int linha_atual) {
     printf("In line %2d | Variable \"%s\" was not declared.\n", linha_atual, var_nome);
+    exit(err);
+}
+
+void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl) {
+    printf("In line %2d | Identifier \"%s\" been used as %s, but declared as %s in line %d.\n", linha_erro, nome_id, tipo_utilizacao, tipo_decl, linha_decl);
     exit(err);
 }

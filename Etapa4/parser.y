@@ -199,7 +199,7 @@ id_local: TK_IDENTIFICADOR {
 		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
-		verifica_existencia(stack_table, $3);
+		verif_utilizacao_identificador(stack_table, $3, NAT_variavel);
 		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
@@ -214,11 +214,11 @@ io_dados: entrada { $$ = $1; }
 	;
 
 entrada: TK_PR_INPUT TK_IDENTIFICADOR { 
-	verifica_existencia(stack_table, $2);
+	verif_utilizacao_identificador(stack_table, $2, NAT_variavel);
 	$$ = create_IO_id(AST_IN, $2); };
 
 saida: TK_PR_OUTPUT TK_IDENTIFICADOR { 
-		verifica_existencia(stack_table, $2);
+		verif_utilizacao_identificador(stack_table, $2, NAT_variavel);
 		$$ = create_IO_id(AST_OUT, $2); }
     | TK_PR_OUTPUT literal { $$ = create_IO(AST_OUT, $2); }
 	;
@@ -377,7 +377,7 @@ break: TK_PR_BREAK { $$ = create_CONT_BREAK(AST_BREAK); };
 
 
 chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' { 
-	verifica_existencia(stack_table, $1);
+	verif_utilizacao_identificador(stack_table, $1, NAT_funcao);
 	$$ = create_FUN_CALL(AST_FUN_CALL, $1, $3); };
 
 parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}
@@ -392,10 +392,10 @@ possivel_parametro: expressao {$$ = $1;}
 comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 
 id_ou_vet_expr: TK_IDENTIFICADOR { 
-		verifica_existencia(stack_table, $1);
+		verif_utilizacao_identificador(stack_table, $1, NAT_variavel);
 		$$ = create_ID(AST_ID, $1); }
 	| TK_IDENTIFICADOR '[' expressao ']' { 
-		verifica_existencia(stack_table, $1);
+		verif_utilizacao_identificador(stack_table, $1, NAT_vetor);
 		$$ = create_VEC(AST_VEC, $1, $3); };
 
 op_unaria: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }

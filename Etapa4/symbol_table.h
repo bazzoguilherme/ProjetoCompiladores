@@ -64,10 +64,15 @@ void print_stack_elements(struct stack_symbol_table *stack);
 void print_table(struct elem_table *table);
 
 void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
+void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat_utilizacao);
 
+char *nome_tipo(Type_Natureza nat);
+
+int uso_incorreto_erro(Type_Natureza nat);
 int erro_semantico(int err);
 
 void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl);
 void erro_nao_declaracao(int err, char *var_nome, int linha_atual);
+void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl);
 
 #endif
