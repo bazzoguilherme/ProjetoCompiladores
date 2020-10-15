@@ -435,6 +435,18 @@ Type define_tipo_expr(Type expr1, Type expr2, int linha) {
     }
 }
 
+void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha) {
+    if (tipo_var == tipo_attrib) {
+        return;
+    }
+    // Erro apenas se tiver que fazer conversao para char ou string
+    //  demais tipos (int, float, bool) permitem conversao
+    if (tipo_var == TYPE_CHAR || tipo_var == TYPE_STRING ||
+        tipo_attrib == TYPE_CHAR || tipo_attrib == TYPE_STRING) { 
+        erro_attrib_incompativel(ERR_WRONG_TYPE, linha, tipo_var, tipo_attrib);
+    }
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);
@@ -451,11 +463,16 @@ void erro_nao_declaracao(int err, char *var_nome, int linha_atual) {
 }
 
 void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl) {
-    printf("In line %2d | Identifier \"%s\" been used as %s, but declared as %s in line %d.\n", linha_erro, nome_id, tipo_utilizacao, tipo_decl, linha_decl);
+    printf("In line %2d | Identifier \"%s\" used as %s, but declared as %s in line %d.\n", linha_erro, nome_id, tipo_utilizacao, tipo_decl, linha_decl);
     exit(err);
 }
 
 void erro_converte_string_char(int err, int linha, Type tipo_atual, Type convertendo_para) {
     printf("In line %2d | Error in conversion of type %s to type %s.\n", linha, nome_tipo(tipo_atual), nome_tipo(convertendo_para));
+    exit(err);
+}
+
+void erro_attrib_incompativel(int err, int linha, Type tipo_var, Type tipo_attrib) {
+    printf("In line %2d | Error to assign %s to variable of type %s.\n", linha, nome_tipo(tipo_attrib), nome_tipo(tipo_var));
     exit(err);
 }

@@ -6,6 +6,7 @@
 #include "symbol_table.h"
 
 extern struct stack_symbol_table *stack_table;
+extern int get_line_number(void);
 
 struct valor_lexico_t *lex_int(int int_value, Tipo_val_lex tipo_tk, int linha) {
     struct valor_lexico_t *val_lex = (struct valor_lexico_t*) malloc (sizeof(struct valor_lexico_t));
@@ -166,6 +167,7 @@ struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f
 }
 
 struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
+    verifica_tipo_atribuicao(f1->tipo, f2->tipo, get_line_number());
     return create_AST(ast_type_exp, NULL, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
 

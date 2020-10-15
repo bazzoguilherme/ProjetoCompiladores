@@ -115,9 +115,7 @@ escape_symbol ['"]
 {digito}+{letra}({letra}|{digito})* { return TOKEN_ERRO; }
 
 {digito}+"."{digito}+(("E"|"e")[-+]?{digito}+)? { 
-        printf("FLOAT\n");
         yylval.valor_lexico = lex_float(atof(yytext), VAL_FLOAT, get_line_number());
-        printf("VAL: %f\n", atof(yytext));
         return TK_LIT_FLOAT; 
     }
 
