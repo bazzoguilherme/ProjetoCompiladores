@@ -218,6 +218,7 @@ io_dados: entrada { $$ = $1; }
 
 entrada: TK_PR_INPUT TK_IDENTIFICADOR { 
 	verif_utilizacao_identificador(stack_table, $2, NAT_variavel);
+	verifica_tipo_input(stack_table, $2);
 	$$ = create_IO_id(AST_IN, $2); };
 
 saida: TK_PR_OUTPUT TK_IDENTIFICADOR { 

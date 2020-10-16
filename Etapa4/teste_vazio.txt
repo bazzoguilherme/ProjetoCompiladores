@@ -14,8 +14,8 @@ int main(int gus_aca_lo, int gui, char xnhor) {
     //a = true;
     //int c <= zxxz;
     //v = 'c';
-    b = main(1, 1, 1);
-    
+    b = main(1, 1, '1');
+    input a;
 }
 
 int gg;

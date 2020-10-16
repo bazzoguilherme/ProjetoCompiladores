@@ -502,6 +502,13 @@ void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexi
     }
 }
 
+void verifica_tipo_input(struct stack_symbol_table *stack, struct valor_lexico_t *input_var) {
+    struct elem_table *elemento = encontra_elemento_stack(stack, input_var->valor.val_str);
+    if (elemento->tipo != TYPE_INT && elemento->tipo != TYPE_FLOAT) {
+        erro_input(ERR_WRONG_PAR_INPUT, get_line_number(), input_var->valor.val_str, elemento->tipo);
+    }
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);
@@ -544,5 +551,10 @@ void erro_args_funcao_tipo(int err, int linha, char *nome_fun, int pos_erro) {
 
 void erro_args_funcao(int err, int linha, char *nome_fun, char *motivo) {
     printf("In line %2d | Error in function call of \"%s\" due to %s.\n", linha, nome_fun, motivo);
+    exit(err);
+}
+
+void erro_input(int err, int linha, char *nome_var, Type tipo_var) {
+    printf("In line %2d | Error in input statement. Expected variable of type int or float, but variable \"%s\" of type %s found.\n", linha, nome_var, nome_tipo(tipo_var));
     exit(err);
 }
