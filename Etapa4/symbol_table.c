@@ -4,6 +4,8 @@
 #include "symbol_table.h"
 #include "errors.h"
 
+extern int get_line_number(void);
+
 int tamanho_byte(Type tipo_v){
     switch (tipo_v)
     {
@@ -445,14 +447,8 @@ Type define_tipo_expr(Type expr1, Type expr2, int linha) {
     }
 }
 
-void verifica_expr_un_tipo(Type tipo_exp, int linha) {
-    if (tipo_exp == TYPE_STRING || tipo_exp == TYPE_CHAR) {
-        // error
-    }
-}
-
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha) {
-    if (tipo_var == tipo_attrib) {
+    if (tipo_var == tipo_attrib) { // Após isso, nodo fica do tipo da var que está recendo
         return;
     }
     // Erro apenas se tiver que fazer conversao para char ou string
@@ -488,6 +484,24 @@ int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr)
     }
 }
 
+void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexico_t *funcao, struct AST *parametros) {
+    struct elem_table *fun_args = encontra_elemento_stack(stack, funcao->valor.val_str)->argumentos;
+    int pos_arg = 1;
+    while(fun_args != NULL && parametros != NULL) {
+        if (fun_args->tipo != parametros->tipo) { // WRONG TYPE
+            erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, get_line_number(), funcao->valor.val_str, pos_arg);
+        }
+        fun_args = fun_args->next_elem;
+        parametros = parametros->prox;
+        pos_arg++;
+    }
+    if (fun_args != NULL) { // MISSING
+        erro_args_funcao(ERR_MISSING_ARGS, get_line_number(),funcao->valor.val_str, "missing arguments");
+    } else if (parametros != NULL) { // EXCESS
+        erro_args_funcao(ERR_MISSING_ARGS, get_line_number(),funcao->valor.val_str, "excess of arguments");
+    }
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);
@@ -520,5 +534,15 @@ void erro_attrib_incompativel(int err, int linha, Type tipo_var, Type tipo_attri
 
 void erro_tam_incompativel(int err, int linha, char *nome_var) {
     printf("In line %2d | Error to assign string literal to variable %s due to lack of space.\n", linha, nome_var);
+    exit(err);
+}
+
+void erro_args_funcao_tipo(int err, int linha, char *nome_fun, int pos_erro) {
+    printf("In line %2d | Error in function call of \"%s\" due to type error in argumento %d.\n", linha, nome_fun, pos_erro);
+    exit(err);
+}
+
+void erro_args_funcao(int err, int linha, char *nome_fun, char *motivo) {
+    printf("In line %2d | Error in function call of \"%s\" due to %s.\n", linha, nome_fun, motivo);
     exit(err);
 }

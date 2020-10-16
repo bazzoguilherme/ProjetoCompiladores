@@ -6,14 +6,15 @@ int main(int gus_aca_lo, int gui, char xnhor) {
     string a ;
     //a = "str" + "ing" ;
     //a = 'c';
-    a = "stringg";
-    a = "stringaaa";
+    a = "string";
+    a = "str" + "ing";
     //a = 99;
     //b = 99.0;
     //a = false;
     //a = true;
     //int c <= zxxz;
     //v = 'c';
+    b = main(1, 1, 1);
     
 }
 

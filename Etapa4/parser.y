@@ -382,6 +382,7 @@ break: TK_PR_BREAK { $$ = create_CONT_BREAK(AST_BREAK); };
 
 chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' { 
 	verif_utilizacao_identificador(stack_table, $1, NAT_funcao);
+	verifica_chamada_funcao(stack_table, $1, $3);
 	$$ = create_FUN_CALL(AST_FUN_CALL, $1, $3); };
 
 parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}

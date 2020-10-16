@@ -80,6 +80,8 @@ void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha);
 void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr, int linha);
 int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr);
 
+void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexico_t *funcao, struct AST *parametros);
+
 int erro_semantico(int err);
 
 void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl);
@@ -88,5 +90,8 @@ void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utili
 void erro_converte_string_char(int err, int linha, Type tipo_atual, Type convertendo_para);
 void erro_attrib_incompativel(int err, int linha, Type tipo_var, Type tipo_attrib);
 void erro_tam_incompativel(int err, int linha, char *nome_var);
+void erro_args_funcao_tipo(int err, int linha, char *nome_fun, int pos_erro);
+void erro_args_funcao(int err, int linha, char *nome_fun, char *motivo);
+
 
 #endif
