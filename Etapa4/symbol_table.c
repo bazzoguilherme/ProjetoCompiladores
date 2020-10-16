@@ -509,6 +509,19 @@ void verifica_tipo_input(struct stack_symbol_table *stack, struct valor_lexico_t
     }
 }
 
+void verifica_tipo_output(struct stack_symbol_table *stack, struct valor_lexico_t *output_var) {
+    struct elem_table *elemento = encontra_elemento_stack(stack, output_var->valor.val_str);
+    if (elemento->tipo != TYPE_INT && elemento->tipo != TYPE_FLOAT) {
+        erro_output(ERR_WRONG_PAR_OUTPUT, get_line_number(), output_var->valor.val_str, elemento->tipo);
+    }
+}
+
+void verifica_tipo_output_lit(struct stack_symbol_table *stack, struct AST *lit) {
+    if (lit->tipo != TYPE_INT && lit->tipo != TYPE_FLOAT) {
+        erro_output_lit(ERR_WRONG_PAR_OUTPUT, get_line_number(), lit->tipo);
+    }
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);
@@ -556,5 +569,15 @@ void erro_args_funcao(int err, int linha, char *nome_fun, char *motivo) {
 
 void erro_input(int err, int linha, char *nome_var, Type tipo_var) {
     printf("In line %2d | Error in input statement. Expected variable of type int or float, but variable \"%s\" of type %s found.\n", linha, nome_var, nome_tipo(tipo_var));
+    exit(err);
+}
+
+void erro_output(int err, int linha, char *nome_var, Type tipo_var) {
+    printf("In line %2d | Error in output statement. Expected variable of type int or float, but variable \"%s\" of type %s found.\n", linha, nome_var, nome_tipo(tipo_var));
+    exit(err);
+}
+
+void erro_output_lit(int err, int linha, Type tipo_lit) {
+    printf("In line %2d | Error in output statement. Expected literal of type int or float, but found type %s.\n", linha, nome_tipo(tipo_lit));
     exit(err);
 }

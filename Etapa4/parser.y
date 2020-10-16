@@ -223,8 +223,11 @@ entrada: TK_PR_INPUT TK_IDENTIFICADOR {
 
 saida: TK_PR_OUTPUT TK_IDENTIFICADOR { 
 		verif_utilizacao_identificador(stack_table, $2, NAT_variavel);
+		verifica_tipo_output(stack_table, $2);
 		$$ = create_IO_id(AST_OUT, $2); }
-    | TK_PR_OUTPUT literal { $$ = create_IO(AST_OUT, $2); }
+    | TK_PR_OUTPUT literal { 
+		verifica_tipo_output_lit(stack_table, $2);
+		$$ = create_IO(AST_OUT, $2); }
 	;
 
 tipo: TK_PR_INT { $$ = TYPE_INT; }
