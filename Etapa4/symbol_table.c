@@ -69,9 +69,17 @@ struct elem_table *recupera_ultimo_elemento(struct elem_table *tabela_atual) {
 
 
 struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char *key, Type tipo_lit) {
-    while ( tabela_atual != NULL && !(strcmp(tabela_atual->key, key) == 0 && tipo_lit != tabela_atual->natureza)) {
+    while ( tabela_atual != NULL && (strcmp(tabela_atual->key, key) != 0 || tipo_lit != tabela_atual->natureza)) {
         tabela_atual = tabela_atual->next_elem;
     }
+    // if(tabela_atual != NULL)
+    // {
+    //     printf("%s\n",tabela_atual->key);
+    //     printf("Procurando %s e parou em %s com nat %d\n", key, tabela_atual->key, tabela_atual->natureza);
+    // }
+    // else{
+    //     printf("Nao encontrei nenhum %s\n", key);
+    // }
     return tabela_atual;
 }
 
@@ -224,9 +232,12 @@ struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct
     struct elem_table *aux;
 
     struct elem_table *elemento = NULL;
-    
+
     if (stack != NULL && (elemento = encontra_elemento_tabela(stack->topo, symbol->valor.val_str)) != NULL) {
         erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha, elemento->localizacao);
+    } 
+    if (lista_aux != NULL && encontra_elemento_tabela(lista_aux, symbol->valor.val_str) != NULL) {
+        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha, symbol->linha);
     }
 
     if (lista_aux == NULL) {
@@ -308,7 +319,7 @@ char *literal_key(struct valor_lexico_t* literal) {
         break;
     case VAL_FLOAT:
         new_key = (char *) malloc (60);
-        sprintf(new_key, "%g", literal->valor.val_float);
+        sprintf(new_key, "%f", literal->valor.val_float);
         break;
     default:
         break;
