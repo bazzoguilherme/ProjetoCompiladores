@@ -39,6 +39,7 @@ struct elem_table *new_elem_table();
 struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, char *key);
 struct elem_table *encontra_elemento_stack(struct stack_symbol_table *stack, char *key);
 struct elem_table *recupera_ultimo_elemento(struct elem_table *tabela_atual);
+struct elem_table *recupera_ultimo_elemento_global(struct stack_symbol_table *stack);
 
 struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char *key, Type tipo_lit);
 struct elem_table *encontra_literal_stack(struct stack_symbol_table *stack, char *key, Type tipo_lit);
@@ -71,6 +72,8 @@ Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lex
 char *nome_tipo(Type tipo);
 char *nome_tipo_nat(Type_Natureza nat);
 
+int tipos_compativeis(Type tipo1, Type tipo2);
+
 int uso_incorreto_erro(Type_Natureza nat);
 
 Type define_tipo_expr(Type expr1, Type expr2, int linha);
@@ -88,6 +91,8 @@ void verifica_tipo_output_lit(struct stack_symbol_table *stack, struct AST *lit)
 
 void verifica_shift(struct AST *lit);
 
+void verifica_retorno_funcao(struct stack_symbol_table *stack, struct AST *expr_retorno);
+
 int erro_semantico(int err);
 
 void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl);
@@ -102,5 +107,6 @@ void erro_input(int err, int linha, char *nome_var, Type tipo_var);
 void erro_output(int err, int linha, char *nome_var, Type tipo_var);
 void erro_output_lit(int err, int linha, Type tipo_var);
 void erro_shift(int err, int linha);
+void erro_return(int err, int linha, char *fun_name, Type tipo_fun, Type tipo_ret);
 
 #endif

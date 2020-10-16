@@ -69,6 +69,13 @@ struct elem_table *recupera_ultimo_elemento(struct elem_table *tabela_atual) {
     return tabela_atual;
 }
 
+struct elem_table *recupera_ultimo_elemento_global(struct stack_symbol_table *stack) {
+    while(stack->down_table != NULL) {
+        stack = stack->down_table;
+    }
+    return recupera_ultimo_elemento(stack->topo);
+}
+
 
 struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char *key, Type tipo_lit) {
     while ( tabela_atual != NULL && (strcmp(tabela_atual->key, key) != 0 || tipo_lit != tabela_atual->natureza)) {
@@ -414,6 +421,21 @@ char *nome_tipo_nat(Type_Natureza nat) {
     return "Undeclared Type";
 }
 
+int tipos_compativeis(Type tipo1, Type tipo2) {
+    if (tipo1 == tipo2) {
+        return tipo1;
+    } else if (tipo1 == TYPE_STRING || tipo1 == TYPE_CHAR ||
+                tipo2 == TYPE_STRING || tipo2 == TYPE_CHAR) {
+        return 0;
+    } else if (tipo1 == TYPE_FLOAT || tipo2 == TYPE_FLOAT) {
+        return TYPE_FLOAT;
+    } else if (tipo1 == TYPE_INT || tipo2 == TYPE_INT) {
+        return TYPE_INT;
+    } else {
+        return TYPE_BOOL;
+    } 
+}
+
 int uso_incorreto_erro(Type_Natureza nat) {
     switch (nat) {
     case NAT_variavel:
@@ -532,6 +554,13 @@ void verifica_shift(struct AST *lit) {
     }
 }
 
+void verifica_retorno_funcao(struct stack_symbol_table *stack, struct AST *expr_retorno) {
+    struct elem_table *elemento_fun = recupera_ultimo_elemento_global(stack);
+    if (!tipos_compativeis(elemento_fun->tipo, expr_retorno->tipo)) {
+        erro_return(ERR_WRONG_PAR_RETURN, get_line_number(), elemento_fun->dado.val_str, elemento_fun->tipo, expr_retorno->tipo);
+    }
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);
@@ -594,5 +623,10 @@ void erro_output_lit(int err, int linha, Type tipo_lit) {
 
 void erro_shift(int err, int linha) {
     printf("In line %2d | Error in value used to shift variable, please use positive integer less or equal to 16.\n", linha);
+    exit(err);
+}
+
+void erro_return(int err, int linha, char *fun_name, Type tipo_fun, Type tipo_ret) {
+    printf("In line %2d | Error in return type of function \"%s\". Function declared of type %s but returning type %s.\n", linha, fun_name, nome_tipo(tipo_fun), nome_tipo(tipo_ret));
     exit(err);
 }

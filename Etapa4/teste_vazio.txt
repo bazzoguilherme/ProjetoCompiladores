@@ -18,6 +18,14 @@ int main(int gus_aca_lo, int gui, char xnhor) {
     //input a;
     //output 'c';
     gus_aca_lo << 16;
+    return 1;
+
+    {
+        b = 10;
+        return 10.0;
+    };
+
+    return false;
 }
 
 int gg;

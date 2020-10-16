@@ -377,7 +377,9 @@ while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco_init bloco_end { $$ = create
 for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco_init bloco_end
 	{ $$ = create_FOR(AST_FOR, $3, $5, $7, $10); } ;
 
-retorno: TK_PR_RETURN expressao { $$ = create_RETURN(AST_RETURN, $2); };
+retorno: TK_PR_RETURN expressao { 
+	verifica_retorno_funcao(stack_table, $2);
+	$$ = create_RETURN(AST_RETURN, $2); };
 
 continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
 
