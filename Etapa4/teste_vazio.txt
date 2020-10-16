@@ -17,6 +17,7 @@ int main(int gus_aca_lo, int gui, char xnhor) {
     b = main(1, 1, '1');
     //input a;
     //output 'c';
+    gus_aca_lo << 16;
 }
 
 int gg;

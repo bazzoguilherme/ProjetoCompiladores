@@ -522,6 +522,16 @@ void verifica_tipo_output_lit(struct stack_symbol_table *stack, struct AST *lit)
     }
 }
 
+void verifica_shift(struct AST *lit) {
+    if (lit->tipo_exp == AST_OP_UN) {
+        lit = lit->children[0];
+    }
+    // lit como literal apenas
+    if (lit->valor_lexico->valor.val_int > 16) {
+        erro_shift(ERR_WRONG_PAR_SHIFT, get_line_number());
+    }
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);
@@ -579,5 +589,10 @@ void erro_output(int err, int linha, char *nome_var, Type tipo_var) {
 
 void erro_output_lit(int err, int linha, Type tipo_lit) {
     printf("In line %2d | Error in output statement. Expected literal of type int or float, but found type %s.\n", linha, nome_tipo(tipo_lit));
+    exit(err);
+}
+
+void erro_shift(int err, int linha) {
+    printf("In line %2d | Error in value used to shift variable, please use positive integer less or equal to 16.\n", linha);
     exit(err);
 }

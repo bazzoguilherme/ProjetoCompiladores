@@ -397,7 +397,9 @@ lista_parametro_chamada_funcao: possivel_parametro ',' parametro_chamada_funcao 
 
 possivel_parametro: expressao {$$ = $1;};
 
-comando_shift: id_ou_vet_expr op_shift int_positivo { $$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
+comando_shift: id_ou_vet_expr op_shift int_positivo { 
+	verifica_shift($3);
+	$$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 
 id_ou_vet_expr: TK_IDENTIFICADOR { 
 		verif_utilizacao_identificador(stack_table, $1, NAT_variavel);

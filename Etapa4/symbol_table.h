@@ -86,6 +86,8 @@ void verifica_tipo_input(struct stack_symbol_table *stack, struct valor_lexico_t
 void verifica_tipo_output(struct stack_symbol_table *stack, struct valor_lexico_t *output_var);
 void verifica_tipo_output_lit(struct stack_symbol_table *stack, struct AST *lit);
 
+void verifica_shift(struct AST *lit);
+
 int erro_semantico(int err);
 
 void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl);
@@ -99,5 +101,6 @@ void erro_args_funcao(int err, int linha, char *nome_fun, char *motivo);
 void erro_input(int err, int linha, char *nome_var, Type tipo_var);
 void erro_output(int err, int linha, char *nome_var, Type tipo_var);
 void erro_output_lit(int err, int linha, Type tipo_var);
+void erro_shift(int err, int linha);
 
 #endif
