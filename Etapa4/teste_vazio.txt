@@ -1,18 +1,20 @@
-int a, a, c;
+int a, b, c;
 static float gus_aca_lo;
 char v[10];
 
 int main(int gus_aca_lo, int gui, char xnhor) {
-    int a;
+    string a ;
     //a = "str" + "ing" ;
     //a = 'c';
-    //a = "stringg";
-    a = 99;
-    b = 99.0;
-    a = false;
-    a = true;
-    // int c <= zxxz;
-    v = 'c';
+    a = "stringg";
+    a = "stringaaa";
+    //a = 99;
+    //b = 99.0;
+    //a = false;
+    //a = true;
+    //int c <= zxxz;
+    //v = 'c';
+    
 }
 
 int gg;

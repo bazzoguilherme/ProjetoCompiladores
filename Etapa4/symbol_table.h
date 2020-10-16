@@ -74,7 +74,11 @@ char *nome_tipo_nat(Type_Natureza nat);
 int uso_incorreto_erro(Type_Natureza nat);
 
 Type define_tipo_expr(Type expr1, Type expr2, int linha);
+void verifica_expr_un_tipo(Type tipo_exp, int linha);
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha);
+
+void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr, int linha);
+int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr);
 
 int erro_semantico(int err);
 
@@ -83,5 +87,6 @@ void erro_nao_declaracao(int err, char *var_nome, int linha_atual);
 void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl);
 void erro_converte_string_char(int err, int linha, Type tipo_atual, Type convertendo_para);
 void erro_attrib_incompativel(int err, int linha, Type tipo_var, Type tipo_attrib);
+void erro_tam_incompativel(int err, int linha, char *nome_var);
 
 #endif

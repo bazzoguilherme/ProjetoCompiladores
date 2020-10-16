@@ -168,18 +168,21 @@ struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f
 
 struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
     verifica_tipo_atribuicao(f1->tipo, f2->tipo, get_line_number());
+    if (f1->tipo == TYPE_STRING) {
+        verifica_atrib_string(stack_table, f1->valor_lexico->valor.val_str, f2, get_line_number());
+    }
     return create_AST(ast_type_exp, NULL, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_DECL_ASSIGN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct AST *f2) {
     struct AST* f1 = create_ID(AST_ID, id);
-    return create_AST(ast_type_exp, val_lex, f1->tipo, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, TYPE_NO_VAL, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_DECL_ASSIGN_id(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct valor_lexico_t *id2) {
     struct AST* f1 = create_ID(AST_ID, id);
     struct AST* f2 = create_ID(AST_ID, id2);
-    return create_AST(ast_type_exp, val_lex, f1->tipo, f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, TYPE_NO_VAL, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_IF(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3) {
@@ -196,6 +199,20 @@ struct AST *create_FOR(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, st
 
 struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {
     return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), f1, NULL, NULL, NULL, NULL);
+}
+
+void atualiza_tipo_nodos_decl(struct AST *nodo, Type tipo_nodo) {
+    if (nodo != NULL) {
+        nodo->children[0]->tipo = tipo_nodo;
+        verifica_tipo_atribuicao(tipo_nodo, nodo->children[1]->tipo, get_line_number());
+        nodo->tipo = tipo_nodo;
+        if (tipo_nodo == TYPE_STRING) {
+            verifica_atrib_string(stack_table, nodo->children[0]->valor_lexico->valor.val_str, nodo->children[1], get_line_number());
+        }
+        if (nodo->prox != NULL) {
+            atualiza_tipo_nodos_decl(nodo->prox, tipo_nodo);
+        }
+    }
 }
 
 int return_size(struct AST *f1)  {

@@ -117,6 +117,8 @@ struct AST *create_FOR(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, st
 
 struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1);
 
+void atualiza_tipo_nodos_decl(struct AST *nodo, Type tipo_nodo);
+
 int return_size(struct AST *f1);
 
 Type tipo_de_valor(struct valor_lexico_t *valor);

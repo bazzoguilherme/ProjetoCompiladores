@@ -164,7 +164,6 @@ struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, stru
         stack = new_stack();
     }
     
-
     struct elem_table *elemento = stack->topo;
     struct elem_table *busca_lit = NULL;
 
@@ -179,7 +178,7 @@ struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, stru
             elemento = new_elem_table();
             elemento->key = key_lit;
             elemento->localizacao = literal->linha;
-            elemento->tamanho = tamanho_byte(tipo);
+            elemento->tamanho = tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1);
             elemento->natureza = nat;
             elemento->tipo = tipo;
             elemento->dado = literal->valor;
@@ -221,7 +220,7 @@ struct stack_symbol_table *adiciona_lista_elem_comTipo(struct stack_symbol_table
 
     while (lista_aux != NULL) {
         lista_aux->tipo = tipo_;
-        lista_aux->tamanho *= tamanho_byte(tipo_);
+        lista_aux->tamanho = ((lista_aux->natureza == NAT_variavel && tipo_ == TYPE_STRING) ? -1 : tamanho_byte(tipo_));
         lista_aux = lista_aux->next_elem;
     }
 
@@ -446,6 +445,12 @@ Type define_tipo_expr(Type expr1, Type expr2, int linha) {
     }
 }
 
+void verifica_expr_un_tipo(Type tipo_exp, int linha) {
+    if (tipo_exp == TYPE_STRING || tipo_exp == TYPE_CHAR) {
+        // error
+    }
+}
+
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha) {
     if (tipo_var == tipo_attrib) {
         return;
@@ -455,6 +460,31 @@ void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha) {
     if (tipo_var == TYPE_CHAR || tipo_var == TYPE_STRING ||
         tipo_attrib == TYPE_CHAR || tipo_attrib == TYPE_STRING) { 
         erro_attrib_incompativel(ERR_WRONG_TYPE, linha, tipo_var, tipo_attrib);
+    }
+}
+
+void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr, int linha) {
+    struct elem_table *var = encontra_elemento_stack(stack, nome_var);
+    int tam_inserindo = calcula_tamanho_str_expr(stack, expr);
+    if (var->tamanho == -1){
+        var->tamanho = tam_inserindo;
+    } else if (tam_inserindo > var->tamanho) {
+        erro_tam_incompativel(ERR_STRING_SIZE, linha, nome_var);
+    }
+}
+
+int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr){
+    if (expr == NULL) {
+        return 0;
+    }
+    struct elem_table *elem = NULL;
+    if (expr->tipo_exp == AST_LIT) {
+        return strlen(expr->valor_lexico->valor.val_str);
+    } else if (expr->tipo_exp == AST_ID) {
+        elem = encontra_elemento_stack(stack, expr->valor_lexico->valor.val_str);
+        return ( (elem->tamanho != -1) ? elem->tamanho : 0 );
+    } else if (expr->tipo_exp == AST_OP_BIN) {
+        return calcula_tamanho_str_expr(stack, expr->children[0]) + calcula_tamanho_str_expr(stack, expr->children[1]);
     }
 }
 
@@ -485,5 +515,10 @@ void erro_converte_string_char(int err, int linha, Type tipo_atual, Type convert
 
 void erro_attrib_incompativel(int err, int linha, Type tipo_var, Type tipo_attrib) {
     printf("In line %2d | Error to assign %s to variable of type %s.\n", linha, nome_tipo(tipo_attrib), nome_tipo(tipo_var));
+    exit(err);
+}
+
+void erro_tam_incompativel(int err, int linha, char *nome_var) {
+    printf("In line %2d | Error to assign string literal to variable %s due to lack of space.\n", linha, nome_var);
     exit(err);
 }

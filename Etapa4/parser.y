@@ -175,19 +175,23 @@ id_ou_vetor: TK_IDENTIFICADOR {
 declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { 
 		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
 		lista_aux = NULL;
-		$$ = create_NODE($3, $4); }
+		$$ = create_NODE($3, $4);
+		atualiza_tipo_nodos_decl($$, $2); }
 	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { 
 		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $3);
 		lista_aux = NULL;
-		$$ = create_NODE($4, $5); }
+		$$ = create_NODE($4, $5);
+		atualiza_tipo_nodos_decl($$, $3); }
 	| TK_PR_CONST tipo id_local lista_var_local { 
 		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
 		lista_aux = NULL;
-		$$ = create_NODE($3, $4); }
+		$$ = create_NODE($3, $4);
+		atualiza_tipo_nodos_decl($$, $2); }
 	| tipo id_local lista_var_local { 
 		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $1);
 		lista_aux = NULL;
-		$$ = create_NODE($2, $3); };
+		$$ = create_NODE($2, $3);
+		atualiza_tipo_nodos_decl($$, $1); };
 
 lista_var_local: ',' id_local lista_var_local { $$ = create_NODE($2, $3); }
 	| { $$ = NULL; };
@@ -282,10 +286,10 @@ expr_log_literal: TK_LIT_TRUE {
 		$$ = create_LIT(AST_LIT, $1); };
 
 literal: mais_menos TK_LIT_INT { 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_INT);
+		stack_table = insere_literal(stack_table, $2, NAT_literal, TYPE_INT);
 		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
    | mais_menos TK_LIT_FLOAT { 
-	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_FLOAT);
+	   stack_table = insere_literal(stack_table, $2, NAT_literal, TYPE_FLOAT);
 	   $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
    | literal_char_str { 
 	   $$ = $1; }
