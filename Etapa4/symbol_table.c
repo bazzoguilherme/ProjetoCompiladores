@@ -309,11 +309,11 @@ char *literal_key(struct valor_lexico_t* literal) {
         break;
     case VAL_INT:
         new_key = (char *) malloc (12);
-        sprintf(new_key, "%d", literal->valor.val_int);
+        snprintf(new_key, 12, "%d", literal->valor.val_int);
         break;
     case VAL_FLOAT:
-        new_key = (char *) malloc (60);
-        sprintf(new_key, "%f", literal->valor.val_float);
+        new_key = (char *) malloc (30);
+        snprintf(new_key, 30, "%f", literal->valor.val_float);
         break;
     default:
         break;
