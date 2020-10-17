@@ -137,7 +137,7 @@ struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, stru
     struct elem_table *elemento = NULL;
     
     if (stack != NULL && (elemento = encontra_elemento_tabela(stack->topo, symbol->valor.val_str)) != NULL) {
-        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha, elemento->localizacao);
+        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, elemento->localizacao);
     }
 
     elemento = stack->topo;
@@ -242,10 +242,10 @@ struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct
     struct elem_table *elemento = NULL;
 
     if (stack != NULL && (elemento = encontra_elemento_tabela(stack->topo, symbol->valor.val_str)) != NULL) {
-        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha, elemento->localizacao);
+        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, elemento->localizacao);
     } 
     if (lista_aux != NULL && encontra_elemento_tabela(lista_aux, symbol->valor.val_str) != NULL) {
-        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha, symbol->linha);
+        erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha);
     }
 
     if (lista_aux == NULL) {
@@ -357,24 +357,24 @@ void print_table(struct elem_table *table) {
  */
 void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
     if (encontra_elemento_stack(stack, dado->valor.val_str) == NULL) { // achou elemento - pode user
-        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str, dado->linha);
+        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str);
     }
 }
 
 void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat_utilizacao) {
     struct elem_table *elemento = NULL;
     if ((elemento = encontra_elemento_stack(stack, dado->valor.val_str)) == NULL) { // achou elemento - pode user
-        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str, dado->linha);
+        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str);
     }
     if (nat_utilizacao != elemento->natureza) {
-        erro_uso_incorreto(uso_incorreto_erro(elemento->natureza), dado->linha, elemento->key, nome_tipo_nat(nat_utilizacao), nome_tipo_nat(elemento->natureza), elemento->localizacao);
+        erro_uso_incorreto(uso_incorreto_erro(elemento->natureza), elemento->key, nome_tipo_nat(nat_utilizacao), nome_tipo_nat(elemento->natureza), elemento->localizacao);
     }
 }
 
 Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
     struct elem_table *elemento = NULL;
     if ((elemento = encontra_elemento_stack(stack, dado->valor.val_str)) == NULL) { // achou elemento - pode user
-        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str, dado->linha);
+        erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str);
     }
     return elemento->tipo;
 }
@@ -457,9 +457,9 @@ Type define_tipo_expr(Type expr1, Type expr2, int linha) {
     if (expr1 == expr2) { // int-int, float-float, bool-bool (aceita char-char e string-string)
         return expr1;
     } else if (expr1 == TYPE_STRING || expr2 == TYPE_STRING) {
-        erro_converte_string_char(ERR_STRING_TO_X, linha, TYPE_STRING, (expr1 != TYPE_STRING ? expr1 : expr2));
+        erro_converte_string_char(ERR_STRING_TO_X, TYPE_STRING, (expr1 != TYPE_STRING ? expr1 : expr2));
     } else if (expr1 == TYPE_CHAR || expr2 == TYPE_CHAR) {
-        erro_converte_string_char(ERR_CHAR_TO_X, linha, TYPE_CHAR, (expr1 != TYPE_CHAR ? expr1 : expr2));
+        erro_converte_string_char(ERR_CHAR_TO_X, TYPE_CHAR, (expr1 != TYPE_CHAR ? expr1 : expr2));
     } else if (expr1 == TYPE_FLOAT || expr2 == TYPE_FLOAT) {
         return TYPE_FLOAT;
     } else if (expr1 == TYPE_INT || expr2 == TYPE_INT) {
@@ -477,7 +477,7 @@ void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha) {
     //  demais tipos (int, float, bool) permitem conversao
     if (tipo_var == TYPE_CHAR || tipo_var == TYPE_STRING ||
         tipo_attrib == TYPE_CHAR || tipo_attrib == TYPE_STRING) { 
-        erro_attrib_incompativel(ERR_WRONG_TYPE, linha, tipo_var, tipo_attrib);
+        erro_attrib_incompativel(ERR_WRONG_TYPE, tipo_var, tipo_attrib);
     }
 }
 
@@ -487,7 +487,7 @@ void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, str
     if (var->tamanho == -1){
         var->tamanho = tam_inserindo;
     } else if (tam_inserindo > var->tamanho) {
-        erro_tam_incompativel(ERR_STRING_SIZE, linha, nome_var);
+        erro_tam_incompativel(ERR_STRING_SIZE, nome_var);
     }
 }
 
@@ -511,36 +511,36 @@ void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexi
     int pos_arg = 1;
     while(fun_args != NULL && parametros != NULL) {
         if (fun_args->tipo != parametros->tipo) { // WRONG TYPE
-            erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, get_line_number(), funcao->valor.val_str, pos_arg);
+            erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, funcao->valor.val_str, pos_arg);
         }
         fun_args = fun_args->next_elem;
         parametros = parametros->prox;
         pos_arg++;
     }
     if (fun_args != NULL) { // MISSING
-        erro_args_funcao(ERR_MISSING_ARGS, get_line_number(),funcao->valor.val_str, "missing arguments");
+        erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "missing arguments");
     } else if (parametros != NULL) { // EXCESS
-        erro_args_funcao(ERR_MISSING_ARGS, get_line_number(),funcao->valor.val_str, "excess of arguments");
+        erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "excess of arguments");
     }
 }
 
 void verifica_tipo_input(struct stack_symbol_table *stack, struct valor_lexico_t *input_var) {
     struct elem_table *elemento = encontra_elemento_stack(stack, input_var->valor.val_str);
     if (elemento->tipo != TYPE_INT && elemento->tipo != TYPE_FLOAT) {
-        erro_input(ERR_WRONG_PAR_INPUT, get_line_number(), input_var->valor.val_str, elemento->tipo);
+        erro_input(ERR_WRONG_PAR_INPUT, input_var->valor.val_str, elemento->tipo);
     }
 }
 
 void verifica_tipo_output(struct stack_symbol_table *stack, struct valor_lexico_t *output_var) {
     struct elem_table *elemento = encontra_elemento_stack(stack, output_var->valor.val_str);
     if (elemento->tipo != TYPE_INT && elemento->tipo != TYPE_FLOAT) {
-        erro_output(ERR_WRONG_PAR_OUTPUT, get_line_number(), output_var->valor.val_str, elemento->tipo);
+        erro_output(ERR_WRONG_PAR_OUTPUT, output_var->valor.val_str, elemento->tipo);
     }
 }
 
 void verifica_tipo_output_lit(struct stack_symbol_table *stack, struct AST *lit) {
     if (lit->tipo != TYPE_INT && lit->tipo != TYPE_FLOAT) {
-        erro_output_lit(ERR_WRONG_PAR_OUTPUT, get_line_number(), lit->tipo);
+        erro_output_lit(ERR_WRONG_PAR_OUTPUT, lit->tipo);
     }
 }
 
@@ -550,14 +550,14 @@ void verifica_shift(struct AST *lit) {
     }
     // lit como literal apenas
     if (lit->valor_lexico->valor.val_int > 16) {
-        erro_shift(ERR_WRONG_PAR_SHIFT, get_line_number());
+        erro_shift(ERR_WRONG_PAR_SHIFT);
     }
 }
 
 void verifica_retorno_funcao(struct stack_symbol_table *stack, struct AST *expr_retorno) {
     struct elem_table *elemento_fun = recupera_ultimo_elemento_global(stack);
     if (!tipos_compativeis(elemento_fun->tipo, expr_retorno->tipo)) {
-        erro_return(ERR_WRONG_PAR_RETURN, get_line_number(), elemento_fun->dado.val_str, elemento_fun->tipo, expr_retorno->tipo);
+        erro_return(ERR_WRONG_PAR_RETURN, elemento_fun->dado.val_str, elemento_fun->tipo, expr_retorno->tipo);
     }
 }
 
@@ -566,67 +566,67 @@ int erro_semantico(int err) {
     exit(err);
 }
 
-void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl) {
-    printf("In line %2d | Previous declaration of identifier \"%s\" in line %d.\n", linha_atual, var_nome, linha_decl);
+void erro_declaracao(int err, char *var_nome, int linha_decl) {
+    printf("In line %2d | Previous declaration of identifier \"%s\" in line %d.\n", get_line_number(), var_nome, linha_decl);
     exit(err);
 }
 
-void erro_nao_declaracao(int err, char *var_nome, int linha_atual) {
-    printf("In line %2d | Variable \"%s\" was not declared.\n", linha_atual, var_nome);
+void erro_nao_declaracao(int err, char *var_nome) {
+    printf("In line %2d | Variable \"%s\" was not declared.\n", get_line_number(), var_nome);
     exit(err);
 }
 
-void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl) {
-    printf("In line %2d | Identifier \"%s\" used as %s, but declared as %s in line %d.\n", linha_erro, nome_id, tipo_utilizacao, tipo_decl, linha_decl);
+void erro_uso_incorreto(int err, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl) {
+    printf("In line %2d | Identifier \"%s\" used as %s, but declared as %s in line %d.\n", get_line_number(), nome_id, tipo_utilizacao, tipo_decl, linha_decl);
     exit(err);
 }
 
-void erro_converte_string_char(int err, int linha, Type tipo_atual, Type convertendo_para) {
-    printf("In line %2d | Error in conversion of type %s to type %s.\n", linha, nome_tipo(tipo_atual), nome_tipo(convertendo_para));
+void erro_converte_string_char(int err, Type tipo_atual, Type convertendo_para) {
+    printf("In line %2d | Error in conversion of type %s to type %s.\n", get_line_number(), nome_tipo(tipo_atual), nome_tipo(convertendo_para));
     exit(err);
 }
 
-void erro_attrib_incompativel(int err, int linha, Type tipo_var, Type tipo_attrib) {
-    printf("In line %2d | Error to assign %s to variable of type %s.\n", linha, nome_tipo(tipo_attrib), nome_tipo(tipo_var));
+void erro_attrib_incompativel(int err, Type tipo_var, Type tipo_attrib) {
+    printf("In line %2d | Error to assign %s to variable of type %s.\n", get_line_number(), nome_tipo(tipo_attrib), nome_tipo(tipo_var));
     exit(err);
 }
 
-void erro_tam_incompativel(int err, int linha, char *nome_var) {
-    printf("In line %2d | Error to assign string literal to variable %s due to lack of space.\n", linha, nome_var);
+void erro_tam_incompativel(int err, char *nome_var) {
+    printf("In line %2d | Error to assign string literal to variable %s due to lack of space.\n", get_line_number(), nome_var);
     exit(err);
 }
 
-void erro_args_funcao_tipo(int err, int linha, char *nome_fun, int pos_erro) {
-    printf("In line %2d | Error in function call of \"%s\" due to type error in argumento %d.\n", linha, nome_fun, pos_erro);
+void erro_args_funcao_tipo(int err, char *nome_fun, int pos_erro) {
+    printf("In line %2d | Error in function call of \"%s\" due to type error in argumento %d.\n", get_line_number(), nome_fun, pos_erro);
     exit(err);
 }
 
-void erro_args_funcao(int err, int linha, char *nome_fun, char *motivo) {
-    printf("In line %2d | Error in function call of \"%s\" due to %s.\n", linha, nome_fun, motivo);
+void erro_args_funcao(int err, char *nome_fun, char *motivo) {
+    printf("In line %2d | Error in function call of \"%s\" due to %s.\n", get_line_number(), nome_fun, motivo);
     exit(err);
 }
 
-void erro_input(int err, int linha, char *nome_var, Type tipo_var) {
-    printf("In line %2d | Error in input statement. Expected variable of type int or float, but variable \"%s\" of type %s found.\n", linha, nome_var, nome_tipo(tipo_var));
+void erro_input(int err, char *nome_var, Type tipo_var) {
+    printf("In line %2d | Error in input statement. Expected variable of type int or float, but variable \"%s\" of type %s found.\n", get_line_number(), nome_var, nome_tipo(tipo_var));
     exit(err);
 }
 
-void erro_output(int err, int linha, char *nome_var, Type tipo_var) {
-    printf("In line %2d | Error in output statement. Expected variable of type int or float, but variable \"%s\" of type %s found.\n", linha, nome_var, nome_tipo(tipo_var));
+void erro_output(int err, char *nome_var, Type tipo_var) {
+    printf("In line %2d | Error in output statement. Expected variable of type int or float, but variable \"%s\" of type %s found.\n", get_line_number(), nome_var, nome_tipo(tipo_var));
     exit(err);
 }
 
-void erro_output_lit(int err, int linha, Type tipo_lit) {
-    printf("In line %2d | Error in output statement. Expected literal of type int or float, but found type %s.\n", linha, nome_tipo(tipo_lit));
+void erro_output_lit(int err, Type tipo_lit) {
+    printf("In line %2d | Error in output statement. Expected literal of type int or float, but found type %s.\n", get_line_number(), nome_tipo(tipo_lit));
     exit(err);
 }
 
-void erro_shift(int err, int linha) {
-    printf("In line %2d | Error in value used to shift variable, please use positive integer less or equal to 16.\n", linha);
+void erro_shift(int err) {
+    printf("In line %2d | Error in value used to shift variable, please use positive integer less or equal to 16.\n", get_line_number());
     exit(err);
 }
 
-void erro_return(int err, int linha, char *fun_name, Type tipo_fun, Type tipo_ret) {
-    printf("In line %2d | Error in return type of function \"%s\". Function declared of type %s but returning type %s.\n", linha, fun_name, nome_tipo(tipo_fun), nome_tipo(tipo_ret));
+void erro_return(int err, char *fun_name, Type tipo_fun, Type tipo_ret) {
+    printf("In line %2d | Error in return type of function \"%s\". Function declared of type %s but returning type %s.\n", get_line_number(), fun_name, nome_tipo(tipo_fun), nome_tipo(tipo_ret));
     exit(err);
 }

@@ -95,18 +95,18 @@ void verifica_retorno_funcao(struct stack_symbol_table *stack, struct AST *expr_
 
 int erro_semantico(int err);
 
-void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl);
-void erro_nao_declaracao(int err, char *var_nome, int linha_atual);
-void erro_uso_incorreto(int err, int linha_erro, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl);
-void erro_converte_string_char(int err, int linha, Type tipo_atual, Type convertendo_para);
-void erro_attrib_incompativel(int err, int linha, Type tipo_var, Type tipo_attrib);
-void erro_tam_incompativel(int err, int linha, char *nome_var);
-void erro_args_funcao_tipo(int err, int linha, char *nome_fun, int pos_erro);
-void erro_args_funcao(int err, int linha, char *nome_fun, char *motivo);
-void erro_input(int err, int linha, char *nome_var, Type tipo_var);
-void erro_output(int err, int linha, char *nome_var, Type tipo_var);
-void erro_output_lit(int err, int linha, Type tipo_var);
-void erro_shift(int err, int linha);
-void erro_return(int err, int linha, char *fun_name, Type tipo_fun, Type tipo_ret);
+void erro_declaracao(int err, char *var_nome, int linha_decl);
+void erro_nao_declaracao(int err, char *var_nome);
+void erro_uso_incorreto(int err, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl);
+void erro_converte_string_char(int err, Type tipo_atual, Type convertendo_para);
+void erro_attrib_incompativel(int err, Type tipo_var, Type tipo_attrib);
+void erro_tam_incompativel(int err, char *nome_var);
+void erro_args_funcao_tipo(int err, char *nome_fun, int pos_erro);
+void erro_args_funcao(int err, char *nome_fun, char *motivo);
+void erro_input(int err, char *nome_var, Type tipo_var);
+void erro_output(int err, char *nome_var, Type tipo_var);
+void erro_output_lit(int err, Type tipo_var);
+void erro_shift(int err);
+void erro_return(int err, char *fun_name, Type tipo_fun, Type tipo_ret);
 
 #endif
