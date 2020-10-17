@@ -7,6 +7,7 @@
 extern int get_line_number(void);
 
 struct stack_symbol_table *stack = NULL;
+struct elem_table *lista_aux = NULL;
 
 int tamanho_byte(Type tipo_v){
     switch (tipo_v)
@@ -203,7 +204,7 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
     }
 }
 
-void adiciona_lista_elem_comTipo(struct elem_table *lista_aux, Type tipo_) {
+void adiciona_lista_elem_comTipo(Type tipo_) {
 
     if (stack == NULL) {
         stack = escopo_global();
@@ -224,9 +225,10 @@ void adiciona_lista_elem_comTipo(struct elem_table *lista_aux, Type tipo_) {
         lista_aux->tamanho *= ((lista_aux->natureza == NAT_variavel && tipo_ == TYPE_STRING) ? -1 : tamanho_byte(tipo_));
         lista_aux = lista_aux->next_elem;
     }
+    lista_aux = NULL; // Limpa lista
 }
 
-struct elem_table *cria_simbolo_parcial(struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_) {
+void cria_simbolo_parcial(struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_) {
     struct elem_table *aux;
 
     struct elem_table *elemento = NULL;
@@ -242,7 +244,8 @@ struct elem_table *cria_simbolo_parcial(struct elem_table *lista_aux, struct val
         struct elem_table *new_elem = create_elem(strdup(symbol->valor.val_str), 
                                 symbol->linha, nat, TYPE_NO_VAL, tamanho_, 
                                 symbol->valor);
-        return new_elem;
+        lista_aux = new_elem;
+        return;
     } else {
         aux = lista_aux;
         while(aux->next_elem != NULL) {
@@ -256,7 +259,6 @@ struct elem_table *cria_simbolo_parcial(struct elem_table *lista_aux, struct val
 
     aux->next_elem = new_elem;
 
-    return lista_aux;
 }
 
 

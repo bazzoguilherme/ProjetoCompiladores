@@ -33,8 +33,6 @@ extern void libera(void *arvore);
 
 extern struct stack_symbol_table *stack;
 
-struct elem_table *lista_aux = NULL;
-
 %}
 %union {
 	struct valor_lexico_t *valor_lexico;
@@ -155,42 +153,36 @@ programa: declaracao_global programa { $$ = $2; }
 	
 
 declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global {
-		adiciona_lista_elem_comTipo(lista_aux, $2);
-		lista_aux = NULL;
+		adiciona_lista_elem_comTipo($2);
 	}
 	| tipo id_ou_vetor lista_var_global {
-		adiciona_lista_elem_comTipo(lista_aux, $1);
-		lista_aux = NULL;
+		adiciona_lista_elem_comTipo($1);
 	};
 
 lista_var_global: ',' id_ou_vetor lista_var_global
 	| ';';
 
 id_ou_vetor: TK_IDENTIFICADOR { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		cria_simbolo_parcial($1, NAT_variavel, 1);
 		free_val_lex($1); }
 	| TK_IDENTIFICADOR '[' int_positivo ']' { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_vetor, return_size($3));
+		cria_simbolo_parcial($1, NAT_vetor, return_size($3));
 		free_val_lex($1); libera_ast($3); } ;
 
 declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { 
-		adiciona_lista_elem_comTipo(lista_aux, $2);
-		lista_aux = NULL;
+		adiciona_lista_elem_comTipo($2);
 		$$ = create_NODE($3, $4);
 		atualiza_tipo_nodos_decl($$, $2); }
 	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { 
-		adiciona_lista_elem_comTipo(lista_aux, $3);
-		lista_aux = NULL;
+		adiciona_lista_elem_comTipo($3);
 		$$ = create_NODE($4, $5);
 		atualiza_tipo_nodos_decl($$, $3); }
 	| TK_PR_CONST tipo id_local lista_var_local { 
-		adiciona_lista_elem_comTipo(lista_aux, $2);
-		lista_aux = NULL;
+		adiciona_lista_elem_comTipo($2);
 		$$ = create_NODE($3, $4);
 		atualiza_tipo_nodos_decl($$, $2); }
 	| tipo id_local lista_var_local { 
-		adiciona_lista_elem_comTipo(lista_aux, $1);
-		lista_aux = NULL;
+		adiciona_lista_elem_comTipo($1);
 		$$ = create_NODE($2, $3);
 		atualiza_tipo_nodos_decl($$, $1); };
 
@@ -198,14 +190,14 @@ lista_var_local: ',' id_local lista_var_local { $$ = create_NODE($2, $3); }
 	| { $$ = NULL; };
 
 id_local: TK_IDENTIFICADOR { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		cria_simbolo_parcial($1, NAT_variavel, 1);
 		$$ = NULL; free_val_lex($1); }
 	| TK_IDENTIFICADOR assign literal { 
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		cria_simbolo_parcial($1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
 		verif_utilizacao_identificador($3, NAT_variavel);
-		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
+		cria_simbolo_parcial($1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
 assign: TK_OC_LE { $$ = $1; };

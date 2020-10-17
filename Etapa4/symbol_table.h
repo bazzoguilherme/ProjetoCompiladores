@@ -54,9 +54,9 @@ void delete_escopo();
 void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
 void insere_literal(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
 
-void adiciona_lista_elem_comTipo(struct elem_table *lista_aux, Type tipo_);
+void adiciona_lista_elem_comTipo(Type tipo_);
 
-struct elem_table *cria_simbolo_parcial(struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_);
+void cria_simbolo_parcial(struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_);
 
 void adiciona_argumentos_funcao();
 
