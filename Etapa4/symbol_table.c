@@ -313,7 +313,7 @@ char *literal_key(struct valor_lexico_t* literal) {
         break;
     case VAL_FLOAT:
         new_key = (char *) malloc (30);
-        snprintf(new_key, 30, "%f", literal->valor.val_float);
+        snprintf(new_key, 30, "%.6f", literal->valor.val_float);
         break;
     default:
         break;

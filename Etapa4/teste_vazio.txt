@@ -14,11 +14,13 @@ int main(int var1, int gui, char xnhor) {
 
     //b = - 'c';
 
+    input b;
+
     b = 2;
     b = 10;
     b = 2;
     
-    v[10-2] = 'd';
+    v[10-28798.0853] = 'd';
 
     main(1, 2, 'x');
 

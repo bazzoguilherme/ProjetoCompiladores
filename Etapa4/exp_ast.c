@@ -140,7 +140,7 @@ void print_LIT(struct AST *ast) {
         printf("%p [label=\"%d\"];\n", ast, ast->valor_lexico->valor.val_int);
         break;
     case VAL_FLOAT:
-        printf("%p [label=\"%g\"];\n", ast, ast->valor_lexico->valor.val_float);
+        printf("%p [label=\"%.6f\"];\n", ast, ast->valor_lexico->valor.val_float);
         break;
     case VAL_BOOL:
         printf("%p [label=\"%s\"];\n", ast, (ast->valor_lexico->valor.val_int ? "true" : "false"));
