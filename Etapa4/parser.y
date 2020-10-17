@@ -31,7 +31,7 @@ extern void *arvore;
 extern void exporta(void *arvore);
 extern void libera(void *arvore);
 
-struct stack_symbol_table *stack_table = NULL;
+extern struct stack_symbol_table *stack;
 
 struct elem_table *lista_aux = NULL;
 
@@ -152,13 +152,14 @@ programa: declaracao_global programa { $$ = $2; }
 	| declaracao_funcao programa { $$ = create_NODE($1, $2); arvore = (void*) $$; }
 	| { $$ = NULL; }
 	;
+	
 
 declaracao_global: TK_PR_STATIC tipo id_ou_vetor lista_var_global {
-		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
+		adiciona_lista_elem_comTipo(lista_aux, $2);
 		lista_aux = NULL;
 	}
 	| tipo id_ou_vetor lista_var_global {
-		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $1);
+		adiciona_lista_elem_comTipo(lista_aux, $1);
 		lista_aux = NULL;
 	};
 
@@ -166,29 +167,29 @@ lista_var_global: ',' id_ou_vetor lista_var_global
 	| ';';
 
 id_ou_vetor: TK_IDENTIFICADOR { 
-		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
 		free_val_lex($1); }
 	| TK_IDENTIFICADOR '[' int_positivo ']' { 
-		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_vetor, return_size($3));
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_vetor, return_size($3));
 		free_val_lex($1); libera_ast($3); } ;
 
 declaracao_local: TK_PR_STATIC tipo id_local lista_var_local { 
-		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
+		adiciona_lista_elem_comTipo(lista_aux, $2);
 		lista_aux = NULL;
 		$$ = create_NODE($3, $4);
 		atualiza_tipo_nodos_decl($$, $2); }
 	| TK_PR_STATIC TK_PR_CONST tipo id_local lista_var_local { 
-		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $3);
+		adiciona_lista_elem_comTipo(lista_aux, $3);
 		lista_aux = NULL;
 		$$ = create_NODE($4, $5);
 		atualiza_tipo_nodos_decl($$, $3); }
 	| TK_PR_CONST tipo id_local lista_var_local { 
-		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $2);
+		adiciona_lista_elem_comTipo(lista_aux, $2);
 		lista_aux = NULL;
 		$$ = create_NODE($3, $4);
 		atualiza_tipo_nodos_decl($$, $2); }
 	| tipo id_local lista_var_local { 
-		stack_table = adiciona_lista_elem_comTipo(stack_table, lista_aux, $1);
+		adiciona_lista_elem_comTipo(lista_aux, $1);
 		lista_aux = NULL;
 		$$ = create_NODE($2, $3);
 		atualiza_tipo_nodos_decl($$, $1); };
@@ -197,14 +198,14 @@ lista_var_local: ',' id_local lista_var_local { $$ = create_NODE($2, $3); }
 	| { $$ = NULL; };
 
 id_local: TK_IDENTIFICADOR { 
-		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
 		$$ = NULL; free_val_lex($1); }
 	| TK_IDENTIFICADOR assign literal { 
-		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN(AST_DECL_ASSIGN, $2, $1, $3); }
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
-		verif_utilizacao_identificador(stack_table, $3, NAT_variavel);
-		lista_aux = cria_simbolo_parcial(stack_table, lista_aux, $1, NAT_variavel, 1);
+		verif_utilizacao_identificador($3, NAT_variavel);
+		lista_aux = cria_simbolo_parcial(lista_aux, $1, NAT_variavel, 1);
 		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
 
 assign: TK_OC_LE { $$ = $1; };
@@ -217,16 +218,16 @@ io_dados: entrada { $$ = $1; }
 	;
 
 entrada: TK_PR_INPUT TK_IDENTIFICADOR { 
-	verif_utilizacao_identificador(stack_table, $2, NAT_variavel);
-	verifica_tipo_input(stack_table, $2);
+	verif_utilizacao_identificador($2, NAT_variavel);
+	verifica_tipo_input($2);
 	$$ = create_IO_id(AST_IN, $2); };
 
 saida: TK_PR_OUTPUT TK_IDENTIFICADOR { 
-		verif_utilizacao_identificador(stack_table, $2, NAT_variavel);
-		verifica_tipo_output(stack_table, $2);
+		verif_utilizacao_identificador($2, NAT_variavel);
+		verifica_tipo_output($2);
 		$$ = create_IO_id(AST_OUT, $2); }
     | TK_PR_OUTPUT literal { 
-		verifica_tipo_output_lit(stack_table, $2);
+		verifica_tipo_output_lit($2);
 		$$ = create_IO(AST_OUT, $2); }
 	;
 
@@ -274,43 +275,43 @@ expr_arit: id_ou_vet_expr { $$ = $1; }
 	| expr_arit_C { $$ = $1; };
 
 expr_arit_B: TK_LIT_INT { 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_INT);
+		insere_literal($1, NAT_literal, TYPE_INT);
 		$$ = create_LIT(AST_LIT, $1); }
 	| TK_LIT_FLOAT { 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_FLOAT);
+		insere_literal($1, NAT_literal, TYPE_FLOAT);
 		$$ = create_LIT(AST_LIT, $1); } ;
 
 expr_arit_C: chamada_funcao { $$ = $1; }; // Chamada de funcao
 
 expr_log_literal: TK_LIT_TRUE { 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+		insere_literal($1, NAT_literal, TYPE_BOOL);
 		$$ = create_LIT(AST_LIT, $1); }
 	| TK_LIT_FALSE { 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+		insere_literal($1, NAT_literal, TYPE_BOOL);
 		$$ = create_LIT(AST_LIT, $1); };
 
 literal: mais_menos TK_LIT_INT { 
-		stack_table = insere_literal(stack_table, $2, NAT_literal, TYPE_INT);
+		insere_literal($2, NAT_literal, TYPE_INT);
 		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
    | mais_menos TK_LIT_FLOAT { 
-	   stack_table = insere_literal(stack_table, $2, NAT_literal, TYPE_FLOAT);
+	   insere_literal($2, NAT_literal, TYPE_FLOAT);
 	   $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
    | literal_char_str { 
 	   $$ = $1; }
    | TK_LIT_TRUE { 
-	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+	   insere_literal($1, NAT_literal, TYPE_BOOL);
 	   $$ = create_LIT(AST_LIT, $1); }
    | TK_LIT_FALSE { 
-	   stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_BOOL);
+	   insere_literal($1, NAT_literal, TYPE_BOOL);
 	   $$ = create_LIT(AST_LIT, $1); };
 
 
 literal_char_str: 
 	  TK_LIT_CHAR  { 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_CHAR);
+		insere_literal($1, NAT_literal, TYPE_CHAR);
 		$$ = create_LIT(AST_LIT, $1); }
 	| TK_LIT_STRING	{ 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_STRING);
+		insere_literal($1, NAT_literal, TYPE_STRING);
 		$$ = create_LIT(AST_LIT, $1); }
 	;
 
@@ -318,20 +319,20 @@ literal_char_str:
 declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao { $$ = create_FUNCAO(AST_FUNCAO, $1, $3); };
 
 declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR { 
-		stack_table = insere_simbolo(stack_table, $3, NAT_funcao, $2);
+		insere_simbolo($3, NAT_funcao, $2);
 		$$ = $3; }
 	| tipo TK_IDENTIFICADOR { 
-		stack_table = insere_simbolo(stack_table, $2, NAT_funcao, $1);
+		insere_simbolo($2, NAT_funcao, $1);
 		$$ = $2; } ;
 
 tipo_const: TK_PR_CONST
 	| ;
 
 decl_header_parametros: decl_header_param_init decl_header_param_end 
-	{ adiciona_argumentos_funcao(stack_table); }
+	{ adiciona_argumentos_funcao(); }
 ;
 
-decl_header_param_init: '(' { stack_table = new_escopo(stack_table); };
+decl_header_param_init: '(' { new_escopo(); };
 
 decl_header_param_end: parametros ')';
 
@@ -342,12 +343,12 @@ lista_parametro: parametro ',' lista_parametro
 	| parametro ;
 
 parametro: tipo_const tipo TK_IDENTIFICADOR { 
-	stack_table = insere_simbolo(stack_table, $3, NAT_variavel, $2);
+	insere_simbolo($3, NAT_variavel, $2);
 	free_val_lex($3); };
 
 
-bloco_init: '{' { stack_table = new_escopo(stack_table); }; 
-bloco_end: comandos '}' { $$ = $1; print_table(stack_table->topo); stack_table = delete_stack(stack_table); };
+bloco_init: '{' { new_escopo(); }; 
+bloco_end: comandos '}' { $$ = $1; print_table(stack->topo); delete_escopo(); };
 
 bloco_funcao: '{' bloco_end { $$ = $2; };
 
@@ -378,7 +379,7 @@ for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco_init bloco_
 	{ $$ = create_FOR(AST_FOR, $3, $5, $7, $10); } ;
 
 retorno: TK_PR_RETURN expressao { 
-	verifica_retorno_funcao(stack_table, $2);
+	verifica_retorno_funcao($2);
 	$$ = create_RETURN(AST_RETURN, $2); };
 
 continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
@@ -387,8 +388,8 @@ break: TK_PR_BREAK { $$ = create_CONT_BREAK(AST_BREAK); };
 
 
 chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' { 
-	verif_utilizacao_identificador(stack_table, $1, NAT_funcao);
-	verifica_chamada_funcao(stack_table, $1, $3);
+	verif_utilizacao_identificador($1, NAT_funcao);
+	verifica_chamada_funcao($1, $3);
 	$$ = create_FUN_CALL(AST_FUN_CALL, $1, $3); };
 
 parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}
@@ -404,10 +405,10 @@ comando_shift: id_ou_vet_expr op_shift int_positivo {
 	$$ = create_SHIFT(AST_SHIFT, $2, $1, $3); };
 
 id_ou_vet_expr: TK_IDENTIFICADOR { 
-		verif_utilizacao_identificador(stack_table, $1, NAT_variavel);
+		verif_utilizacao_identificador($1, NAT_variavel);
 		$$ = create_ID(AST_ID, $1); }
 	| TK_IDENTIFICADOR '[' expressao ']' { 
-		verif_utilizacao_identificador(stack_table, $1, NAT_vetor);
+		verif_utilizacao_identificador($1, NAT_vetor);
 		$$ = create_VEC(AST_VEC, $1, $3); };
 
 op_unaria: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
@@ -453,10 +454,10 @@ mais_menos: '+' { $$ = lex_especial('+', VAL_ESPECIAL, get_line_number()); }
 	| { $$ = NULL; };
 
 int_positivo: TK_LIT_INT { 
-		stack_table = insere_literal(stack_table, $1, NAT_literal, TYPE_INT);
+		insere_literal($1, NAT_literal, TYPE_INT);
 		$$ = create_LIT(AST_LIT, $1); }
 	| '+' TK_LIT_INT { 
-		stack_table = insere_literal(stack_table, $2, NAT_literal, TYPE_INT);
+		insere_literal($2, NAT_literal, TYPE_INT);
 		struct valor_lexico_t *val_lex = lex_especial('+', VAL_ESPECIAL, get_line_number());
 		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, val_lex, $2); 
 		}

@@ -6,6 +6,8 @@
 
 extern int get_line_number(void);
 
+struct stack_symbol_table *stack = NULL;
+
 int tamanho_byte(Type tipo_v){
     switch (tipo_v)
     {
@@ -125,21 +127,21 @@ struct stack_symbol_table *escopo_global() {
     return novo_escopo;
 }
 
-struct stack_symbol_table *new_escopo(struct stack_symbol_table *stack_antigo) {
+void new_escopo() {
     struct stack_symbol_table *novo_escopo = new_stack();
     novo_escopo->topo = NULL;
-    novo_escopo->down_table = stack_antigo;
-    return novo_escopo;
+    novo_escopo->down_table = stack; // Coloca stack como escopo antigo
+    stack = novo_escopo; // Atualiza stack
 }
 
-struct stack_symbol_table *delete_stack(struct stack_symbol_table *current_stack) {
-    struct stack_symbol_table *novo_topo = current_stack->down_table;
+void delete_escopo() {
+    struct stack_symbol_table *novo_topo = stack->down_table;
     // Free old table
-    return novo_topo;
+    stack = novo_topo;
 }
 
 
-struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo) {
+void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo) {
     if (stack == NULL) {
         stack = new_stack();
     }
@@ -167,10 +169,9 @@ struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, stru
                                     symbol->valor);
         elemento->next_elem = aux;
     }
-    return stack;
 }
 
-struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, struct valor_lexico_t *literal, Type_Natureza nat, Type tipo) {
+void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo) {
     if (stack == NULL) {
         stack = new_stack();
     }
@@ -200,11 +201,9 @@ struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, stru
             elemento->next_elem = aux;
         }
     }
-
-    return stack;
 }
 
-struct stack_symbol_table *adiciona_lista_elem_comTipo(struct stack_symbol_table *stack, struct elem_table *lista_aux, Type tipo_) {
+void adiciona_lista_elem_comTipo(struct elem_table *lista_aux, Type tipo_) {
 
     if (stack == NULL) {
         stack = escopo_global();
@@ -225,11 +224,9 @@ struct stack_symbol_table *adiciona_lista_elem_comTipo(struct stack_symbol_table
         lista_aux->tamanho *= ((lista_aux->natureza == NAT_variavel && tipo_ == TYPE_STRING) ? -1 : tamanho_byte(tipo_));
         lista_aux = lista_aux->next_elem;
     }
-
-    return stack;
 }
 
-struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_) {
+struct elem_table *cria_simbolo_parcial(struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_) {
     struct elem_table *aux;
 
     struct elem_table *elemento = NULL;
@@ -263,7 +260,7 @@ struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct
 }
 
 
-void adiciona_argumentos_funcao(struct stack_symbol_table *stack) {
+void adiciona_argumentos_funcao() {
     struct elem_table *escopo_funcao = stack->topo;
     struct stack_symbol_table *escopo_anterior = stack->down_table;
 
@@ -342,13 +339,13 @@ void print_table(struct elem_table *table) {
  * e.g. int a <= b; (verifica b)
  * e.g. a = 10; (verifica a)
  */
-void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
+void verifica_existencia(struct valor_lexico_t *dado) {
     if (encontra_elemento_stack(stack, dado->valor.val_str) == NULL) { // achou elemento - pode user
         erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str);
     }
 }
 
-void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat_utilizacao) {
+void verif_utilizacao_identificador(struct valor_lexico_t *dado, Type_Natureza nat_utilizacao) {
     struct elem_table *elemento = NULL;
     if ((elemento = encontra_elemento_stack(stack, dado->valor.val_str)) == NULL) { // achou elemento - pode user
         erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str);
@@ -493,7 +490,7 @@ int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr)
     }
 }
 
-void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexico_t *funcao, struct AST *parametros) {
+void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametros) {
     struct elem_table *fun_args = encontra_elemento_stack(stack, funcao->valor.val_str)->argumentos;
     int pos_arg = 1;
     while(fun_args != NULL && parametros != NULL) {
@@ -511,21 +508,21 @@ void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexi
     }
 }
 
-void verifica_tipo_input(struct stack_symbol_table *stack, struct valor_lexico_t *input_var) {
+void verifica_tipo_input(struct valor_lexico_t *input_var) {
     struct elem_table *elemento = encontra_elemento_stack(stack, input_var->valor.val_str);
     if (elemento->tipo != TYPE_INT && elemento->tipo != TYPE_FLOAT) {
         erro_input(ERR_WRONG_PAR_INPUT, input_var->valor.val_str, elemento->tipo);
     }
 }
 
-void verifica_tipo_output(struct stack_symbol_table *stack, struct valor_lexico_t *output_var) {
+void verifica_tipo_output(struct valor_lexico_t *output_var) {
     struct elem_table *elemento = encontra_elemento_stack(stack, output_var->valor.val_str);
     if (elemento->tipo != TYPE_INT && elemento->tipo != TYPE_FLOAT) {
         erro_output(ERR_WRONG_PAR_OUTPUT, output_var->valor.val_str, elemento->tipo);
     }
 }
 
-void verifica_tipo_output_lit(struct stack_symbol_table *stack, struct AST *lit) {
+void verifica_tipo_output_lit(struct AST *lit) {
     if (lit->tipo != TYPE_INT && lit->tipo != TYPE_FLOAT) {
         erro_output_lit(ERR_WRONG_PAR_OUTPUT, lit->tipo);
     }
@@ -541,7 +538,7 @@ void verifica_shift(struct AST *lit) {
     }
 }
 
-void verifica_retorno_funcao(struct stack_symbol_table *stack, struct AST *expr_retorno) {
+void verifica_retorno_funcao(struct AST *expr_retorno) {
     struct elem_table *elemento_fun = recupera_ultimo_elemento_global(stack);
     if (!tipos_compativeis(elemento_fun->tipo, expr_retorno->tipo)) {
         erro_return(ERR_WRONG_PAR_RETURN, elemento_fun->dado.val_str, elemento_fun->tipo, expr_retorno->tipo);

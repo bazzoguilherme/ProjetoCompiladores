@@ -48,17 +48,17 @@ struct elem_table *encontra_literal_stack(struct stack_symbol_table *stack, char
 
 struct stack_symbol_table *new_stack();
 struct stack_symbol_table *escopo_global();
-struct stack_symbol_table *new_escopo(struct stack_symbol_table *stack_antigo);
-struct stack_symbol_table *delete_stack();
+void new_escopo();
+void delete_escopo();
 
-struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
-struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
+void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
+void insere_literal(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
 
-struct stack_symbol_table *adiciona_lista_elem_comTipo(struct stack_symbol_table *stack, struct elem_table *lista_aux, Type tipo_);
+void adiciona_lista_elem_comTipo(struct elem_table *lista_aux, Type tipo_);
 
-struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_);
+struct elem_table *cria_simbolo_parcial(struct elem_table *lista_aux, struct valor_lexico_t *symbol, Type_Natureza nat, int tamanho_);
 
-void adiciona_argumentos_funcao(struct stack_symbol_table *stack);
+void adiciona_argumentos_funcao();
 
 char *literal_key(struct valor_lexico_t* literal);
 
@@ -66,8 +66,8 @@ char *literal_key(struct valor_lexico_t* literal);
 void print_stack_elements(struct stack_symbol_table *stack);
 void print_table(struct elem_table *table);
 
-void verifica_existencia(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
-void verif_utilizacao_identificador(struct stack_symbol_table *stack, struct valor_lexico_t *dado, Type_Natureza nat_utilizacao);
+void verifica_existencia(struct valor_lexico_t *dado);
+void verif_utilizacao_identificador(struct valor_lexico_t *dado, Type_Natureza nat_utilizacao);
 
 Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
 
@@ -84,15 +84,15 @@ void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib);
 void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr);
 int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr);
 
-void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexico_t *funcao, struct AST *parametros);
+void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametros);
 
-void verifica_tipo_input(struct stack_symbol_table *stack, struct valor_lexico_t *input_var);
-void verifica_tipo_output(struct stack_symbol_table *stack, struct valor_lexico_t *output_var);
-void verifica_tipo_output_lit(struct stack_symbol_table *stack, struct AST *lit);
+void verifica_tipo_input(struct valor_lexico_t *input_var);
+void verifica_tipo_output(struct valor_lexico_t *output_var);
+void verifica_tipo_output_lit(struct AST *lit);
 
 void verifica_shift(struct AST *lit);
 
-void verifica_retorno_funcao(struct stack_symbol_table *stack, struct AST *expr_retorno);
+void verifica_retorno_funcao(struct AST *expr_retorno);
 
 int erro_semantico(int err);
 

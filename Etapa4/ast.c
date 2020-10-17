@@ -5,7 +5,7 @@
 
 #include "symbol_table.h"
 
-extern struct stack_symbol_table *stack_table;
+extern struct stack_symbol_table *stack;
 extern int get_line_number(void);
 
 struct valor_lexico_t *lex_int(int int_value, Tipo_val_lex tipo_tk, int linha) {
@@ -93,7 +93,7 @@ struct AST *create_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
 }
 
 struct AST *create_ID(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
-    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), NULL, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack, val_lex), NULL, NULL, NULL, NULL, NULL);
 }
 struct AST *create_ID_semTipo(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
     return create_AST(ast_type_exp, val_lex, TYPE_NO_VAL, NULL, NULL, NULL, NULL, NULL);
@@ -115,7 +115,7 @@ struct AST *create_NODE(struct AST *f1, struct AST *next) {
 }
 
 struct AST *create_FUNCAO(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {
-    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack, val_lex), f1, NULL, NULL, NULL, NULL);
 }
 
 // struct AST *create_EXPRESSAO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
@@ -172,7 +172,7 @@ struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f
 struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
     verifica_tipo_atribuicao(f1->tipo, f2->tipo);
     if (f1->tipo == TYPE_STRING) {
-        verifica_atrib_string(stack_table, f1->valor_lexico->valor.val_str, f2);
+        verifica_atrib_string(stack, f1->valor_lexico->valor.val_str, f2);
     }
     return create_AST(ast_type_exp, NULL, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
@@ -201,7 +201,7 @@ struct AST *create_FOR(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, st
 }
 
 struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {
-    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), f1, NULL, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack, val_lex), f1, NULL, NULL, NULL, NULL);
 }
 
 void atualiza_tipo_nodos_decl(struct AST *nodo, Type tipo_nodo) {
@@ -210,7 +210,7 @@ void atualiza_tipo_nodos_decl(struct AST *nodo, Type tipo_nodo) {
         verifica_tipo_atribuicao(tipo_nodo, nodo->children[1]->tipo);
         nodo->tipo = tipo_nodo;
         if (tipo_nodo == TYPE_STRING) {
-            verifica_atrib_string(stack_table, nodo->children[0]->valor_lexico->valor.val_str, nodo->children[1]);
+            verifica_atrib_string(stack, nodo->children[0]->valor_lexico->valor.val_str, nodo->children[1]);
         }
         if (nodo->prox != NULL) {
             atualiza_tipo_nodos_decl(nodo->prox, tipo_nodo);
