@@ -83,6 +83,7 @@ struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, Ty
 struct AST *create_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex);
 
 struct AST *create_ID(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex);
+struct AST *create_ID_semTipo(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex);
 
 struct AST *create_NODE(struct AST *f1, struct AST *next);
 

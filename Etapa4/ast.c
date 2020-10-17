@@ -95,6 +95,9 @@ struct AST *create_LIT(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
 struct AST *create_ID(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
     return create_AST(ast_type_exp, val_lex, get_tipo_elemento_tabela(stack_table, val_lex), NULL, NULL, NULL, NULL, NULL);
 }
+struct AST *create_ID_semTipo(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex) {
+    return create_AST(ast_type_exp, val_lex, TYPE_NO_VAL, NULL, NULL, NULL, NULL, NULL);
+}
 
 struct AST *create_NODE(struct AST *f1, struct AST *next) {
     if (f1 == NULL){
@@ -163,7 +166,7 @@ struct AST *create_VEC(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, st
 
 // CHECK dois retornos possiveis
 struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3) {
-    return create_AST(ast_type_exp, NULL, f2->tipo, f1, f2, f3, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, define_tipo_expr(f2->tipo, f3->tipo, get_line_number()), f1, f2, f3, NULL, NULL);
 }
 
 struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
@@ -175,12 +178,12 @@ struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2)
 }
 
 struct AST *create_DECL_ASSIGN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct AST *f2) {
-    struct AST* f1 = create_ID(AST_ID, id);
+    struct AST* f1 = create_ID_semTipo(AST_ID, id);
     return create_AST(ast_type_exp, val_lex, TYPE_NO_VAL, f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_DECL_ASSIGN_id(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct valor_lexico_t *id, struct valor_lexico_t *id2) {
-    struct AST* f1 = create_ID(AST_ID, id);
+    struct AST* f1 = create_ID_semTipo(AST_ID, id);
     struct AST* f2 = create_ID(AST_ID, id2);
     return create_AST(ast_type_exp, val_lex, TYPE_NO_VAL, f1, f2, NULL, NULL, NULL);
 }

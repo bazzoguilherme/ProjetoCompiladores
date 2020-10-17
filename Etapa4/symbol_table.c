@@ -400,19 +400,19 @@ char *nome_tipo(Type tipo) {
     default:
         break;
     }
-    return "Undeclared Type";
+    return "? Type";
 }
 
 char *nome_tipo_nat(Type_Natureza nat) {
     switch (nat) {
     case NAT_variavel:
-        return "Variavel";
+        return "Variable";
         break;
     case NAT_vetor:
-        return "Vetor";
+        return "Vector";
         break;
     case NAT_funcao:
-        return "Funcao";
+        return "Function";
         break;
     
     default:
@@ -567,7 +567,7 @@ int erro_semantico(int err) {
 }
 
 void erro_declaracao(int err, char *var_nome, int linha_atual, int linha_decl) {
-    printf("In line %2d | Previous declaration of variable \"%s\" in line %d.\n", linha_atual, var_nome, linha_decl);
+    printf("In line %2d | Previous declaration of identifier \"%s\" in line %d.\n", linha_atual, var_nome, linha_decl);
     exit(err);
 }
 

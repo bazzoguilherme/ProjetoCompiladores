@@ -2,30 +2,19 @@ int a, b, c;
 static float gus_aca_lo;
 char v[10];
 
-int main(int gus_aca_lo, int gui, char xnhor) {
-    string a ;
-    //a = "str" + "ing" ;
-    //a = 'c';
-    a = "string";
-    a = "str" + "ing";
-    //a = 99;
-    //b = 99.0;
-    //a = false;
-    //a = true;
-    //int c <= zxxz;
-    //v = 'c';
-    b = main(1, 1, '1');
-    //input a;
-    //output 'c';
-    gus_aca_lo << 16;
-    return 1;
+int main(int var1, int gui, char xnhor) {
+    char a;
+    a = 'a' + 'a';
 
-    {
-        b = 10;
-        return 10.0;
+    if (10.1-false+10) {
+        int a <= 10.0;
+    } else {
+        return true;
     };
 
-    return false;
+    //b = - 'c';
+
+    string new_s <= "string";
 }
 
 int gg;
