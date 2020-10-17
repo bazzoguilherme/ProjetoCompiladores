@@ -36,6 +36,8 @@ struct stack_symbol_table {
 
 
 struct elem_table *new_elem_table();
+struct elem_table *create_elem(char *key, int loc, Type_Natureza nat, Type tipo, int tam, union val_lex dado);
+
 struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, char *key);
 struct elem_table *encontra_elemento_stack(struct stack_symbol_table *stack, char *key);
 struct elem_table *recupera_ultimo_elemento(struct elem_table *tabela_atual);

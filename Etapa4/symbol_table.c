@@ -32,6 +32,16 @@ struct elem_table *new_elem_table() {
     return (struct elem_table *) malloc (sizeof(struct elem_table));
 }
 
+struct elem_table *create_elem(char *key, int loc, Type_Natureza nat, Type tipo, int tam, union val_lex dado) {
+    struct elem_table *elemento = new_elem_table();
+    elemento->key = key;
+    elemento->localizacao = loc;
+    elemento->tamanho = tam;
+    elemento->natureza = nat;
+    elemento->tipo = tipo;
+    elemento->dado = dado;
+    return elemento;
+}
 
 struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, char *key) {
     // enquanto n for nulo, n for a key que queremos COM nat = literal
@@ -143,26 +153,18 @@ struct stack_symbol_table *insere_simbolo(struct stack_symbol_table *stack, stru
     elemento = stack->topo;
 
     if (elemento == NULL) {
-        elemento = new_elem_table();
-        elemento->key = strdup(symbol->valor.val_str);
-        elemento->localizacao = symbol->linha;
-        elemento->tamanho = tamanho_byte(tipo);
-        elemento->natureza = nat;
-        elemento->tipo = tipo;
-        elemento->dado = symbol->valor;
+        elemento = create_elem(strdup(symbol->valor.val_str), 
+                                symbol->linha, nat, tipo, tamanho_byte(tipo), 
+                                symbol->valor);
+
         stack->topo = elemento;
     } else {
         while(elemento->next_elem != NULL) {
             elemento = elemento->next_elem;
         }
-        struct elem_table *aux = new_elem_table();
-
-        aux->key = strdup(symbol->valor.val_str);
-        aux->localizacao = symbol->linha;
-        aux->tamanho = tamanho_byte(tipo);
-        aux->natureza = nat;
-        aux->tipo = tipo;
-        aux->dado = symbol->valor;
+        struct elem_table *aux = create_elem(strdup(symbol->valor.val_str), 
+                                    symbol->linha, nat, tipo, tamanho_byte(tipo), 
+                                    symbol->valor);
         elemento->next_elem = aux;
     }
     return stack;
@@ -184,26 +186,17 @@ struct stack_symbol_table *insere_literal(struct stack_symbol_table *stack, stru
     } else {
 
         if (elemento == NULL) {
-            elemento = new_elem_table();
-            elemento->key = key_lit;
-            elemento->localizacao = literal->linha;
-            elemento->tamanho = tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1);
-            elemento->natureza = nat;
-            elemento->tipo = tipo;
-            elemento->dado = literal->valor;
+            elemento = create_elem(key_lit, literal->linha, nat, tipo, 
+                                tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
+                                literal->valor);
             stack->topo = elemento;
         } else {
             while(elemento->next_elem != NULL) {
                 elemento = elemento->next_elem;
             }
-            struct elem_table *aux = new_elem_table();
-
-            aux->key = key_lit;
-            aux->localizacao = literal->linha;
-            aux->tamanho = tamanho_byte(tipo);
-            aux->natureza = nat;
-            aux->tipo = tipo;
-            aux->dado = literal->valor;
+            struct elem_table *aux = create_elem(key_lit, literal->linha, nat, tipo, 
+                                tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
+                                literal->valor);
             elemento->next_elem = aux;
         }
     }
@@ -229,7 +222,7 @@ struct stack_symbol_table *adiciona_lista_elem_comTipo(struct stack_symbol_table
 
     while (lista_aux != NULL) {
         lista_aux->tipo = tipo_;
-        lista_aux->tamanho = ((lista_aux->natureza == NAT_variavel && tipo_ == TYPE_STRING) ? -1 : tamanho_byte(tipo_));
+        lista_aux->tamanho *= ((lista_aux->natureza == NAT_variavel && tipo_ == TYPE_STRING) ? -1 : tamanho_byte(tipo_));
         lista_aux = lista_aux->next_elem;
     }
 
@@ -249,12 +242,9 @@ struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct
     }
 
     if (lista_aux == NULL) {
-        struct elem_table *new_elem = new_elem_table();
-        new_elem->key = strdup(symbol->valor.val_str);
-        new_elem->localizacao = symbol->linha;
-        new_elem->natureza = nat;
-        new_elem->tamanho = tamanho_;
-        new_elem->dado = symbol->valor;
+        struct elem_table *new_elem = create_elem(strdup(symbol->valor.val_str), 
+                                symbol->linha, nat, TYPE_NO_VAL, tamanho_, 
+                                symbol->valor);
         return new_elem;
     } else {
         aux = lista_aux;
@@ -263,12 +253,9 @@ struct elem_table *cria_simbolo_parcial(struct stack_symbol_table *stack, struct
         }
     }
 
-    struct elem_table *new_elem = new_elem_table();
-    new_elem->key = strdup(symbol->valor.val_str);
-    new_elem->localizacao = symbol->linha;
-    new_elem->natureza = nat;
-    new_elem->tamanho = tamanho_;
-    new_elem->dado = symbol->valor;
+    struct elem_table *new_elem = create_elem(strdup(symbol->valor.val_str), 
+                                symbol->linha, nat, TYPE_NO_VAL, tamanho_, 
+                                symbol->valor);
 
     aux->next_elem = new_elem;
 

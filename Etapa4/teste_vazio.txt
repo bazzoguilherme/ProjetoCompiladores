@@ -17,8 +17,14 @@ int main(int var1, int gui, char xnhor) {
     b = 2;
     b = 10;
     b = 2;
+    
+    v[10-2] = 'd';
 
     string new_s <= "string";
+}
+
+int m() {
+    //int nic <= 0, b <= nic;
 }
 
 int gg;
