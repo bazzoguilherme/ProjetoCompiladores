@@ -69,7 +69,7 @@ void print_table(struct elem_table *table);
 void verifica_existencia(struct valor_lexico_t *dado);
 void verif_utilizacao_identificador(struct valor_lexico_t *dado, Type_Natureza nat_utilizacao);
 
-Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lexico_t *dado);
+Type get_tipo_elemento(struct valor_lexico_t *dado);
 
 char *nome_tipo(Type tipo);
 char *nome_tipo_nat(Type_Natureza nat);
@@ -81,7 +81,7 @@ int uso_incorreto_erro(Type_Natureza nat);
 Type define_tipo_expr(Type expr1, Type expr2);
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib);
 
-void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr);
+void verifica_atrib_string(char *nome_var, struct AST *expr);
 int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr);
 
 void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametros);

@@ -357,7 +357,7 @@ void verif_utilizacao_identificador(struct valor_lexico_t *dado, Type_Natureza n
     }
 }
 
-Type get_tipo_elemento_tabela(struct stack_symbol_table *stack, struct valor_lexico_t *dado) {
+Type get_tipo_elemento(struct valor_lexico_t *dado) {
     struct elem_table *elemento = NULL;
     if ((elemento = encontra_elemento_stack(stack, dado->valor.val_str)) == NULL) { // achou elemento - pode user
         erro_nao_declaracao(ERR_UNDECLARED, dado->valor.val_str);
@@ -467,7 +467,7 @@ void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib) {
     }
 }
 
-void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr) {
+void verifica_atrib_string(char *nome_var, struct AST *expr) {
     struct elem_table *var = encontra_elemento_stack(stack, nome_var);
     int tam_inserindo = calcula_tamanho_str_expr(stack, expr);
     if (var->tamanho == -1){

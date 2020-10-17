@@ -20,7 +20,10 @@ int main(int var1, int gui, char xnhor) {
     
     v[10-2] = 'd';
 
+    main(1, 2, 'x');
+
     string new_s <= "string";
+    new_s = "abc";
 }
 
 int m() {
