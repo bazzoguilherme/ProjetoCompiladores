@@ -76,11 +76,10 @@ int tipos_compativeis(Type tipo1, Type tipo2);
 
 int uso_incorreto_erro(Type_Natureza nat);
 
-Type define_tipo_expr(Type expr1, Type expr2, int linha);
-void verifica_expr_un_tipo(Type tipo_exp, int linha);
-void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha);
+Type define_tipo_expr(Type expr1, Type expr2);
+void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib);
 
-void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr, int linha);
+void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr);
 int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr);
 
 void verifica_chamada_funcao(struct stack_symbol_table *stack, struct valor_lexico_t *funcao, struct AST *parametros);

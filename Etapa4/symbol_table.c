@@ -78,13 +78,13 @@ struct elem_table *recupera_ultimo_elemento_global(struct stack_symbol_table *st
 
 
 struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char *key, Type tipo_lit) {
-    while ( tabela_atual != NULL && (strcmp(tabela_atual->key, key) != 0 || tipo_lit != tabela_atual->natureza)) {
+    while ( tabela_atual != NULL && (strcmp(tabela_atual->key, key) != 0 || tipo_lit != tabela_atual->tipo)) {
         tabela_atual = tabela_atual->next_elem;
     }
     // if(tabela_atual != NULL)
     // {
     //     printf("%s\n",tabela_atual->key);
-    //     printf("Procurando %s e parou em %s com nat %d\n", key, tabela_atual->key, tabela_atual->natureza);
+    //     printf("Procurando %s e parou em %s com tipo %d\n", key, tabela_atual->key, tabela_atual->tipo);
     // }
     // else{
     //     printf("Nao encontrei nenhum %s\n", key);
@@ -453,7 +453,7 @@ int uso_incorreto_erro(Type_Natureza nat) {
     }
 }
 
-Type define_tipo_expr(Type expr1, Type expr2, int linha) {
+Type define_tipo_expr(Type expr1, Type expr2) {
     if (expr1 == expr2) { // int-int, float-float, bool-bool (aceita char-char e string-string)
         return expr1;
     } else if (expr1 == TYPE_STRING || expr2 == TYPE_STRING) {
@@ -469,7 +469,7 @@ Type define_tipo_expr(Type expr1, Type expr2, int linha) {
     }
 }
 
-void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha) {
+void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib) {
     if (tipo_var == tipo_attrib) { // Após isso, nodo fica do tipo da var que está recendo
         return;
     }
@@ -481,7 +481,7 @@ void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib, int linha) {
     }
 }
 
-void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr, int linha) {
+void verifica_atrib_string(struct stack_symbol_table *stack, char *nome_var, struct AST *expr) {
     struct elem_table *var = encontra_elemento_stack(stack, nome_var);
     int tam_inserindo = calcula_tamanho_str_expr(stack, expr);
     if (var->tamanho == -1){

@@ -123,7 +123,7 @@ struct AST *create_FUNCAO(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex,
 // }
 
 struct AST *create_EXPRESSAO_BIN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2) {
-    return create_AST(ast_type_exp, val_lex, define_tipo_expr(f1->tipo, f2->tipo, val_lex->linha), f1, f2, NULL, NULL, NULL);
+    return create_AST(ast_type_exp, val_lex, define_tipo_expr(f1->tipo, f2->tipo), f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_EXPRESSAO_UN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {
@@ -166,13 +166,13 @@ struct AST *create_VEC(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, st
 
 // CHECK dois retornos possiveis
 struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3) {
-    return create_AST(ast_type_exp, NULL, define_tipo_expr(f2->tipo, f3->tipo, get_line_number()), f1, f2, f3, NULL, NULL);
+    return create_AST(ast_type_exp, NULL, define_tipo_expr(f2->tipo, f3->tipo), f1, f2, f3, NULL, NULL);
 }
 
 struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
-    verifica_tipo_atribuicao(f1->tipo, f2->tipo, get_line_number());
+    verifica_tipo_atribuicao(f1->tipo, f2->tipo);
     if (f1->tipo == TYPE_STRING) {
-        verifica_atrib_string(stack_table, f1->valor_lexico->valor.val_str, f2, get_line_number());
+        verifica_atrib_string(stack_table, f1->valor_lexico->valor.val_str, f2);
     }
     return create_AST(ast_type_exp, NULL, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
@@ -207,10 +207,10 @@ struct AST *create_FUN_CALL(Type_Exp ast_type_exp, struct valor_lexico_t *val_le
 void atualiza_tipo_nodos_decl(struct AST *nodo, Type tipo_nodo) {
     if (nodo != NULL) {
         nodo->children[0]->tipo = tipo_nodo;
-        verifica_tipo_atribuicao(tipo_nodo, nodo->children[1]->tipo, get_line_number());
+        verifica_tipo_atribuicao(tipo_nodo, nodo->children[1]->tipo);
         nodo->tipo = tipo_nodo;
         if (tipo_nodo == TYPE_STRING) {
-            verifica_atrib_string(stack_table, nodo->children[0]->valor_lexico->valor.val_str, nodo->children[1], get_line_number());
+            verifica_atrib_string(stack_table, nodo->children[0]->valor_lexico->valor.val_str, nodo->children[1]);
         }
         if (nodo->prox != NULL) {
             atualiza_tipo_nodos_decl(nodo->prox, tipo_nodo);
