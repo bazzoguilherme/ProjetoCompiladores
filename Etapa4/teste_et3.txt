@@ -3,7 +3,7 @@
 
 int var_global, cont_universal;
 char nome[20];
-char nome[+10];
+char nome2[+10];
 bool cond;
 static float media, mediana;
 static string user_name;
@@ -35,7 +35,7 @@ int main () {
     int i <= 1, i2;
     char c <= 'c';
     char ch <= '\"';
-    static string s <= "";
+    static string s;
     float f <= -10.5e-1;
     bool b;
     const float pi <= 3.14;
@@ -55,13 +55,13 @@ int main () {
 
     /* IO */
     input i;
-    output s;
+    //output s;
     output 5;
     output -5;
 
 
     /* Chamada Funcao */
-    par();
+    par(2, 'v');
     par(i, '\n');
     par(?true + 15 ^ (-2), '\n');
 
@@ -75,7 +75,7 @@ int main () {
     /* Comando retorno.. */
     return -1;
     return true;
-    return 'c';
+    // return 'c';
     return 15.0;
     continue;
     break;
@@ -115,14 +115,16 @@ int main () {
 
     /* Testes expressoes */
     i = false ? 10 : 5;
-    i = #c;
-    i = *c * (3/2);
-    i = &c + 2;
+    //i = #c;
+    //i = *c * (3/2);
+    //i = &c + 2;
     b = true || 2;
     b = ? b; 
     b = ? (+b * 10); 
 
-    a = a[1] + b < c;
+
+    int a;
+    a = new_g[1];
 
     /* Bloco */
     {
