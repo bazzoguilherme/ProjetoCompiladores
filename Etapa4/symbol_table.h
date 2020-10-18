@@ -102,7 +102,7 @@ void erro_uso_incorreto(int err, char *nome_id, char *tipo_utilizacao, char *tip
 void erro_converte_string_char(int err, Type tipo_atual, Type convertendo_para);
 void erro_attrib_incompativel(int err, Type tipo_var, Type tipo_attrib);
 void erro_tam_incompativel(int err, char *nome_var);
-void erro_args_funcao_tipo(int err, char *nome_fun, int pos_erro);
+void erro_args_funcao_tipo(int err, char *nome_fun, int pos_erro, Type tipo_passado, Type tipo_esperado);
 void erro_args_funcao(int err, char *nome_fun, char *motivo);
 void erro_input(int err, char *nome_var, Type tipo_var);
 void erro_output(int err, char *nome_var, Type tipo_var);

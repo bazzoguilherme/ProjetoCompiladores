@@ -495,9 +495,13 @@ int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr)
 void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametros) {
     struct elem_table *fun_args = encontra_elemento_stack(stack, funcao->valor.val_str)->argumentos;
     int pos_arg = 1;
+    int err = 0, pos_arg_err;
+    Type tipo_passado, tipo_esperado;
+
     while(fun_args != NULL && parametros != NULL) {
-        if (!tipos_compativeis(fun_args->tipo, parametros->tipo)) { // WRONG TYPE
-            erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, funcao->valor.val_str, pos_arg);
+        if (!err && !tipos_compativeis(fun_args->tipo, parametros->tipo)) { // WRONG TYPE
+            err = 1; pos_arg_err = pos_arg;
+            tipo_esperado = fun_args->tipo; tipo_passado = parametros->tipo;
         }
         fun_args = fun_args->next_elem;
         parametros = parametros->prox;
@@ -507,6 +511,8 @@ void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametr
         erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "missing arguments");
     } else if (parametros != NULL) { // EXCESS
         erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "excess of arguments");
+    } if (err) {
+        erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, funcao->valor.val_str, pos_arg_err, tipo_passado, tipo_esperado);
     }
 }
 
@@ -578,12 +584,13 @@ void erro_attrib_incompativel(int err, Type tipo_var, Type tipo_attrib) {
 }
 
 void erro_tam_incompativel(int err, char *nome_var) {
-    printf("In line %2d | Error to assign string literal to variable %s due to lack of space.\n", get_line_number(), nome_var);
+    printf("In line %2d | Error to assign string to variable %s due to lack of space.\n", get_line_number(), nome_var);
     exit(err);
 }
 
-void erro_args_funcao_tipo(int err, char *nome_fun, int pos_erro) {
-    printf("In line %2d | Error in function call of \"%s\" due to type error in argumento %d.\n", get_line_number(), nome_fun, pos_erro);
+void erro_args_funcao_tipo(int err, char *nome_fun, int pos_erro, Type tipo_passado, Type tipo_esperado) {
+    printf("In line %2d | Error in function call of \"%s\" due to type error in argument %d.\n", get_line_number(), nome_fun, pos_erro);
+    printf(" - Expecting %s, but value of type %s found.\n", nome_tipo(tipo_esperado), nome_tipo(tipo_passado));
     exit(err);
 }
 
