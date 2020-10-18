@@ -79,6 +79,8 @@ int tipos_compativeis(Type tipo1, Type tipo2);
 int uso_incorreto_erro(Type_Natureza nat);
 
 Type define_tipo_expr(Type expr1, Type expr2);
+void verifica_bool_condition(Type expr2, char *lugar, int linha);
+
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib);
 
 void verifica_atrib_string(char *nome_var, struct AST *expr);
@@ -100,6 +102,7 @@ void erro_declaracao(int err, char *var_nome, int linha_decl);
 void erro_nao_declaracao(int err, char *var_nome);
 void erro_uso_incorreto(int err, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl);
 void erro_converte_string_char(int err, Type tipo_atual, Type convertendo_para);
+void erro_str_ch_paraBool_controle_fluxo(int err, int linha, Type tipo_atual, char *operacao);
 void erro_attrib_incompativel(int err, Type tipo_var, Type tipo_attrib);
 void erro_tam_incompativel(int err, char *nome_var);
 void erro_args_funcao_tipo(int err, char *nome_fun, int pos_erro, Type tipo_passado, Type tipo_esperado);

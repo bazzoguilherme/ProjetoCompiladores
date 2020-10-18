@@ -455,6 +455,14 @@ Type define_tipo_expr(Type expr1, Type expr2) {
     }
 }
 
+void verifica_bool_condition(Type expr2, char *lugar, int linha) {
+    if (expr2 == TYPE_STRING) {
+        erro_str_ch_paraBool_controle_fluxo(ERR_STRING_TO_X, linha, TYPE_STRING, lugar);
+    } else if (expr2 == TYPE_CHAR) {
+        erro_str_ch_paraBool_controle_fluxo(ERR_CHAR_TO_X, linha, TYPE_CHAR, lugar);
+    }
+}
+
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib) {
     if (tipo_var == tipo_attrib) { // Após isso, nodo fica do tipo da var que está recendo
         return;
@@ -575,6 +583,11 @@ void erro_uso_incorreto(int err, char *nome_id, char *tipo_utilizacao, char *tip
 
 void erro_converte_string_char(int err, Type tipo_atual, Type convertendo_para) {
     printf("In line %2d | Error in conversion of type %s to type %s.\n", get_line_number(), nome_tipo(tipo_atual), nome_tipo(convertendo_para));
+    exit(err);
+}
+
+void erro_str_ch_paraBool_controle_fluxo(int err, int linha, Type tipo_atual, char *operacao) {
+    printf("In line %2d | Error in conversion of type %s to type compatible with bool in \"%s\" statement.\n", linha, nome_tipo(tipo_atual), operacao);
     exit(err);
 }
 
