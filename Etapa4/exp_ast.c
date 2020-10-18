@@ -4,8 +4,6 @@
 
 #include "symbol_table.h"
 
-extern struct stack_symbol_table *stack;
-
 void libera(void *arvore) {
     libera_ast((struct AST *) arvore);
 }
@@ -34,7 +32,6 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 
 
 void exporta (void *arvore){
-    print_stack_elements(stack);
 	struct AST *ast = (struct AST*) arvore;
     print_pointers(ast);
     print_ast(ast);

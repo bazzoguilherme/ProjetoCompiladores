@@ -31,8 +31,6 @@ extern void *arvore;
 extern void exporta(void *arvore);
 extern void libera(void *arvore);
 
-extern struct stack_symbol_table *stack;
-
 %}
 %union {
 	struct valor_lexico_t *valor_lexico;
@@ -340,7 +338,7 @@ parametro: tipo_const tipo TK_IDENTIFICADOR {
 
 
 bloco_init: '{' { new_escopo(); }; 
-bloco_end: comandos '}' { $$ = $1; print_table(stack->topo); delete_escopo(); };
+bloco_end: comandos '}' { $$ = $1; delete_escopo(); };
 
 bloco_funcao: '{' bloco_end { $$ = $2; };
 
