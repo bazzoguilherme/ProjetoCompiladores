@@ -105,14 +105,6 @@ struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char
     while ( tabela_atual != NULL && (strcmp(tabela_atual->key, key) != 0 || tipo_lit != tabela_atual->tipo)) {
         tabela_atual = tabela_atual->next_elem;
     }
-    // if(tabela_atual != NULL)
-    // {
-    //     printf("%s\n",tabela_atual->key);
-    //     printf("Procurando %s e parou em %s com tipo %d\n", key, tabela_atual->key, tabela_atual->tipo);
-    // }
-    // else{
-    //     printf("Nao encontrei nenhum %s\n", key);
-    // }
     return tabela_atual;
 }
 
@@ -530,6 +522,8 @@ int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr)
         return ( (elem->tamanho != -1) ? elem->tamanho : 0 );
     } else if (expr->tipo_exp == AST_OP_BIN) {
         return calcula_tamanho_str_expr(stack, expr->children[0]) + calcula_tamanho_str_expr(stack, expr->children[1]);
+    } else if (expr->tipo_exp == AST_VEC) {
+        return 0;
     }
 }
 
@@ -552,7 +546,7 @@ void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametr
         erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "missing arguments");
     } else if (parametros != NULL) { // EXCESS
         erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "excess of arguments");
-    } if (err) {
+    } if (err) { // Erro de tipos - menor prioridade
         erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, funcao->valor.val_str, pos_arg_err, tipo_passado, tipo_esperado);
     }
 }
