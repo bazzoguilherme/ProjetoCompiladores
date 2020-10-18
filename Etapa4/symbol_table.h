@@ -39,7 +39,9 @@ struct elem_table *new_elem_table();
 struct elem_table *create_elem(char *key, int loc, Type_Natureza nat, Type tipo, int tam, union val_lex dado);
 
 struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, char *key);
+struct elem_table *encontra_elemento_tabela_tipoNat(struct elem_table *tabela_atual, char *key, Type_Natureza nat);
 struct elem_table *encontra_elemento_stack(struct stack_symbol_table *stack, char *key);
+struct elem_table *encontra_elemento_stack_tipoNat(struct stack_symbol_table *stack, char *key, Type_Natureza nat);
 struct elem_table *recupera_ultimo_elemento(struct elem_table *tabela_atual);
 struct elem_table *recupera_ultimo_elemento_global(struct stack_symbol_table *stack);
 
@@ -100,6 +102,7 @@ void verifica_retorno_funcao(struct AST *expr_retorno);
 int erro_semantico(int err);
 
 void erro_declaracao(int err, char *var_nome, int linha_decl);
+void erro_declaracao_function(int err, char *var_nome, int linha_decl);
 void erro_nao_declaracao(int err, char *var_nome);
 void erro_uso_incorreto(int err, char *nome_id, char *tipo_utilizacao, char *tipo_decl, int linha_decl);
 void erro_converte_string_char(int err, Type tipo_atual, Type convertendo_para);

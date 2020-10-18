@@ -51,14 +51,14 @@ struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, cha
     while ( tabela_atual != NULL && !(strcmp(tabela_atual->key, key) == 0 && NAT_literal != tabela_atual->natureza)) {
         tabela_atual = tabela_atual->next_elem;
     }
-    // if(tabela_atual != NULL)
-    // {
-    //     printf("%s\n",tabela_atual->key);
-    //     printf("Procurando %s e parou em %s com nat %d\n", key, tabela_atual->key, tabela_atual->natureza);
-    // }
-    // else{
-    //     printf("Nao encontrei nenhum %s\n", key);
-    // }
+    return tabela_atual;
+}
+
+struct elem_table *encontra_elemento_tabela_tipoNat(struct elem_table *tabela_atual, char *key, Type_Natureza nat) {
+    // enquanto n for nulo, n for a key que queremos COM nat = literal
+    while ( tabela_atual != NULL && (tabela_atual->natureza != nat || strcmp(tabela_atual->key, key) != 0)) {
+        tabela_atual = tabela_atual->next_elem;
+    }
     return tabela_atual;
 }
 
@@ -68,6 +68,17 @@ struct elem_table *encontra_elemento_stack(struct stack_symbol_table *stack, cha
 
     while ( stack != NULL && elemento == NULL ) {
         elemento = encontra_elemento_tabela(stack->topo, key);
+        stack = stack->down_table;
+    }
+    
+    return elemento;
+}
+
+struct elem_table *encontra_elemento_stack_tipoNat(struct stack_symbol_table *stack, char *key, Type_Natureza nat) {
+    struct elem_table *elemento = NULL;
+
+    while ( stack != NULL && elemento == NULL) {
+        elemento = encontra_elemento_tabela_tipoNat(stack->topo, key, nat);
         stack = stack->down_table;
     }
     
@@ -151,6 +162,9 @@ void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo)
     
     if (stack != NULL && (elemento = encontra_elemento_tabela(stack->topo, symbol->valor.val_str)) != NULL) {
         erro_declaracao(ERR_DECLARED, symbol->valor.val_str, elemento->localizacao);
+    }
+    if (stack != NULL && (elemento = encontra_elemento_stack_tipoNat(stack, symbol->valor.val_str, NAT_funcao)) != NULL) {
+        erro_declaracao_function(ERR_DECLARED, symbol->valor.val_str, elemento->localizacao);
     }
 
     elemento = stack->topo;
@@ -238,6 +252,9 @@ void cria_simbolo_parcial(struct valor_lexico_t *symbol, Type_Natureza nat, int 
     } 
     if (lista_aux != NULL && encontra_elemento_tabela(lista_aux, symbol->valor.val_str) != NULL) {
         erro_declaracao(ERR_DECLARED, symbol->valor.val_str, symbol->linha);
+    }
+    if (stack != NULL && (elemento = encontra_elemento_stack_tipoNat(stack, symbol->valor.val_str, NAT_funcao)) != NULL) {
+        erro_declaracao_function(ERR_DECLARED, symbol->valor.val_str, elemento->localizacao);
     }
 
     if (lista_aux == NULL) {
@@ -580,6 +597,12 @@ int erro_semantico(int err) {
 
 void erro_declaracao(int err, char *var_nome, int linha_decl) {
     printf("In line %2d | Previous declaration of identifier \"%s\" in line %d.\n", get_line_number(), var_nome, linha_decl);
+    exit(err);
+}
+
+void erro_declaracao_function(int err, char *var_nome, int linha_decl) {
+    printf("In line %2d | Previous declaration of identifier \"%s\" in line %d.\n", get_line_number(), var_nome, linha_decl);
+    printf(" - You can't reuse a functions name.\n");
     exit(err);
 }
 

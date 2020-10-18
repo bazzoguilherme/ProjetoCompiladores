@@ -40,6 +40,10 @@ int main(int var1, int gui, char xnhor) {
 
 int m() {
     //int nic <= 0, b <= nic;
+    {
+        //int main <= 1;
+        int m;
+    };
 }
 
 int gg;
