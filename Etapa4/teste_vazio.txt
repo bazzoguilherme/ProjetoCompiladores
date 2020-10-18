@@ -9,6 +9,7 @@ int main(int var1, int gui, char xnhor) {
     if (10.1-false+10) {
         int a <= 10.0;
     } else {
+        a << 20;
         return true;
     };
 
@@ -22,10 +23,14 @@ int main(int var1, int gui, char xnhor) {
     
     v[10-28798.0853] = 'd';
 
-    main(1, 'x', 1);
+    // main(1, 'x', 1);
 
     string new_s <= "string";
     new_s = "abc";
+
+    string s;
+    s = "str1";
+    //s = "ssssssss";
 }
 
 int m() {

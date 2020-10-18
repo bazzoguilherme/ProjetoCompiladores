@@ -542,7 +542,7 @@ void verifica_shift(struct AST *lit) {
     }
     // lit como literal apenas
     if (lit->valor_lexico->valor.val_int > 16) {
-        erro_shift(ERR_WRONG_PAR_SHIFT);
+        erro_shift(ERR_WRONG_PAR_SHIFT, lit->valor_lexico->valor.val_int);
     }
 }
 
@@ -584,7 +584,7 @@ void erro_attrib_incompativel(int err, Type tipo_var, Type tipo_attrib) {
 }
 
 void erro_tam_incompativel(int err, char *nome_var) {
-    printf("In line %2d | Error to assign string to variable %s due to lack of space.\n", get_line_number(), nome_var);
+    printf("In line %2d | Error to assign string to variable \"%s\" due to lack of space.\n", get_line_number(), nome_var);
     exit(err);
 }
 
@@ -614,8 +614,8 @@ void erro_output_lit(int err, Type tipo_lit) {
     exit(err);
 }
 
-void erro_shift(int err) {
-    printf("In line %2d | Error in value used to shift variable, please use positive integer less or equal to 16.\n", get_line_number());
+void erro_shift(int err, int err_val) {
+    printf("In line %2d | Error in value used in shift operation, please use positive integer less or equal to 16. (value %d found)\n", get_line_number(), err_val);
     exit(err);
 }
 

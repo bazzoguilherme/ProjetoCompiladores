@@ -107,7 +107,7 @@ void erro_args_funcao(int err, char *nome_fun, char *motivo);
 void erro_input(int err, char *nome_var, Type tipo_var);
 void erro_output(int err, char *nome_var, Type tipo_var);
 void erro_output_lit(int err, Type tipo_var);
-void erro_shift(int err);
+void erro_shift(int err, int err_int);
 void erro_return(int err, char *fun_name, Type tipo_fun, Type tipo_ret);
 
 #endif
