@@ -496,7 +496,7 @@ void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametr
     struct elem_table *fun_args = encontra_elemento_stack(stack, funcao->valor.val_str)->argumentos;
     int pos_arg = 1;
     while(fun_args != NULL && parametros != NULL) {
-        if (fun_args->tipo != parametros->tipo) { // WRONG TYPE
+        if (!tipos_compativeis(fun_args->tipo, parametros->tipo)) { // WRONG TYPE
             erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, funcao->valor.val_str, pos_arg);
         }
         fun_args = fun_args->next_elem;

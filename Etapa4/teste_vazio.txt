@@ -22,7 +22,7 @@ int main(int var1, int gui, char xnhor) {
     
     v[10-28798.0853] = 'd';
 
-    main(1, 2, 'x');
+    main(1, 2.0, 'x');
 
     string new_s <= "string";
     new_s = "abc";
