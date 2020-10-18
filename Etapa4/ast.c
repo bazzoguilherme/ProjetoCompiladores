@@ -122,7 +122,8 @@ struct AST *create_FUNCAO(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex,
 // }
 
 struct AST *create_EXPRESSAO_BIN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1, struct AST *f2) {
-    return create_AST(ast_type_exp, val_lex, define_tipo_expr(f1->tipo, f2->tipo), f1, f2, NULL, NULL, NULL);
+    Type tipo_coercao = define_tipo_expr(f1->tipo, f2->tipo);
+    return create_AST(ast_type_exp, val_lex, tipo_op_bin(val_lex, tipo_coercao), f1, f2, NULL, NULL, NULL);
 }
 
 struct AST *create_EXPRESSAO_UN(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, struct AST *f1) {

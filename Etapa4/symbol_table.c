@@ -455,6 +455,18 @@ Type define_tipo_expr(Type expr1, Type expr2) {
     }
 }
 
+Type tipo_op_bin(struct valor_lexico_t *val_lex, Type tipo_nodos) {
+    if (val_lex->tipo == VAL_ESPECIAL) {
+        if (val_lex->valor.val_char == '<' || 
+            val_lex->valor.val_char == '>') {
+                return TYPE_BOOL;
+            }
+    } else if (val_lex->tipo == VAL_OP_COMPOSTO) {
+        return TYPE_BOOL;
+    }
+    return tipo_nodos;
+}
+
 void verifica_bool_condition(Type expr2, char *lugar, int linha) {
     if (expr2 == TYPE_STRING) {
         erro_str_ch_paraBool_controle_fluxo(ERR_STRING_TO_X, linha, TYPE_STRING, lugar);

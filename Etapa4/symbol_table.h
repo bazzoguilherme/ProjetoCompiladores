@@ -79,6 +79,7 @@ int tipos_compativeis(Type tipo1, Type tipo2);
 int uso_incorreto_erro(Type_Natureza nat);
 
 Type define_tipo_expr(Type expr1, Type expr2);
+Type tipo_op_bin(struct valor_lexico_t *val_lex, Type tipo_nodos);
 void verifica_bool_condition(Type expr2, char *lugar, int linha);
 
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib);
