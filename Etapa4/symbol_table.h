@@ -86,7 +86,7 @@ void verifica_bool_condition(Type expr2, char *lugar, int linha);
 
 void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib);
 
-void verifica_atrib_string(char *nome_var, struct AST *expr);
+void verifica_atrib_string(struct AST *ast, struct AST *expr);
 int calcula_tamanho_str_expr(struct stack_symbol_table *stack, struct AST *expr);
 
 void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametros);

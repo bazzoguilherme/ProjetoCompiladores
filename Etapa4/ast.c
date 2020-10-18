@@ -173,7 +173,7 @@ struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f
 struct AST *create_ASSIGN(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2) {
     verifica_tipo_atribuicao(f1->tipo, f2->tipo);
     if (f1->tipo == TYPE_STRING) {
-        verifica_atrib_string(f1->valor_lexico->valor.val_str, f2);
+        verifica_atrib_string(f1, f2);
     }
     return create_AST(ast_type_exp, NULL, f1->tipo, f1, f2, NULL, NULL, NULL);
 }
@@ -214,7 +214,7 @@ void atualiza_tipo_nodos_decl(struct AST *nodo, Type tipo_nodo) {
         verifica_tipo_atribuicao(tipo_nodo, nodo->children[1]->tipo);
         nodo->tipo = tipo_nodo;
         if (tipo_nodo == TYPE_STRING) {
-            verifica_atrib_string(nodo->children[0]->valor_lexico->valor.val_str, nodo->children[1]);
+            verifica_atrib_string(nodo->children[0], nodo->children[1]);
         }
         if (nodo->prox != NULL) {
             atualiza_tipo_nodos_decl(nodo->prox, tipo_nodo);

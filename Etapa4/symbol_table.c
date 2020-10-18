@@ -504,7 +504,11 @@ void verifica_tipo_atribuicao(Type tipo_var, Type tipo_attrib) {
     }
 }
 
-void verifica_atrib_string(char *nome_var, struct AST *expr) {
+void verifica_atrib_string(struct AST *ast, struct AST *expr) {
+    if (ast->tipo_exp == AST_VEC) {
+        return;
+    }
+    char *nome_var = ast->valor_lexico->valor.val_str;
     struct elem_table *var = encontra_elemento_stack(stack, nome_var);
     int tam_inserindo = calcula_tamanho_str_expr(stack, expr);
     if (var->tamanho == -1){

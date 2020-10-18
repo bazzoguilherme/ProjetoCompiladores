@@ -1,6 +1,7 @@
 int a, b, c;
 static float gus_aca_lo;
 char v[10];
+string vec_str[10];
 
 int main(int var1, int gui, char xnhor) {
     char a;
@@ -25,6 +26,9 @@ int main(int var1, int gui, char xnhor) {
     b = 2;
     b = 10;
     b = 2;
+
+    vec_str[0] = "str0";
+    vec_str[1] = "str1";
     
     v[10-28798.0853] = 'd';
 
@@ -42,7 +46,7 @@ int m() {
     //int nic <= 0, b <= nic;
     {
         //int main <= 1;
-        int m;
+        //int m;
     };
 }
 
