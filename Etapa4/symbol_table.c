@@ -143,6 +143,7 @@ void delete_escopo() {
     // Free old table
     free_table(stack->topo);
     stack->topo = NULL;
+    free(stack);
 
     stack = novo_topo;
 }
@@ -157,6 +158,9 @@ void free_table(struct elem_table *table) {
 
     free(table->key);
     free_table(table->argumentos);
+    if (table->natureza != NAT_literal || (table->natureza == NAT_literal && table->tipo == TYPE_STRING)) {
+        free(table->dado.val_str);
+    }
     free(table);
 
     free_table(prox_elemento);
@@ -170,6 +174,15 @@ void free_stack(struct stack_symbol_table *stack) {
     free(stack);
 }
 
+union val_lex dupl_union(union val_lex dado, Type_Natureza nat, Type tipo){
+    union val_lex new_u;
+    new_u.val_char = dado.val_char;
+    new_u.val_int = dado.val_int;
+    new_u.val_float = dado.val_float;
+    if (nat != NAT_literal || (nat == NAT_literal && tipo == TYPE_STRING))
+        new_u.val_str = strdup(dado.val_str);
+    return new_u;
+}
 
 void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo) {
     if (stack == NULL) {
@@ -190,7 +203,7 @@ void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo)
     if (elemento == NULL) {
         elemento = create_elem(strdup(symbol->valor.val_str), 
                                 symbol->linha, nat, tipo, tamanho_byte(tipo), 
-                                symbol->valor);
+                                dupl_union(symbol->valor, nat, tipo));
 
         stack->topo = elemento;
     } else {
@@ -199,7 +212,7 @@ void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo)
         }
         struct elem_table *aux = create_elem(strdup(symbol->valor.val_str), 
                                     symbol->linha, nat, tipo, tamanho_byte(tipo), 
-                                    symbol->valor);
+                                    dupl_union(symbol->valor, nat, tipo));
         elemento->next_elem = aux;
     }
 }
@@ -216,13 +229,14 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
 
     if ((busca_lit = encontra_literal_tabela(stack->topo, key_lit, tipo)) != NULL) {
        // Atualiza elemento 
+       free(key_lit);
        busca_lit->localizacao = literal->linha;
     } else {
 
         if (elemento == NULL) {
             elemento = create_elem(key_lit, literal->linha, nat, tipo, 
                                 tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
-                                literal->valor);
+                                dupl_union(literal->valor, nat, tipo));
             stack->topo = elemento;
         } else {
             while(elemento->next_elem != NULL) {
@@ -230,7 +244,7 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
             }
             struct elem_table *aux = create_elem(key_lit, literal->linha, nat, tipo, 
                                 tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
-                                literal->valor);
+                                dupl_union(literal->valor, nat, tipo));
             elemento->next_elem = aux;
         }
     }
@@ -278,7 +292,7 @@ void cria_simbolo_parcial(struct valor_lexico_t *symbol, Type_Natureza nat, int 
     if (lista_aux == NULL) {
         struct elem_table *new_elem = create_elem(strdup(symbol->valor.val_str), 
                                 symbol->linha, nat, TYPE_NO_VAL, tamanho_, 
-                                symbol->valor);
+                                dupl_union(symbol->valor, nat, TYPE_NO_VAL));
         lista_aux = new_elem;
         return;
     } else {
@@ -290,7 +304,7 @@ void cria_simbolo_parcial(struct valor_lexico_t *symbol, Type_Natureza nat, int 
 
     struct elem_table *new_elem = create_elem(strdup(symbol->valor.val_str), 
                                 symbol->linha, nat, TYPE_NO_VAL, tamanho_, 
-                                symbol->valor);
+                                dupl_union(symbol->valor, nat, TYPE_NO_VAL));
 
     aux->next_elem = new_elem;
 

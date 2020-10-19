@@ -25,4 +25,4 @@ parser_table: parser.y
 	$(BISON) -v parser.y
 
 clean:
-	rm $(filename) lex.yy.* parser.tab.* *.o
+	rm $(filename) lex.yy.c parser.tab.c parser.tab.h *.o

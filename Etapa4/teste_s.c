@@ -14,3 +14,7 @@ int ff2 () {
     string b <= "sBBB";
     b = "vv";
 }
+char v() {
+
+}
+int a;
