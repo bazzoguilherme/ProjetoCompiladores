@@ -5,8 +5,9 @@ string vec_str[10];
 
 int main(int var1, int gui, char xnhor) {
     char a;
-    a = 'a' + 'a';
-        
+    a = 'a' + 'w';
+    b = 10;
+    /*    
     if (1 < 2) {
         string a <= "aaa";
     } else {
@@ -14,10 +15,10 @@ int main(int var1, int gui, char xnhor) {
         a << 2;
         return true;
     };
-
-    //for (b = 1:"false":b=b+1) {
-    //    a = true ? 1 : 2;
-    //};
+    */
+    for (b = 1:false:b=b+1) {
+        a = true ? '1' : '2';
+    };
 
     //b = - 'c';
 

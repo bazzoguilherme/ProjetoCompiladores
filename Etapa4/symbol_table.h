@@ -52,6 +52,8 @@ struct stack_symbol_table *new_stack();
 struct stack_symbol_table *escopo_global();
 void new_escopo();
 void delete_escopo();
+void free_table(struct elem_table *table);
+void free_stack(struct stack_symbol_table *stack);
 
 void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);
 void insere_literal(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);

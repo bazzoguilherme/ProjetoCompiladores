@@ -102,7 +102,7 @@ struct elem_table *recupera_ultimo_elemento_global(struct stack_symbol_table *st
 
 
 struct elem_table *encontra_literal_tabela(struct elem_table *tabela_atual, char *key, Type tipo_lit) {
-    while ( tabela_atual != NULL && (strcmp(tabela_atual->key, key) != 0 || tipo_lit != tabela_atual->tipo)) {
+    while ( tabela_atual != NULL && (strcmp(tabela_atual->key, key) != 0 || tipo_lit != tabela_atual->tipo || tabela_atual->natureza != NAT_literal)) {
         tabela_atual = tabela_atual->next_elem;
     }
     return tabela_atual;
@@ -141,7 +141,33 @@ void new_escopo() {
 void delete_escopo() {
     struct stack_symbol_table *novo_topo = stack->down_table;
     // Free old table
+    free_table(stack->topo);
+    stack->topo = NULL;
+
     stack = novo_topo;
+}
+
+void free_table(struct elem_table *table) {
+    if (table == NULL) {
+        return;
+    }
+
+    struct elem_table *prox_elemento = table->next_elem;
+    table->next_elem = NULL;
+
+    free(table->key);
+    free_table(table->argumentos);
+    free(table);
+
+    free_table(prox_elemento);
+}
+
+void free_stack(struct stack_symbol_table *stack) {
+    if (stack == NULL) {
+        return;
+    }
+    free_table(stack->topo);
+    free(stack);
 }
 
 
@@ -314,7 +340,7 @@ char *literal_key(struct valor_lexico_t* literal) {
         break;
     case VAL_BOOL:
         new_key = (char *) malloc (6);
-        new_key = ((literal->valor.val_int == 1) ? "true" : "false");
+        strcpy(new_key, (literal->valor.val_int == 1) ? "true" : "false");
         break;
     case VAL_INT:
         new_key = (char *) malloc (12);

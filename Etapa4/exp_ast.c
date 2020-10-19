@@ -4,8 +4,11 @@
 
 #include "symbol_table.h"
 
+extern struct stack_symbol_table *stack;
+
 void libera(void *arvore) {
     libera_ast((struct AST *) arvore);
+    free_stack(stack);
 }
 
 void libera_ast(struct AST *ast) {
