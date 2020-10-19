@@ -157,7 +157,7 @@ void free_table(struct elem_table *table) {
     table->next_elem = NULL;
 
     free(table->key);
-    free_table(table->argumentos);
+    // free_table(table->argumentos);
     if (table->natureza != NAT_literal || (table->natureza == NAT_literal && table->tipo == TYPE_STRING)) {
         free(table->dado.val_str);
     }
