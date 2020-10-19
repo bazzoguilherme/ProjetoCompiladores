@@ -1,0 +1,135 @@
+
+/* Declaracao Global ~1 */
+
+int var_global, cont_universal;
+char nome[20];
+char nome2[+10];
+bool cond;
+static float media, mediana;
+static string user_name;
+
+// int init <= 10; // ERRO
+// int err[-10]; // ERRO
+
+
+static char static_type_func() { }
+
+int par(int i, const char t) {
+    return 0;
+}
+
+// int err(int i[10]) { } // ERRO
+
+// int err(int 1) { } // ERRO
+
+// int f {} // ERRO
+
+// int f () // ERRO - linhas afrente
+
+// Nova var global
+int new_g[2];
+
+/* Funcao Principal */
+int main () {
+    /* Declaracoes locais */
+    int i <= 1, i2;
+    char c <= 'c';
+    char ch <= '\"';
+    static string s;
+    float f <= -10.5e-1;
+    bool b;
+    const float pi <= 3.14;
+    const float tau;
+    // int v[10]; // ERRO
+    
+
+    /* Atribuicao */
+    i = 2;
+    i = 1 + 2;
+    tau = pi * 2;
+
+    nome[0] = 'c';
+    nome[i] = 'c';
+    s = "Guilherme_e_Gustavo";
+    b = 1 % 2 == 0;
+
+    /* IO */
+    input i;
+    //output s;
+    output 5;
+    output -5;
+
+
+    /* Chamada Funcao */
+    par(2, 'v');
+    par(i, '\n');
+    par(?true + 15 ^ (-2), '\n');
+
+    /* Comando shift */
+    i << 2;
+    i >> 3;
+    // i << -2; // ERRO
+    // i << '1'; // ERRO
+    new_g[0] << 2;
+
+    /* Comando retorno.. */
+    return -1;
+    return true;
+    // return 'c';
+    return 15.0;
+    continue;
+    break;
+    // break 2; // ERRO
+
+    /* Controle fluxo */
+    if (true) {
+        i = 10;
+        if (true) {
+
+        } else {};
+    } else {} ;
+    
+    // else {} // ERRO
+    
+    if (false) {
+        i = 7;
+    } else {
+        i = 9;
+    };
+
+    // if ('c') { } // ERRO
+
+    while (i % 2 != 0) do {
+        i << 2;
+        i << +3;
+        break;
+    };
+
+    for (i = 0: i < 2: i=i-(-1)) {
+        output i;
+        continue;
+    };
+
+    i = true ? i+0 : i+1;
+
+
+    /* Testes expressoes */
+    i = false ? 10 : 5;
+    //i = #c;
+    //i = *c * (3/2);
+    //i = &c + 2;
+    b = true || 2;
+    b = ? b; 
+    b = ? (+b * 10); 
+
+
+    int a;
+    a = new_g[1];
+
+    /* Bloco */
+    {
+        int v <= 1;
+    };
+
+    return 0;
+}
