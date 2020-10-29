@@ -148,6 +148,13 @@ void delete_escopo() {
     stack = novo_topo;
 }
 
+void free_args(struct elem_table* args) {
+    if (args != NULL) {
+        free_args(args->next_elem);
+    }
+    free(args);
+}
+
 void free_table(struct elem_table *table) {
     if (table == NULL) {
         return;
@@ -157,7 +164,7 @@ void free_table(struct elem_table *table) {
     table->next_elem = NULL;
 
     free(table->key);
-    // free_table(table->argumentos);
+    free_args(table->argumentos);
     if (table->natureza != NAT_literal || (table->natureza == NAT_literal && table->tipo == TYPE_STRING)) {
         free(table->dado.val_str);
     }
@@ -323,7 +330,7 @@ void adiciona_argumentos_funcao() {
     if (funcao != NULL) {
         while(escopo_funcao != NULL) {
             struct elem_table *novo_param = new_elem_table();
-            novo_param->key = strdup(escopo_funcao->key);
+            novo_param->key = escopo_funcao->key;
             novo_param->tipo = escopo_funcao->tipo;
 
             if (anterior == NULL) {
