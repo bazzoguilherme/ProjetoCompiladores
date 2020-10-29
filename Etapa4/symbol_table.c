@@ -585,7 +585,7 @@ void verifica_chamada_funcao(struct valor_lexico_t *funcao, struct AST *parametr
     if (fun_args != NULL) { // MISSING
         erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "missing arguments");
     } else if (parametros != NULL) { // EXCESS
-        erro_args_funcao(ERR_MISSING_ARGS, funcao->valor.val_str, "excess of arguments");
+        erro_args_funcao(ERR_EXCESS_ARGS, funcao->valor.val_str, "excess of arguments");
     } if (err) { // Erro de tipos - menor prioridade
         erro_args_funcao_tipo(ERR_WRONG_TYPE_ARGS, funcao->valor.val_str, pos_arg_err, tipo_passado, tipo_esperado);
     }
