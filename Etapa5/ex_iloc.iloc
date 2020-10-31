@@ -1,0 +1,12 @@
+loadI 1 => r0
+loadI 1 => r1
+loadI 4 => r2
+cmp_LE r1, r2 => r3
+cbr r3 -> L0, L1
+L0: addI r0, 1 => r4
+i2i r4 => r0
+addI r1, 1 => r1
+cmp_LE r1, r2 => r5
+cbr r5 -> L0, L1
+L1: loadI 0 => r6
+store r0 => r6
