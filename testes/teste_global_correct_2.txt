@@ -1,0 +1,241 @@
+
+static int svarint, svarint2, svarint3;
+static float svarfloat;
+static char svarchar;
+static bool svarbool;
+static string svarstring;
+
+int varint;
+float varfloat;
+char varchar;
+bool varbool;
+string varstring;
+
+static int intvec[10];
+static float floatvec[10];
+static char charvec[10];
+static bool boolvec[10];
+static string stringvec[10];
+
+int avvec[10];
+float bvvec[10];
+char cvvec[10];
+bool dvvec[10];
+string evvec[10];
+
+static int efoo1(){}
+static float efoo2(){}
+static char efoo3(){}
+static bool efoo4(){}
+static string efoo5(){}
+
+int efoo6(){}
+float efoo7(){}
+char efoo8(){}
+bool efoo9(){}
+string efoo10(){}
+
+int efoo11(){
+	{};
+}
+
+
+int efoo12(const int a, const float b, const char c, const bool d, const string e){}
+int efoo13(int a, float b, char c, bool d, string e){}
+int efoo14(const int a, int b, char c, const bool e){}
+
+int efoo15(const int a, const float b, const char c, const bool d, const string e){
+	static const int var;
+	static int var1;
+	int var2;
+	int var_a <= 0;
+	static const float var3 <= 3.0;
+	static float var4 <= var2;
+	static const int a1, b1, c1, d1 <= 10, e1, f1 <= b;
+}
+
+int bar(){}
+int foobar(int a, float b, int c, float d, char e, string f, bool g){}
+
+int efoo16(const int a, const float b, const char c, const bool d, const string e){
+	bar();
+	foobar(a, b, 1, 2, 'a', "bbb", 3.5);
+
+}
+
+int intvector[10];
+
+static int foo(){
+	int identificador, var;
+	identificador = 0;
+	intvector[0] = 90;
+	charvec[1] = 'f';
+	intvector[2] = true;
+	stringvec[3] = "string";
+	var = 3.5;
+}
+
+static int foo2(){
+	int identificador;
+	input identificador;
+	output identificador;
+	output 10;
+	output 10.2;
+}
+
+float v[10];
+static int foo3(){
+	int identificador;
+	v[5] = 3.2;
+	identificador << 10;
+	identificador << 10;
+	int var <= 10, var2 <= 3;
+	v[var - 3 + var2] << 10;
+	v[var] >> 10;
+	v[var + 3 - var2] >> 3;
+
+}
+
+static int foo4(){
+	continue;
+}
+
+static int foo5(){
+	break;
+}
+
+static int foo6(){
+	return 10;
+}
+
+static int foo7(){
+	int var;
+	if (true) {
+		var = 2;
+	} else {
+		var = 3;
+	};
+}
+
+static int foo8(){
+	float var <= 2.5, y <= 4;
+	if (2 + 3 - var * y <= 7) {
+		var = 2;
+	};
+	return 2 > 7;
+}
+
+static int foo9(){
+	float var <= 2.5, y <= 4, a<=0, c <= 3;
+	if (2 + 3 - var * y <= 7) {
+		var = 2;
+	}else {
+		if (a > 2){
+		c = 7;
+		};
+		var = 18;
+	};
+	return var;
+}
+
+
+static int foo10(){
+	int i, mult;
+	for (i=0: i < 100: i = i+1){
+		mult = 10 * i;
+		output mult;
+	};
+}
+
+
+static int foo11(int counter){
+	while (counter + 7 < 10) do {
+		output counter;
+		counter = counter + 1;
+	};
+}
+
+static int foo12(int counter){
+	counter = 11;
+	while(counter < 10) do {};
+}
+
+
+float soma(float a, float b){
+	return a+b;
+}
+
+float square(float a){
+	return a * a;
+}
+
+int expvec[10];
+
+static bool expressions(int ident, float exp, int h_table, bool cond){
+	int var <= 5, oper <= 6, a <= 1, b <= 2;
+
+	exp = ident;
+	exp = ?(?soma(10, 20) + expvec[10]);
+	exp = expvec[-10 + 5 * 5];
+	exp = expvec[!cond > 10];
+	exp = 10 > var && (oper > 2 ? 7*4/2 : a^7+4);
+	exp = 10 > var && (soma(a,b) > 3 ? -square(a) : 3 * square(b));
+}
+
+static bool arithmetic_expressions(int ident, float exp, int h_table, bool cond){
+	int var <= 5, oper <= 6, a <= 1, b <= 2, k <= 1, f <= 5, e <= 7, hash <= 1;
+	float valor;
+	valor = ident * exp;
+
+	exp = 2 + 3.2;
+	exp = valor + 7 / 2;
+	exp = intvec[2] + intvec[valor*7-2/4] - 42.42;
+	exp = intvec[2] + valor - (intvec[valor] * intvec[soma(a,b)]) / 7.5 % 3 ^ 9;
+	exp = +7 + -3 + !b + &k + *f + ?e + #hash;
+	
+}
+
+static bool logical_expressions(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l){
+	bool exp;
+	
+	exp = a && b;
+	exp = a || b;
+	exp = a | b;
+	exp = a & b;
+	exp = a > b;
+	exp = a < b;
+	exp = a >= b;
+	exp = a <= b;
+	exp = a != b;
+	exp = a == b;
+	exp = a && b || c & d | f > g < h >= i <= j != k == l;
+	exp = a && (b || (c & d | (f > g < h) >= i)) <= (j != k) == l;
+}
+
+int avalia(float a, float b, float c){
+	return soma(a, soma(b, c));
+}
+
+static bool tern_expressions(float a, float b, float c, float d){
+	bool exp;
+	exp = true ? 2 : 3;
+	exp = false?true:false;
+	exp = false ? true : false;
+	exp = soma(a,b) > 10 ? soma(a,c) > 20 ? avalia(a,b,c) : a^4 : soma(b,c) < 5 ? true : false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
