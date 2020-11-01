@@ -165,7 +165,7 @@ struct AST *create_VEC(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, st
 }
 
 struct AST *create_TERNARIO(Type_Exp ast_type_exp, struct AST *f1, struct AST *f2, struct AST *f3) {
-    verifica_bool_condition(f1->tipo, "TERNARY", f2->valor_lexico->linha);
+    verifica_bool_condition(f1->tipo, "TERNARY", get_line_number());
     return create_AST(ast_type_exp, NULL, define_tipo_expr(f2->tipo, f3->tipo), f1, f2, f3, NULL, NULL);
 }
 
