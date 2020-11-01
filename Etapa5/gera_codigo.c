@@ -19,13 +19,3 @@ char *gera_label() {
     snprintf(new_label, MAX_TAM_LABEL, "L%d", label++);
     return new_label;
 }
-
-int main() {
-
-    printf("%s\n", gera_regis());
-    printf("%s\n", gera_regis());
-    printf("%s\n", gera_regis());
-
-
-    return 0;
-}
