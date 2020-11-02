@@ -102,7 +102,8 @@ extern void libera(void *arvore);
 %type<ast> id_ou_vet_expr
 %type<ast> expressao
 %type<ast> expr
-%type<ast> expr_log_comp
+%type<ast> expr_log_comp_or
+%type<ast> expr_log_comp_and
 %type<ast> expr_log
 %type<ast> expr_comp
 %type<ast> expr_soma
@@ -130,7 +131,6 @@ extern void libera(void *arvore);
 
 %type<valor_lexico> declaracao_header
 %type<valor_lexico> op_shift
-%type<valor_lexico> op_logica_comparacao
 %type<valor_lexico> op_binaria_logica
 %type<valor_lexico> op_binaria_soma
 %type<valor_lexico> op_binaria_produto
@@ -230,11 +230,14 @@ tipo: TK_PR_INT { $$ = TYPE_INT; }
 
 expressao: expr { $$ = $1; };
 
-expr: expr_log_comp { $$ = $1; }
-	| expr_log_comp '?' expressao ':' expressao { $$ = create_TERNARIO(AST_TERNARIO, $1, $3, $5); }
+expr: expr_log_comp_or { $$ = $1; }
+	| expr_log_comp_or '?' expressao ':' expressao { $$ = create_TERNARIO(AST_TERNARIO, $1, $3, $5); }
 	;
 
-expr_log_comp: expr_log_comp op_logica_comparacao expr_log { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+expr_log_comp_or: expr_log_comp_or TK_OC_OR expr_log_comp_and { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+	| expr_log_comp_and { $$ = $1; };
+
+expr_log_comp_and: expr_log_comp_and TK_OC_AND expr_log { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
 	| expr_log { $$ = $1; };
 
 expr_log: expr_log op_binaria_logica expr_comp { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
@@ -428,9 +431,6 @@ op_binaria_expoente: '^' { $$ = lex_especial('^', VAL_ESPECIAL, get_line_number(
 
 op_binaria_logica: '|' { $$ = lex_especial('|', VAL_ESPECIAL, get_line_number()); }
 	| '&' { $$ = lex_especial('&', VAL_ESPECIAL, get_line_number()); };
-
-op_logica_comparacao: TK_OC_AND { $$ = $1; }
-	| TK_OC_OR { $$ = $1; };
 
 op_binaria_comparacao: '<' { $$ = lex_especial('<', VAL_ESPECIAL, get_line_number()); }
 	| '>' { $$ = lex_especial('>', VAL_ESPECIAL, get_line_number()); }

@@ -43,3 +43,54 @@ struct code *gera_code(OP op, char* arg1, char *arg2, char *dest) {
     codigo->prox = NULL;
     return codigo;
 }
+
+
+OP op_operacao(struct valor_lexico_t *operacao) {
+    if (operacao->tipo == VAL_ESPECIAL) { // char
+        return op_simples(operacao->valor.val_char);
+    } else { // Op-composto
+        // return op_composta(operacao->valor.val_str);
+    }
+}
+
+OP op_simples(char op) {
+    switch (op)
+    {
+    case '+':
+        return op_add;
+        break;
+    case '-':
+        return op_sub;
+        break;
+    case '*':
+        return op_mult;
+        break;
+    case '/':
+        return op_div;
+        break;
+    // case '<':
+    //     return op_cmp_LT;
+    //     break;
+    // case '>':
+    //     return op_cmp_GT;
+    //     break;
+    default:
+        break;
+    }
+}
+
+// OP op_composta(char *op) {
+//     if (strcmp(op, "<=") == 0) {
+//         return op_cmp_LE;
+//     } else if (strcmp(op, ">=") == 0) {
+//         return op_cmp_GE;
+//     } else if (strcmp(op, "==") == 0) {
+//         return op_cmp_EQ;
+//     } else if (strcmp(op, "!=") == 0) {
+//         return op_cmp_NE;
+//     } else if (strcmp(op, "&&") == 0) {
+//         return op_and;
+//     } else if (strcmp(op, "||") == 0) {
+//         return op_or;
+//     }
+// }
