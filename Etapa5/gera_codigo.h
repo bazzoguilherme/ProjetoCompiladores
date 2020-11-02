@@ -11,6 +11,7 @@ struct code *alloc_code();
 
 char *int2str(struct valor_lexico_t *literal);
 
+struct code *concat(struct code *code1, struct code *code2, struct code *code3);
 struct code *gera_code(OP op, char* arg1, char *arg2, char *dest);
 
 OP op_operacao(struct valor_lexico_t *operacao);

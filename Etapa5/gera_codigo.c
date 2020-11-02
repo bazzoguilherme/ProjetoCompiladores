@@ -33,6 +33,23 @@ char *int2str(struct valor_lexico_t *literal) {
     return new_key;
 }
 
+struct code *concat(struct code *code1, struct code *code2, struct code *code3) {
+    struct code *aux = code1;
+    if (code1 == NULL)
+        return NULL;
+
+    while(aux->prox != NULL)
+        aux = aux->prox;
+
+    aux->prox = code2;
+
+    while(aux->prox != NULL)
+        aux = aux->prox;
+
+    aux->prox = code3;
+    return code1;
+}
+
 struct code *gera_code(OP op, char* arg1, char *arg2, char *dest) {
     struct code *codigo = alloc_code();
     codigo->label = NULL;
