@@ -2,6 +2,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "gera_codigo.h"
+
 #define MAX_FILHOS 4
 
 typedef enum Tipo_val_lex {
@@ -75,6 +77,7 @@ typedef struct AST {
     Type_Exp tipo_exp;
     struct valor_lexico_t *valor_lexico;
     struct AST *children[MAX_FILHOS];
+    struct code *codigo;
     struct AST *prox;
 } AST;
 
