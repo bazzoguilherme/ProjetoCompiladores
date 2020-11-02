@@ -21,6 +21,7 @@
 #include "ast.h"
 #include "exp_ast.h"
 #include "symbol_table.h"
+#include "gera_codigo.h"
 
 int yylex(void);
 int yyerror (char const *s);
@@ -266,7 +267,9 @@ expr_arit: id_ou_vet_expr { $$ = $1; }
 
 expr_arit_B: TK_LIT_INT { 
 		insere_literal($1, NAT_literal, TYPE_INT);
-		$$ = create_LIT(AST_LIT, $1); }
+		$$ = create_LIT(AST_LIT, $1);
+		$$->local = gera_regis();
+		$$->codigo = gera_code(op_loadI, int2str($1), NULL, $$->local); }
 	| TK_LIT_FLOAT { 
 		insere_literal($1, NAT_literal, TYPE_FLOAT);
 		$$ = create_LIT(AST_LIT, $1); } ;

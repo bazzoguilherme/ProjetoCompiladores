@@ -2,8 +2,6 @@
 #ifndef AST_H
 #define AST_H
 
-#include "gera_codigo.h"
-
 #define MAX_FILHOS 4
 
 typedef enum Tipo_val_lex {
@@ -29,6 +27,7 @@ struct valor_lexico_t {
     Tipo_val_lex tipo;
     union val_lex valor;
 };
+
 
 struct valor_lexico_t *lex_int(int int_value, Tipo_val_lex tipo_tk, int linha);
 struct valor_lexico_t *lex_bool(int bool_val, Tipo_val_lex tipo_tk, int linha);
@@ -72,11 +71,60 @@ typedef enum Type {
     TYPE_BOOL,
 } Type;
 
+
+typedef enum OP {
+    nop = 0,
+    op_add = 1,
+    op_sub,
+    op_mult,
+    op_div,
+    op_addI,
+    op_subI,
+    op_multI,
+    op_divI,
+    op_load, 
+    op_loadI, 
+    op_loadAI, 
+    op_loadAO, 
+    op_cload,
+    op_cloadAI,
+    op_cloadAO,
+    op_store, 
+    op_storeAI, 
+    op_storeAO, 
+    op_cstore, 
+    op_cstoreAI, 
+    op_cstoreAO, 
+    op_i2i,
+    op_c2c,
+    op_c2i,
+    op_i2c,
+    op_cmp_LT,
+    op_cmp_LE,
+    op_cmp_EQ,
+    op_cmp_GE,
+    op_cmp_GT,
+    op_cmp_NE,
+    op_cbr,
+    op_jump,
+    op_jumpI,
+} OP;
+
+struct code {
+    char* label; // NULL or Lx
+    OP operation; // e.g. add r1, r2 => r3
+    char* arg1;
+    char* arg2;
+    char* dest;
+    struct code *prox; // montagem de "cabeça para baixo"
+};
+
 typedef struct AST {
     Type tipo;
     Type_Exp tipo_exp;
     struct valor_lexico_t *valor_lexico;
     struct AST *children[MAX_FILHOS];
+    char *local;
     struct code *codigo;
     struct AST *prox;
 } AST;
