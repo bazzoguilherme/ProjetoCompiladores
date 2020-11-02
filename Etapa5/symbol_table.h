@@ -25,12 +25,15 @@ struct elem_table {
     int tamanho; // bytes
     struct elem_table *argumentos; // Funcao
     union val_lex dado;
+    int deslocamento;
 
     struct elem_table *next_elem;
 };
 
 struct stack_symbol_table {
     struct elem_table *topo;
+    int deslocamento;
+    int nomeado;
     struct stack_symbol_table *down_table;
 };
 
@@ -51,6 +54,7 @@ struct elem_table *encontra_literal_stack(struct stack_symbol_table *stack, char
 struct stack_symbol_table *new_stack();
 struct stack_symbol_table *escopo_global();
 void new_escopo();
+void new_escopo_funcao();
 void delete_escopo();
 void free_table(struct elem_table *table);
 void free_stack(struct stack_symbol_table *stack);
@@ -120,5 +124,9 @@ void erro_output(int err, char *nome_var, Type tipo_var);
 void erro_output_lit(int err, Type tipo_var);
 void erro_shift(int err, int err_int);
 void erro_return(int err, char *fun_name, Type tipo_fun, Type tipo_ret);
+
+void exp_table();
+void print_stack(struct stack_symbol_table *stack);
+void print_table(struct elem_table *table);
 
 #endif

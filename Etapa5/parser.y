@@ -322,7 +322,7 @@ decl_header_parametros: decl_header_param_init decl_header_param_end
 	{ adiciona_argumentos_funcao(); }
 ;
 
-decl_header_param_init: '(' { new_escopo(); };
+decl_header_param_init: '(' { new_escopo_funcao(); };
 
 decl_header_param_end: parametros ')';
 

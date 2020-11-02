@@ -4,6 +4,9 @@
 #include "symbol_table.h"
 #include "errors.h"
 
+#define TRUE 1
+#define FALSE 0
+
 extern int get_line_number(void);
 
 struct stack_symbol_table *stack = NULL;
@@ -43,6 +46,7 @@ struct elem_table *create_elem(char *key, int loc, Type_Natureza nat, Type tipo,
     elemento->natureza = nat;
     elemento->tipo = tipo;
     elemento->dado = dado;
+    elemento->deslocamento = 0;
     return elemento;
 }
 
@@ -128,6 +132,8 @@ struct stack_symbol_table *escopo_global() {
     struct stack_symbol_table *novo_escopo = new_stack();
     novo_escopo->topo = NULL;
     novo_escopo->down_table = NULL;
+    novo_escopo->deslocamento = 0;
+    novo_escopo->nomeado = FALSE;
     return novo_escopo;
 }
 
@@ -135,11 +141,27 @@ void new_escopo() {
     struct stack_symbol_table *novo_escopo = new_stack();
     novo_escopo->topo = NULL;
     novo_escopo->down_table = stack; // Coloca stack como escopo antigo
+    novo_escopo->deslocamento = stack->deslocamento; // Adiciona deslocamento de tabela anterior - ja que nao nomeado
+    novo_escopo->nomeado = FALSE;
+    stack = novo_escopo; // Atualiza stack
+}
+
+void new_escopo_funcao() {
+    struct stack_symbol_table *novo_escopo = new_stack();
+    novo_escopo->topo = NULL;
+    novo_escopo->down_table = stack; // Coloca stack como escopo antigo
+    novo_escopo->deslocamento = 0; // Escopo nomeado - deslocamento comecando em zero
+    novo_escopo->nomeado = TRUE;
     stack = novo_escopo; // Atualiza stack
 }
 
 void delete_escopo() {
     struct stack_symbol_table *novo_topo = stack->down_table;
+
+    if (!stack->nomeado) { // Transfere deslocamento quando sai de escopo não-nomeado
+        novo_topo->deslocamento = stack->deslocamento;
+    }
+
     // Free old table
     free_table(stack->topo);
     stack->topo = NULL;
@@ -194,7 +216,7 @@ union val_lex dupl_union(union val_lex dado, Type_Natureza nat, Type tipo){
 
 void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo) {
     if (stack == NULL) {
-        stack = new_stack();
+        stack = escopo_global();
     }
     
     struct elem_table *elemento = NULL;
@@ -212,6 +234,8 @@ void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo)
         elemento = create_elem(strdup(symbol->valor.val_str), 
                                 symbol->linha, nat, tipo, tamanho_byte(tipo), 
                                 dupl_union(symbol->valor, nat, tipo));
+        elemento->deslocamento = stack->deslocamento;
+        stack->deslocamento += elemento->tamanho;
 
         stack->topo = elemento;
     } else {
@@ -221,13 +245,16 @@ void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo)
         struct elem_table *aux = create_elem(strdup(symbol->valor.val_str), 
                                     symbol->linha, nat, tipo, tamanho_byte(tipo), 
                                     dupl_union(symbol->valor, nat, tipo));
+        aux->deslocamento = stack->deslocamento;
+        stack->deslocamento += aux->tamanho;
+
         elemento->next_elem = aux;
     }
 }
 
 void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo) {
     if (stack == NULL) {
-        stack = new_stack();
+        stack = escopo_global();
     }
     
     struct elem_table *elemento = stack->topo;
@@ -245,6 +272,9 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
             elemento = create_elem(key_lit, literal->linha, nat, tipo, 
                                 tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
                                 dupl_union(literal->valor, nat, tipo));
+            elemento->deslocamento = stack->deslocamento;
+            stack->deslocamento += elemento->tamanho;
+
             stack->topo = elemento;
         } else {
             while(elemento->next_elem != NULL) {
@@ -253,6 +283,9 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
             struct elem_table *aux = create_elem(key_lit, literal->linha, nat, tipo, 
                                 tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
                                 dupl_union(literal->valor, nat, tipo));
+            aux->deslocamento = stack->deslocamento;
+            stack->deslocamento += aux->tamanho;
+            
             elemento->next_elem = aux;
         }
     }
@@ -277,6 +310,9 @@ void adiciona_lista_elem_comTipo(Type tipo_) {
     while (lista_aux != NULL) {
         lista_aux->tipo = tipo_;
         lista_aux->tamanho *= ((lista_aux->natureza == NAT_variavel && tipo_ == TYPE_STRING) ? -1 : tamanho_byte(tipo_));
+        lista_aux->deslocamento = stack->deslocamento;
+        stack->deslocamento += lista_aux->tamanho;
+
         lista_aux = lista_aux->next_elem;
     }
     lista_aux = NULL; // Limpa lista
@@ -379,19 +415,19 @@ char *literal_key(struct valor_lexico_t* literal) {
 }
 
 
-void print_stack_elements(struct stack_symbol_table *stack) {
-    printf("Stack - print\n");
-    print_table(stack->topo);
-    if (stack->down_table != NULL)
-        print_stack_elements(stack->down_table);
-}
+// void print_stack_elements(struct stack_symbol_table *stack) {
+//     printf("Stack - print\n");
+//     print_table(stack->topo);
+//     if (stack->down_table != NULL)
+//         print_stack_elements(stack->down_table);
+// }
 
-void print_table(struct elem_table *table) {
-    while(table != NULL) {
-        printf("Elemento: %s\n", table->key);
-        table = table->next_elem;
-    }
-}
+// void print_table(struct elem_table *table) {
+//     while(table != NULL) {
+//         printf("Elemento: %s\n", table->key);
+//         table = table->next_elem;
+//     }
+// }
 
 
 /* Verifica se variavei ja existe em utilizacao
@@ -716,4 +752,27 @@ void erro_shift(int err, int err_val) {
 void erro_return(int err, char *fun_name, Type tipo_fun, Type tipo_ret) {
     printf("In line %2d | Error in return type of function \"%s\". Function declared of type %s but returning type %s.\n", get_line_number(), fun_name, nome_tipo(tipo_fun), nome_tipo(tipo_ret));
     exit(err);
+}
+
+void exp_table() {
+    print_stack(stack);
+    printf("\n\n");
+}
+
+void print_stack(struct stack_symbol_table *stack) {
+    if (stack == NULL) {
+        return;
+    }
+    printf("STACK deslocamento: %d\n", stack->deslocamento);
+    print_table(stack->topo);
+    printf("-----------------------\n");
+    print_stack(stack->down_table);
+}
+
+void print_table(struct elem_table *table) {
+    if(table == NULL) {
+        return;
+    }
+    printf("%s: deslocamento: %d\n", table->key, table->deslocamento);
+    print_table(table->next_elem);
 }
