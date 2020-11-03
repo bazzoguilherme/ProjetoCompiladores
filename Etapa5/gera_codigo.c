@@ -97,6 +97,12 @@ struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_
     return c;
 }
 
+struct code *gera_load_var(OP op, struct AST *ast, char *dest) {
+    int desloc, escopo;
+    desloc = deslocamento_symbol(ast->valor_lexico->valor.val_str, &escopo);
+    return gera_code(NULL, op, ((escopo == GLOBAL) ? "rbss":"rfp"), int2str(desloc), dest, NULL, NULL);
+}
+
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
     struct code *atualiza_rfp = gera_code(NULL, op_i2i, "rsp", NULL, "rfp", NULL, NULL); // Atualiza RFP
     int desloc, escopo;

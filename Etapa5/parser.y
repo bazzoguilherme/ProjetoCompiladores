@@ -264,7 +264,7 @@ F: '(' expressao ')' { $$ = $2; }
 	| op_unaria literal_char_str { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
 	| op_unaria_prio_dir '(' expressao ')' { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $3); };
 
-expr_arit: id_ou_vet_expr { $$ = $1; }
+expr_arit: id_ou_vet_expr { $$ = $1; $$->local = gera_regis(); $$->codigo = gera_load_var(op_loadAI, $1, $$->local); }
 	| expr_arit_B { $$ = $1; $$->local = $1->local; $$->codigo = $1->codigo; }
 	| expr_arit_C { $$ = $1; };
 
@@ -354,7 +354,7 @@ parametro: tipo_const tipo TK_IDENTIFICADOR {
 bloco_init: '{' { new_escopo(); }; 
 bloco_end: comandos '}' { $$ = $1; delete_escopo(); };
 
-bloco_funcao: '{' comandos '}' { $$ = $2; };
+bloco_funcao: '{' comandos '}' { $$ = $2; exp_table(); };
 
 comandos: comando comandos { $$ = create_NODE($1, $2); }
 	| { $$ = NULL; } ;

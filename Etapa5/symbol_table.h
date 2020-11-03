@@ -4,6 +4,25 @@
 
 #include "ast.h"
 
+/*
+ * Para Funções
+ * em 0 : Posição de retorno de funcao
+ * em 4 : Retorno da funcao
+ * em 8 : rfp \ Realizar o 'pop' da pilha
+ * em 12: rsp /
+ *  -- Motivo: facilidade no controle
+ */
+#define INIT_ESC_NOMEADO 16
+#define LOCAL_RETORNO 0
+#define RETORNO_FUNC 4
+#define DESL_RFP 8
+#define DESL_RSP 12
+
+#define TRUE 1
+#define FALSE 0
+
+#define GLOBAL 1
+#define LOCAL 0
 
 // Definido por nós - valores a rever
 typedef enum Type_Natureza {
