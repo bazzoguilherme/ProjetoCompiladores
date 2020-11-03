@@ -4,6 +4,20 @@
 #include "symbol_table.h"
 #include "errors.h"
 
+/*
+ * Para Funções
+ * em 0 : Posição de retorno de funcao
+ * em 4 : Retorno da funcao
+ * em 8 : rfp \ Realizar o 'pop' da pilha
+ * em 12: rsp /
+ *  -- Motivo: facilidade no controle
+ */
+#define INIT_ESC_NOMEADO 16
+#define LOCAL_RETORNO 0
+#define RETORNO_FUNC 4
+#define DESL_RFP 8
+#define DESL_RSP 12
+
 #define TRUE 1
 #define FALSE 0
 
@@ -153,7 +167,7 @@ void new_escopo_funcao() {
     struct stack_symbol_table *novo_escopo = new_stack();
     novo_escopo->topo = NULL;
     novo_escopo->down_table = stack; // Coloca stack como escopo antigo
-    novo_escopo->deslocamento = 0; // Escopo nomeado - deslocamento comecando em zero
+    novo_escopo->deslocamento = INIT_ESC_NOMEADO; // Escopo nomeado - deslocamento comecando em zero
     novo_escopo->nomeado = TRUE;
     stack = novo_escopo; // Atualiza stack
 }
@@ -676,7 +690,7 @@ void verifica_retorno_funcao(struct AST *expr_retorno) {
 }
 
 
-int deslocamento_var(char *var, int *escopo) {
+int deslocamento_symbol(char *symbol, int *escopo) {
     struct stack_symbol_table *stack_atual = stack;
     struct elem_table *elemento = NULL;
     *escopo = LOCAL;
@@ -684,7 +698,7 @@ int deslocamento_var(char *var, int *escopo) {
     while(stack_atual != NULL) {
         elemento = stack_atual->topo;
         while(elemento!=NULL) {
-            if (elemento->natureza != NAT_literal && strcmp(elemento->key, var) == 0) {
+            if (elemento->natureza != NAT_literal && strcmp(elemento->key, symbol) == 0) {
                 if (stack_atual->down_table == NULL) {
                     *escopo = GLOBAL;
                 }
@@ -694,6 +708,16 @@ int deslocamento_var(char *var, int *escopo) {
         }
         stack_atual = stack_atual->down_table;
     }
+}
+
+int deslocamento_funcao_atual() {
+    struct stack_symbol_table *aux = stack, *ant = stack->down_table;
+
+    while(aux->down_table != NULL) {
+        ant = aux;
+        aux = aux->down_table;
+    }
+    return ant->deslocamento;
 }
 
 

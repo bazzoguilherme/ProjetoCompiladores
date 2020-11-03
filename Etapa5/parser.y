@@ -265,14 +265,14 @@ F: '(' expressao ')' { $$ = $2; }
 	| op_unaria_prio_dir '(' expressao ')' { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $3); };
 
 expr_arit: id_ou_vet_expr { $$ = $1; }
-	| expr_arit_B { $$ = $1; }
+	| expr_arit_B { $$ = $1; $$->local = $1->local; $$->codigo = $1->codigo; }
 	| expr_arit_C { $$ = $1; };
 
 expr_arit_B: TK_LIT_INT { 
 		insere_literal($1, NAT_literal, TYPE_INT);
 		$$ = create_LIT(AST_LIT, $1);
 		$$->local = gera_regis();
-		$$->codigo = gera_code(op_loadI, int2str($1), NULL, $$->local); }
+		$$->codigo = gera_loadI(op_loadI, $1, $$->local); }
 	| TK_LIT_FLOAT { 
 		insere_literal($1, NAT_literal, TYPE_FLOAT);
 		$$ = create_LIT(AST_LIT, $1); } ;
@@ -288,7 +288,10 @@ expr_log_literal: TK_LIT_TRUE {
 
 literal: mais_menos TK_LIT_INT { 
 		insere_literal($2, NAT_literal, TYPE_INT);
-		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
+		$$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2);
+		$$->local = gera_regis();
+		$$->codigo = gera_loadI_sinal(op_loadI, $1, $2, $$->local); 
+		}
    | mais_menos TK_LIT_FLOAT { 
 	   insere_literal($2, NAT_literal, TYPE_FLOAT);
 	   $$ = create_EXPRESSAO_UN_LIT(AST_OP_UN, $1, $2); }
@@ -312,7 +315,12 @@ literal_char_str:
 	;
 
 
-declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao { $$ = create_FUNCAO(AST_FUNCAO, $1, $3); };
+declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao { 
+	$$ = create_FUNCAO(AST_FUNCAO, $1, $3); 
+	$$->codigo = gera_decl_funcao($1);
+	$$->codigo = concat_codigos_ast($$, $3, NULL);
+	delete_escopo();
+	};
 
 declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR { 
 		insere_simbolo($3, NAT_funcao, $2);
@@ -346,7 +354,7 @@ parametro: tipo_const tipo TK_IDENTIFICADOR {
 bloco_init: '{' { new_escopo(); }; 
 bloco_end: comandos '}' { $$ = $1; delete_escopo(); };
 
-bloco_funcao: '{' bloco_end { $$ = $2; };
+bloco_funcao: '{' comandos '}' { $$ = $2; };
 
 comandos: comando comandos { $$ = create_NODE($1, $2); }
 	| { $$ = NULL; } ;

@@ -120,7 +120,8 @@ struct code {
     OP operation; // e.g. add r1, r2 => r3
     char* arg1;
     char* arg2;
-    char* dest;
+    char* dest1;
+    char* dest2;
     struct code *prox; // montagem de "cabeça para baixo"
 };
 

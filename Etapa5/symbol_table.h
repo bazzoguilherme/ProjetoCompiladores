@@ -107,7 +107,8 @@ void verifica_shift(struct AST *lit);
 
 void verifica_retorno_funcao(struct AST *expr_retorno);
 
-int deslocamento_var(char *var, int *escopo);
+int deslocamento_symbol(char *symbol, int *escopo);
+int deslocamento_funcao_atual();
 
 int erro_semantico(int err);
 
