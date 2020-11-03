@@ -7,6 +7,9 @@
 #define TRUE 1
 #define FALSE 0
 
+#define GLOBAL 1
+#define LOCAL 0
+
 extern int get_line_number(void);
 
 struct stack_symbol_table *stack = NULL;
@@ -671,6 +674,28 @@ void verifica_retorno_funcao(struct AST *expr_retorno) {
         erro_return(ERR_WRONG_PAR_RETURN, elemento_fun->dado.val_str, elemento_fun->tipo, expr_retorno->tipo);
     }
 }
+
+
+int deslocamento_var(char *var, int *escopo) {
+    struct stack_symbol_table *stack_atual = stack;
+    struct elem_table *elemento = NULL;
+    *escopo = LOCAL;
+
+    while(stack_atual != NULL) {
+        elemento = stack_atual->topo;
+        while(elemento!=NULL) {
+            if (elemento->natureza != NAT_literal && strcmp(elemento->key, var) == 0) {
+                if (stack_atual->down_table == NULL) {
+                    *escopo = GLOBAL;
+                }
+                return elemento->deslocamento;
+            }
+            elemento = elemento->next_elem;
+        }
+        stack_atual = stack_atual->down_table;
+    }
+}
+
 
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
