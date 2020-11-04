@@ -11,10 +11,10 @@
 #define NULL_LABEL -1
 #define NULL_REGIS -1
 
-#define RBSS_name "bss"
-#define RFP_name  "fp"
-#define RSP_name  "sp"
-#define RPC_name  "pc"
+#define RBSS_name "rbss"
+#define RFP_name  "rfp"
+#define RSP_name  "rsp"
+#define RPC_name  "rpc"
 
 #define RBSS -2
 #define RFP  -3
@@ -53,5 +53,16 @@ OP op_composta(char *op);
 void print_code(struct code *codigo);
 
 void traduz_op(struct code *c);
-
+void traduz_regis(int reg_id);
+void traduz_label(int label);
+char *regis_especial(int reg);
+void print_rr_d(struct code *c);
+void print_rc_d(struct code *c);
+void print_r_d(struct code *c);
+void print_c_d(struct code *c);
+void print_r_dr(struct code *c);
+void print_r_dc(struct code *c);
+void print_r_LL(struct code *c);
+void print_r(struct code *c);
+void print_L(struct code *c);
 #endif

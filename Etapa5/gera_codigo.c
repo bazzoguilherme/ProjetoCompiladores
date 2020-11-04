@@ -95,7 +95,7 @@ struct code *gera_load_var(OP op, struct AST *ast, int dest) {
 }
 
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
-    struct code *atualiza_rfp = gera_code(NULL_LABEL, op_i2i, RSP, NULL_REGIS, RSP, NULL_REGIS, NULL); // Atualiza RFP
+    struct code *atualiza_rfp = gera_code(NULL_LABEL, op_i2i, RSP, NULL_REGIS, RFP, NULL_REGIS, NULL); // Atualiza RFP
     int desloc, escopo;
     desloc = deslocamento_funcao_atual();
     struct code *atualiza_rsp = gera_code(NULL_LABEL, op_addI, RSP, desloc, RSP, NULL_REGIS, NULL); // Atualiza RSP
@@ -231,127 +231,259 @@ void traduz_op(struct code *c) {
     switch (c->operation)
     {
     case nop:
-        printf("nop\n");
+        printf("nop");
         break;
     case op_add:
-        printf("add\n");
+        printf("add");
+        print_rr_d(c);
         break;
     case op_sub:
-        printf("sub\n");
+        printf("sub");
+        print_rr_d(c);
         break;
     case op_mult:
-        printf("mult\n");
+        printf("mult");
+        print_rr_d(c);
         break;
     case op_div:
-        printf("div\n");
+        printf("div");
+        print_rr_d(c);
         break;
     case op_addI:
-        printf("addI\n");
+        printf("addI");
+        print_rc_d(c);
         break;
     case op_subI:
-        printf("subI\n");
+        printf("subI");
+        print_rc_d(c);
         break;
     case op_rsubI:
-        printf("rsubI\n");
+        printf("rsubI");
+        print_rc_d(c);
         break;
     case op_multI:
-        printf("multI\n");
+        printf("multI");
+        print_rc_d(c);
         break;
     case op_divI:
-        printf("divI\n");
+        printf("divI");
+        print_rc_d(c);
         break;
     case op_and:
-        printf("and\n");
+        printf("and");
+        print_rr_d(c);
         break;
     case op_andI:
-        printf("andI\n");
+        printf("andI");
+        print_rc_d(c);
         break;
     case op_or:
-        printf("or\n");
+        printf("or");
+        print_rr_d(c);
         break;
     case op_orI:
-        printf("orI\n");
+        printf("orI");
+        print_rc_d(c);
         break;
     case op_load:
-        printf("load\n");
+        printf("load");
+        print_r_d(c);
         break;
     case op_loadI:
-        printf("loadI\n");
+        printf("loadI");
+        print_c_d(c);
         break;
     case op_loadAI:
-        printf("loadAI\n");
+        printf("loadAI");
+        print_rc_d(c);
         break;
     case op_loadAO:
-        printf("loadAO\n");
+        printf("loadAO");
+        print_rr_d(c);
         break;
     case op_cload:
-        printf("cload\n");
+        printf("cload");
         break;
     case op_cloadAI:
-        printf("cloadAI\n");
+        printf("cloadAI");
         break;
     case op_cloadAO:
-        printf("cloadAO\n");
+        printf("cloadAO");
         break;
     case op_store:
-        printf("store\n");
+        printf("store");
+        print_r_d(c);
         break;
     case op_storeAI:
-        printf("storeAI\n");
+        printf("storeAI");
+        print_r_dc(c);
         break;
     case op_storeAO:
-        printf("storeAO\n");
+        printf("storeAO");
+        print_r_dr(c);
         break;
     case op_cstore:
-        printf("cstore\n");
+        printf("cstore");
         break;
     case op_cstoreAI:
-        printf("cstoreAI\n");
+        printf("cstoreAI");
         break;
     case op_cstoreAO:
-        printf("cstoreAO\n");
+        printf("cstoreAO");
         break;
     case op_i2i:
-        printf("i2i\n");
+        printf("i2i");
+        print_r_d(c);
         break;
     case op_c2c:
-        printf("c2c\n");
+        printf("c2c");
         break;
     case op_c2i:
-        printf("c2i\n");
+        printf("c2i");
         break;
     case op_i2c:
-        printf("i2c\n");
+        printf("i2c");
         break;
     case op_cmp_LT:
-        printf("cmp_LT\n");
+        printf("cmp_LT");
+        print_rr_d(c);
         break;
     case op_cmp_LE:
-        printf("cmp_LE\n");
+        printf("cmp_LE");
+        print_rr_d(c);
         break;
     case op_cmp_EQ:
-        printf("cmp_EQ\n");
+        printf("cmp_EQ");
+        print_rr_d(c);
         break;
     case op_cmp_GE:
-        printf("cmp_GE\n");
+        printf("cmp_GE");
+        print_rr_d(c);
         break;
     case op_cmp_GT:
-        printf("cmp_GT\n");
+        printf("cmp_GT");
+        print_rr_d(c);
         break;
     case op_cmp_NE:
-        printf("cmp_NE\n");
+        printf("cmp_NE");
+        print_rr_d(c);
         break;
     case op_cbr:
-        printf("cbr\n");
+        printf("cbr");
+        print_r_LL(c);
         break;
     case op_jump:
-        printf("jump\n");
+        printf("jump");
+        print_r(c);
         break;
     case op_jumpI:
-        printf("jumpI\n");
+        printf("jumpI");
+        print_L(c);
         break;
     default:
-        printf("halt\n");
+        printf("halt");
         break;
     }
+    printf("\n");
+}
+
+void traduz_regis(int reg_id) {
+    if (reg_id > NULL_REGIS) {
+        printf("r%d", reg_id);
+    } else if (reg_id < NULL_REGIS) {
+        printf("%s", regis_especial(reg_id));
+    }
+}
+
+void traduz_label(int label) {
+    printf("L%d", label);
+}
+
+char *regis_especial(int reg) {
+    switch (reg)
+    {
+    case RBSS:
+        return RBSS_name;
+        break;
+    case RFP:
+        return RFP_name;
+        break;
+    case RSP:
+        return RSP_name;
+        break;
+    case RPC:
+        return RPC_name;
+        break;
+    default:
+        break;
+    }
+}
+
+void print_rr_d(struct code *c) {
+    printf(" ");
+    traduz_regis(c->arg1);
+    printf(", ");
+    traduz_regis(c->arg2);
+    printf(" => ");
+    traduz_regis(c->dest1);
+}
+
+void print_rc_d(struct code *c) {
+    printf(" ");
+    traduz_regis(c->arg1);
+    printf(", ");
+    printf("%d", c->arg2);
+    printf(" => ");
+    traduz_regis(c->dest1);
+}
+
+void print_r_d(struct code *c) {
+    printf(" ");
+    traduz_regis(c->arg1);
+    printf(" => ");
+    traduz_regis(c->dest1);
+}
+
+void print_c_d(struct code *c) {
+    printf(" ");
+    printf("%d", c->arg1);
+    printf(" => ");
+    traduz_regis(c->dest1);
+}
+
+void print_r_dr(struct code *c) {
+    printf(" ");
+    traduz_regis(c->arg1);
+    printf(" => ");
+    traduz_regis(c->dest1);
+    printf(", ");
+    traduz_regis(c->dest2);
+}
+
+void print_r_dc(struct code *c) {
+    printf(" ");
+    traduz_regis(c->arg1);
+    printf(" => ");
+    traduz_regis(c->dest1);
+    printf(", ");
+    printf("%d", c->dest2);
+}
+
+void print_r_LL(struct code *c) {
+    printf(" ");
+    traduz_regis(c->arg1);
+    printf(" => ");
+    traduz_label(c->dest1);
+    printf(", ");
+    traduz_label(c->dest2);
+}
+
+void print_r(struct code *c) {
+    printf(" => ");
+    traduz_regis(c->dest1);
+}
+
+void print_L(struct code *c) {
+    printf(" => ");
+    traduz_label(c->dest1);
 }
