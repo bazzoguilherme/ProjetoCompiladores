@@ -205,6 +205,7 @@ atribuicao: id_ou_vet_expr '=' expressao {
 	$$ = create_ASSIGN(AST_ASSIGN, $1, $3);
 	printf("\tAtrib\n");
 	$$->codigo = gera_atribuicao($1, $3);
+	// $$->codigo = concat($$->codigo, gera_atribuicao($1, $3), NULL);
 	print_code($$->codigo); };
 
 
