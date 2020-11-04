@@ -20,5 +20,5 @@ int main(int argc, int argv) {
 
     a = a + 2;
     a = f(10);
-    a = f2(10);
+    // a = f2(10);
 }

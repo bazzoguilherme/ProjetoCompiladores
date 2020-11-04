@@ -128,10 +128,11 @@ struct code *gera_args(struct AST *params) {
     return c;
 }
 
-struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params) {
+struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params, char *dest) {
     // posicao retorno
     char *reg = gera_regis();
-    struct code *jump_fun = gera_code(NULL, op_jumpI, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, NULL);
+    struct code *load_returned_value = gera_code(NULL, op_loadAI, RSP, int2str(RETORNO_FUNC), dest, NULL, NULL);
+    struct code *jump_fun = gera_code(NULL, op_jumpI, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, load_returned_value);
     struct code *store_pos_retorno = gera_code(NULL, op_storeAI, reg, NULL, RSP, int2str(LOCAL_RETORNO), jump_fun);
     struct code *pos_retorno = gera_code(NULL, op_addI, RPC, int2str(3), reg, NULL, store_pos_retorno);
 
@@ -146,6 +147,11 @@ struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *pa
     return store_rsp;
 }
 
+struct code *gera_retorno(struct AST *retorno) {
+    struct code *c = gera_code(NULL, op_storeAI, retorno->local, NULL, RFP, int2str(RETORNO_FUNC), NULL);
+    return concat(c, retorno_funcao(), NULL);
+}
+
 struct code *retorno_funcao() {
     char *reg_retorno = gera_regis();
     struct code *jump = gera_code(NULL, op_jump, NULL, NULL, reg_retorno, NULL, NULL);
@@ -153,6 +159,11 @@ struct code *retorno_funcao() {
     struct code *rsp_salvo = gera_code(NULL, op_loadAI, RFP, int2str(DESL_RSP), RSP, NULL, rfp_salvo);
     struct code *end_retorno = gera_code(NULL, op_loadAI, RFP, "0", reg_retorno, NULL, rsp_salvo);
     return end_retorno;
+}
+
+struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, char *dest) {
+    struct code *c = gera_code(NULL, op_operacao(operacao), f1->local, f2->local, dest, NULL, NULL);
+    return concat(f1->codigo, f2->codigo, c);
 }
 
 OP op_operacao(struct valor_lexico_t *operacao) {

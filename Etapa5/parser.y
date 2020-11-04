@@ -246,10 +246,15 @@ expr_log: expr_log op_binaria_logica expr_comp { $$ = create_EXPRESSAO_BIN(AST_O
 expr_comp: expr_comp op_binaria_comparacao expr_soma { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
 	| expr_soma { $$ = $1; };
 
-expr_soma: expr_soma op_binaria_soma expr_produto { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+expr_soma: expr_soma op_binaria_soma expr_produto { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); 
+		$$->local = gera_regis();
+		$$->codigo = gera_expressao_bin($2, $1, $3, $$->local);}
 	| expr_produto { $$ = $1; };
 
-expr_produto: expr_produto op_binaria_produto expr_expoente { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+expr_produto: expr_produto op_binaria_produto expr_expoente { 
+		$$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3);
+		$$->local = gera_regis();
+		$$->codigo = gera_expressao_bin($2, $1, $3, $$->local); }
 	| expr_expoente { $$ = $1; };
 
 expr_expoente: expr_expoente op_binaria_expoente F { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
@@ -264,8 +269,11 @@ F: '(' expressao ')' { $$ = $2; }
 	| op_unaria literal_char_str { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
 	| op_unaria_prio_dir '(' expressao ')' { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $3); };
 
-expr_arit: id_ou_vet_expr { $$ = $1; $$->local = gera_regis(); $$->codigo = gera_load_var(op_loadAI, $1, $$->local); }
-	| expr_arit_B { $$ = $1; $$->local = $1->local; $$->codigo = $1->codigo; }
+expr_arit: id_ou_vet_expr { 
+		$$ = $1; 
+		$$->local = gera_regis(); 
+		$$->codigo = gera_load_var(op_loadAI, $1, $$->local); }
+	| expr_arit_B { $$ = $1; }
 	| expr_arit_C { $$ = $1; };
 
 expr_arit_B: TK_LIT_INT { 
@@ -319,8 +327,8 @@ declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao {
 	$$ = create_FUNCAO(AST_FUNCAO, $1, $3); 
 	$$->codigo = gera_decl_funcao($1);
 	$$->codigo = concat_codigos_ast($$, $3, NULL);
-	printf("retorno\n");
-	print_code(retorno_funcao());
+	$$->codigo = concat($$->codigo, retorno_funcao(), NULL);
+	print_code($$->codigo);
 	printf("\n\n");
 	delete_escopo();
 	};
@@ -387,7 +395,9 @@ for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco_init bloco_
 
 retorno: TK_PR_RETURN expressao { 
 	verifica_retorno_funcao($2);
-	$$ = create_RETURN(AST_RETURN, $2); };
+	$$ = create_RETURN(AST_RETURN, $2);
+	$$->codigo = gera_retorno($2);
+	};
 
 continue: TK_PR_CONTINUE { $$ = create_CONT_BREAK(AST_CONT); };
 
@@ -398,7 +408,9 @@ chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' {
 	verif_utilizacao_identificador($1, NAT_funcao);
 	verifica_chamada_funcao($1, $3);
 	$$ = create_FUN_CALL(AST_FUN_CALL, $1, $3);
-	$$->codigo = gera_chamada_funcao($1, $3);
+	$$->local = gera_regis();
+	$$->codigo = gera_chamada_funcao($1, $3, $$->local);
+	printf("\n\nCHAMA\n");
 	print_code($$->codigo);
 	};
 
