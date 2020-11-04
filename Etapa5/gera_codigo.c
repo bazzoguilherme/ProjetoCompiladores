@@ -80,7 +80,7 @@ struct code *gera_code(char *label, OP op, char* arg1, char *arg2, char *dest1, 
     codigo->dest1 = dest1;
     codigo->dest2 = dest2;
     codigo->prox = prox;
-    printf("cria_code: %s %s, %s => %s\n", traduz_op(op), arg1, ((arg2 == NULL) ? "" : arg2), dest1);
+    printf("cria_code: %s %s%c %s => %s%c %s\n", traduz_op(op), arg1, ((arg2 == NULL) ? ' ' : ','), ((arg2 == NULL) ? "" : arg2), dest1, ((dest2 == NULL) ? ' ' : ','), ((dest2 == NULL) ? "" : dest2));
     return codigo;
 }
 
@@ -112,6 +112,42 @@ struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
     atualiza_rfp->prox = atualiza_rsp;
     
     return atualiza_rfp;
+}
+
+struct code *gera_args(struct AST *params) {
+    struct AST *aux = params;
+    struct code *c=NULL, *c_aux=NULL;
+    int i;
+    for (i = INIT_ESC_NOMEADO; aux != NULL; i += 4) {
+        if (i == INIT_ESC_NOMEADO) {
+            c = aux->codigo;
+            c = concat(c, gera_code(NULL, op_storeAI, aux->local, NULL, "rsp", int2str(i), NULL), NULL);
+        } else {
+            c_aux = aux->codigo;
+            c = concat(c, c_aux, gera_code(NULL, op_storeAI, aux->local, NULL, "rsp", int2str(i), NULL));
+        }
+        aux = aux->prox;
+    }
+    return c;
+}
+
+struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params) {
+    printf("CHAMADA FUNCAO\n");
+    struct code *store_rsp = gera_code(NULL, op_storeAI, "rsp", NULL, "rsp", int2str(DESL_RSP), NULL);
+    struct code *store_rfp = gera_code(NULL, op_storeAI, "rfp", NULL, "rsp", int2str(DESL_RFP), NULL);
+
+    // argumentos
+    printf("ARGUMENTOS\n");
+    struct code *store_args = gera_args(params);
+
+    // posicao retorno
+    printf("RETORNO\n");
+    char *reg = gera_regis();
+    struct code *pos_retorno = gera_code(NULL, op_addI, "rpc", int2str(3), reg, NULL, NULL);
+    struct code *store_pos_retorno = gera_code(NULL, op_storeAI, reg, NULL, "rsp", int2str(LOCAL_RETORNO), NULL);
+    struct code *jump_fun = gera_code(NULL, op_jump, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, NULL);
+
+    printf("\n");
 }
 
 OP op_operacao(struct valor_lexico_t *operacao) {

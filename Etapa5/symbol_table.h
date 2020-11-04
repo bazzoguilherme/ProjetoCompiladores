@@ -45,6 +45,7 @@ struct elem_table {
     struct elem_table *argumentos; // Funcao
     union val_lex dado;
     int deslocamento;
+    char *label;
 
     struct elem_table *next_elem;
 };
@@ -128,6 +129,7 @@ void verifica_retorno_funcao(struct AST *expr_retorno);
 
 int deslocamento_symbol(char *symbol, int *escopo);
 int deslocamento_funcao_atual();
+char *label_funcao(char *fun_name);
 
 int erro_semantico(int err);
 

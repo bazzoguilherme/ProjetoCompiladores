@@ -1,5 +1,13 @@
 int gl1, gl2;
 
+int f(int x) {
+
+}
+
+int f2(int x) {
+
+}
+
 int main(int argc, int argv) {
     int a <= -10;
     int b;
@@ -11,5 +19,6 @@ int main(int argc, int argv) {
     };
 
     a = a + 2;
-
+    a = f(10);
+    a = f2(10);
 }

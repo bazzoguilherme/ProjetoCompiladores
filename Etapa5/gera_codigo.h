@@ -21,6 +21,8 @@ struct code *gera_loadI(OP op, struct valor_lexico_t *arg1, char *dest);
 struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_lexico_t *arg1, char *dest);
 struct code *gera_load_var(OP op, struct AST *ast, char *dest);
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao);
+struct code *gera_args(struct AST *params);
+struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params);
 
 OP op_operacao(struct valor_lexico_t *operacao);
 OP op_simples(char op);

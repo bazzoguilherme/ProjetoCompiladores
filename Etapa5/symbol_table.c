@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol_table.h"
+#include "gera_codigo.h"
 #include "errors.h"
 
 extern int get_line_number(void);
@@ -44,6 +45,11 @@ struct elem_table *create_elem(char *key, int loc, Type_Natureza nat, Type tipo,
     elemento->tipo = tipo;
     elemento->dado = dado;
     elemento->deslocamento = 0;
+    if (nat == NAT_funcao)
+        elemento->label = gera_label();
+    else
+        elemento->label = NULL;
+
     return elemento;
 }
 
@@ -56,7 +62,6 @@ struct elem_table *encontra_elemento_tabela(struct elem_table *tabela_atual, cha
 }
 
 struct elem_table *encontra_elemento_tabela_tipoNat(struct elem_table *tabela_atual, char *key, Type_Natureza nat) {
-    // enquanto n for nulo, n for a key que queremos COM nat = literal
     while ( tabela_atual != NULL && (tabela_atual->natureza != nat || strcmp(tabela_atual->key, key) != 0)) {
         tabela_atual = tabela_atual->next_elem;
     }
@@ -187,6 +192,9 @@ void free_table(struct elem_table *table) {
     free_args(table->argumentos);
     if (table->natureza != NAT_literal || (table->natureza == NAT_literal && table->tipo == TYPE_STRING)) {
         free(table->dado.val_str);
+    }
+    if (table->label != NULL) {
+        free(table->label);
     }
     free(table);
 
@@ -700,6 +708,10 @@ int deslocamento_funcao_atual() {
     return ant->deslocamento;
 }
 
+char *label_funcao(char *fun_name) {
+    struct elem_table *elemento = encontra_elemento_stack(stack, fun_name);
+    return elemento->label;
+}
 
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
