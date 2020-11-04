@@ -9,16 +9,12 @@
 
 int regis = 0, label = 0;
 
-char *gera_regis() {
-    char *new_regis = (char *) malloc (MAX_TAM_REGIS);
-    snprintf(new_regis, MAX_TAM_REGIS, "r%d", regis++);
-    return new_regis;
+int gera_regis() {
+    return regis++;
 }
 
-char *gera_label() {
-    char *new_label = (char *) malloc (MAX_TAM_LABEL);
-    snprintf(new_label, MAX_TAM_LABEL, "L%d", label++);
-    return new_label;
+int gera_label() {
+    return label++;
 }
 
 struct code *alloc_code() {
@@ -31,10 +27,8 @@ char *int2str(int val) {
     return new_key;
 }
 
-char *lex2str(struct valor_lexico_t *literal) {
-    char *new_key = (char *) malloc (INT_SIZE_STR);
-    snprintf(new_key, INT_SIZE_STR, "%d", literal->valor.val_int);
-    return new_key;
+int lex2int(struct valor_lexico_t *literal) {
+    return literal->valor.val_int;
 }
 
 struct code *concat(struct code *code1, struct code *code2, struct code *code3) {
@@ -68,7 +62,7 @@ struct code *concat_codigos_ast(struct AST *ast1, struct AST *ast2, struct AST *
     return concat(c1, c2, c3);
 }
 
-struct code *gera_code(char *label, OP op, char* arg1, char *arg2, char *dest1, char *dest2, struct code *prox) {
+struct code *gera_code(int label, OP op, int arg1, int arg2, int dest1, int dest2, struct code *prox) {
     struct code *codigo = alloc_code();
     codigo->label = label;
     codigo->operation = op;
@@ -81,30 +75,30 @@ struct code *gera_code(char *label, OP op, char* arg1, char *arg2, char *dest1, 
     return codigo;
 }
 
-struct code *gera_loadI(OP op, struct valor_lexico_t *arg1, char *dest){
-    return gera_code(NULL, op, lex2str(arg1), NULL, dest, NULL, NULL);
+struct code *gera_loadI(OP op, struct valor_lexico_t *arg1, int dest){
+    return gera_code(NULL_LABEL, op, lex2int(arg1), NULL_REGIS, dest, NULL_REGIS, NULL);
 }
 
-struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_lexico_t *arg1, char *dest) {
+struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_lexico_t *arg1, int dest) {
     struct code *c = gera_loadI(op, arg1, dest);
     if (sinal != NULL && sinal->valor.val_char == '-') { // Inverte valor registrador
-        struct code *sub = gera_code(NULL, op_rsubI, "0", dest, dest, NULL, NULL);
+        struct code *sub = gera_code(NULL_LABEL, op_rsubI, 0, dest, dest, NULL_REGIS, NULL);
         c->prox = sub;
     }
     return c;
 }
 
-struct code *gera_load_var(OP op, struct AST *ast, char *dest) {
+struct code *gera_load_var(OP op, struct AST *ast, int dest) {
     int desloc, escopo;
     desloc = deslocamento_symbol(ast->valor_lexico->valor.val_str, &escopo);
-    return gera_code(NULL, op, ((escopo == GLOBAL) ? RBSS:RFP), int2str(desloc), dest, NULL, NULL);
+    return gera_code(NULL_LABEL, op, ((escopo == GLOBAL) ? RBSS:RFP), desloc, dest, NULL_REGIS, NULL);
 }
 
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
-    struct code *atualiza_rfp = gera_code(NULL, op_i2i, RSP, NULL, RSP, NULL, NULL); // Atualiza RFP
+    struct code *atualiza_rfp = gera_code(NULL_LABEL, op_i2i, RSP, NULL_REGIS, RSP, NULL_REGIS, NULL); // Atualiza RFP
     int desloc, escopo;
     desloc = deslocamento_funcao_atual();
-    struct code *atualiza_rsp = gera_code(NULL, op_addI, RSP, int2str(desloc), RSP, NULL, NULL); // Atualiza RSP
+    struct code *atualiza_rsp = gera_code(NULL_LABEL, op_addI, RSP, desloc, RSP, NULL_REGIS, NULL); // Atualiza RSP
 
     atualiza_rfp->prox = atualiza_rsp;
     
@@ -118,57 +112,57 @@ struct code *gera_args(struct AST *params) {
     for (i = INIT_ESC_NOMEADO; aux != NULL; i += 4) {
         if (i == INIT_ESC_NOMEADO) {
             c = aux->codigo;
-            c = concat(c, gera_code(NULL, op_storeAI, aux->local, NULL, RSP, int2str(i), NULL), NULL);
+            c = concat(c, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, i, NULL), NULL);
         } else {
             c_aux = aux->codigo;
-            c = concat(c, c_aux, gera_code(NULL, op_storeAI, aux->local, NULL, RSP, int2str(i), NULL));
+            c = concat(c, c_aux, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, i, NULL));
         }
         aux = aux->prox;
     }
     return c;
 }
 
-struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params, char *dest) {
+struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params, int dest) {
     // posicao retorno
-    char *reg = gera_regis();
-    struct code *load_returned_value = gera_code(NULL, op_loadAI, RSP, int2str(RETORNO_FUNC), dest, NULL, NULL);
-    struct code *jump_fun = gera_code(NULL, op_jumpI, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, load_returned_value);
-    struct code *store_pos_retorno = gera_code(NULL, op_storeAI, reg, NULL, RSP, int2str(LOCAL_RETORNO), jump_fun);
-    struct code *pos_retorno = gera_code(NULL, op_addI, RPC, int2str(3), reg, NULL, store_pos_retorno);
+    int reg = gera_regis();
+    struct code *load_returned_value = gera_code(NULL_LABEL, op_loadAI, RSP, RETORNO_FUNC, dest, NULL_REGIS, NULL);
+    struct code *jump_fun = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, label_funcao(fun_name->valor.val_str), NULL_REGIS, load_returned_value);
+    struct code *store_pos_retorno = gera_code(NULL_LABEL, op_storeAI, reg, NULL_REGIS, RSP, LOCAL_RETORNO, jump_fun);
+    struct code *pos_retorno = gera_code(NULL_LABEL, op_addI, RPC, 3, reg, NULL_REGIS, store_pos_retorno);
 
     // argumentos
     struct code *store_args = gera_args(params);
 
     store_args = concat(store_args, pos_retorno, NULL);
 
-    struct code *store_rfp = gera_code(NULL, op_storeAI, RFP, NULL, RSP, int2str(DESL_RFP), store_args);
-    struct code *store_rsp = gera_code(NULL, op_storeAI, RSP, NULL, RSP, int2str(DESL_RSP), store_rfp);
+    struct code *store_rfp = gera_code(NULL_LABEL, op_storeAI, RFP, NULL_REGIS, RSP, DESL_RFP, store_args);
+    struct code *store_rsp = gera_code(NULL_LABEL, op_storeAI, RSP, NULL_REGIS, RSP, DESL_RSP, store_rfp);
 
     return store_rsp;
 }
 
 struct code *gera_retorno(struct AST *retorno) {
-    struct code *c = gera_code(NULL, op_storeAI, retorno->local, NULL, RFP, int2str(RETORNO_FUNC), NULL);
+    struct code *c = gera_code(NULL_LABEL, op_storeAI, retorno->local, NULL_REGIS, RFP, RETORNO_FUNC, NULL);
     return concat(c, retorno_funcao(), NULL);
 }
 
 struct code *retorno_funcao() {
-    char *reg_retorno = gera_regis();
-    struct code *jump = gera_code(NULL, op_jump, NULL, NULL, reg_retorno, NULL, NULL);
-    struct code *rfp_salvo = gera_code(NULL, op_loadAI, RFP, int2str(DESL_RFP), RFP, NULL, jump);
-    struct code *rsp_salvo = gera_code(NULL, op_loadAI, RFP, int2str(DESL_RSP), RSP, NULL, rfp_salvo);
-    struct code *end_retorno = gera_code(NULL, op_loadAI, RFP, "0", reg_retorno, NULL, rsp_salvo);
+    int reg_retorno = gera_regis();
+    struct code *jump = gera_code(NULL_LABEL, op_jump, NULL_REGIS, NULL_REGIS, reg_retorno, NULL_REGIS, NULL);
+    struct code *rfp_salvo = gera_code(NULL_LABEL, op_loadAI, RFP, DESL_RFP, RFP, NULL_REGIS, jump);
+    struct code *rsp_salvo = gera_code(NULL_LABEL, op_loadAI, RFP, DESL_RSP, RSP, NULL_REGIS, rfp_salvo);
+    struct code *end_retorno = gera_code(NULL_LABEL, op_loadAI, RFP, 0, reg_retorno, NULL_REGIS, rsp_salvo);
     return end_retorno;
 }
 
 struct code *gera_atribuicao(struct AST *atrib, struct AST *expr) {
     int desloc, escopo;
     desloc = deslocamento_symbol(atrib->valor_lexico->valor.val_str, &escopo);
-    return gera_code(NULL, op_storeAI, expr->local, NULL, ((escopo == GLOBAL) ? RBSS:RFP), int2str(desloc), NULL);
+    return gera_code(NULL_LABEL, op_storeAI, expr->local, NULL_REGIS, ((escopo == GLOBAL) ? RBSS:RFP), desloc, NULL);
 }
 
-struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, char *dest) {
-    struct code *c = gera_code(NULL, op_operacao(operacao), f1->local, f2->local, dest, NULL, NULL);
+struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, int dest) {
+    struct code *c = gera_code(NULL_LABEL, op_operacao(operacao), f1->local, f2->local, dest, NULL_REGIS, NULL);
     return concat(f1->codigo, f2->codigo, c);
 }
 
@@ -225,151 +219,139 @@ OP op_simples(char op) {
 void print_code(struct code *codigo) {
     if (codigo == NULL) return;
 
-    if (codigo->label != NULL)
-        printf("%s: ", codigo->label);
+    if (codigo->label != NULL_LABEL)
+        printf("L%d: ", codigo->label);
     
-    printf("%s", traduz_op(codigo->operation));
-
-    if (codigo->arg1 != NULL)
-        printf(" %s",codigo->arg1);
-    if (codigo->arg2 != NULL)
-        printf(", %s => ",codigo->arg2);
-    else
-        printf(" => ");
-    if (codigo->dest1 != NULL)
-        printf("%s",codigo->dest1);
-    if (codigo->dest2 != NULL)
-        printf(", %s ",codigo->dest2);
+    traduz_op(codigo);
     
-    printf("\n");
     print_code(codigo->prox);
 }
 
-char *traduz_op(OP op) {
-    switch (op)
+void traduz_op(struct code *c) {
+    switch (c->operation)
     {
     case nop:
-        return "nop";
+        printf("nop\n");
         break;
     case op_add:
-        return "add";
+        printf("add\n");
         break;
     case op_sub:
-        return "sub";
+        printf("sub\n");
         break;
     case op_mult:
-        return "mult";
+        printf("mult\n");
         break;
     case op_div:
-        return "div";
+        printf("div\n");
         break;
     case op_addI:
-        return "addI";
+        printf("addI\n");
         break;
     case op_subI:
-        return "subI";
+        printf("subI\n");
         break;
     case op_rsubI:
-        return "rsubI";
+        printf("rsubI\n");
         break;
     case op_multI:
-        return "multI";
+        printf("multI\n");
         break;
     case op_divI:
-        return "divI";
+        printf("divI\n");
         break;
     case op_and:
-        return "and";
+        printf("and\n");
         break;
     case op_andI:
-        return "andI";
+        printf("andI\n");
         break;
     case op_or:
-        return "or";
+        printf("or\n");
         break;
     case op_orI:
-        return "orI";
+        printf("orI\n");
         break;
     case op_load:
-        return "load";
+        printf("load\n");
         break;
     case op_loadI:
-        return "loadI";
+        printf("loadI\n");
         break;
     case op_loadAI:
-        return "loadAI";
+        printf("loadAI\n");
         break;
     case op_loadAO:
-        return "loadAO";
+        printf("loadAO\n");
         break;
     case op_cload:
-        return "cload";
+        printf("cload\n");
         break;
     case op_cloadAI:
-        return "cloadAI";
+        printf("cloadAI\n");
         break;
     case op_cloadAO:
-        return "cloadAO";
+        printf("cloadAO\n");
         break;
     case op_store:
-        return "store";
+        printf("store\n");
         break;
     case op_storeAI:
-        return "storeAI";
+        printf("storeAI\n");
         break;
     case op_storeAO:
-        return "storeAO";
+        printf("storeAO\n");
         break;
     case op_cstore:
-        return "cstore";
+        printf("cstore\n");
         break;
     case op_cstoreAI:
-        return "cstoreAI";
+        printf("cstoreAI\n");
         break;
     case op_cstoreAO:
-        return "cstoreAO";
+        printf("cstoreAO\n");
         break;
     case op_i2i:
-        return "i2i";
+        printf("i2i\n");
         break;
     case op_c2c:
-        return "c2c";
+        printf("c2c\n");
         break;
     case op_c2i:
-        return "c2i";
+        printf("c2i\n");
         break;
     case op_i2c:
-        return "i2c";
+        printf("i2c\n");
         break;
     case op_cmp_LT:
-        return "cmp_LT";
+        printf("cmp_LT\n");
         break;
     case op_cmp_LE:
-        return "cmp_LE";
+        printf("cmp_LE\n");
         break;
     case op_cmp_EQ:
-        return "cmp_EQ";
+        printf("cmp_EQ\n");
         break;
     case op_cmp_GE:
-        return "cmp_GE";
+        printf("cmp_GE\n");
         break;
     case op_cmp_GT:
-        return "cmp_GT";
+        printf("cmp_GT\n");
         break;
     case op_cmp_NE:
-        return "cmp_NE";
+        printf("cmp_NE\n");
         break;
     case op_cbr:
-        return "cbr";
+        printf("cbr\n");
         break;
     case op_jump:
-        return "jump";
+        printf("jump\n");
         break;
     case op_jumpI:
-        return "jumpI";
+        printf("jumpI\n");
         break;
     default:
-        return "halt";
+        printf("halt\n");
         break;
     }
 }

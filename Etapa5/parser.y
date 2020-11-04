@@ -203,10 +203,7 @@ assign: TK_OC_LE { $$ = $1; };
 
 atribuicao: id_ou_vet_expr '=' expressao { 
 	$$ = create_ASSIGN(AST_ASSIGN, $1, $3);
-	printf("\tAtrib\n");
-	// $$->codigo = gera_atribuicao($1, $3);
-	$$->codigo = concat($3->codigo, gera_atribuicao($1, $3), NULL);
-	print_code($$->codigo); };
+	$$->codigo = concat($3->codigo, gera_atribuicao($1, $3), NULL); };
 
 
 io_dados: entrada { $$ = $1; }
@@ -333,8 +330,8 @@ declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao {
 	$$->codigo = gera_decl_funcao($1);
 	$$->codigo = concat_codigos_ast($$, $3, NULL);
 	$$->codigo = concat($$->codigo, retorno_funcao(), NULL);
+	printf("\n\nFUN");
 	print_code($$->codigo);
-	printf("\n\n");
 	delete_escopo();
 	};
 

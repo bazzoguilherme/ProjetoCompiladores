@@ -48,7 +48,7 @@ struct elem_table *create_elem(char *key, int loc, Type_Natureza nat, Type tipo,
     if (nat == NAT_funcao)
         elemento->label = gera_label();
     else
-        elemento->label = NULL;
+        elemento->label = NULL_LABEL;
 
     return elemento;
 }
@@ -192,9 +192,6 @@ void free_table(struct elem_table *table) {
     free_args(table->argumentos);
     if (table->natureza != NAT_literal || (table->natureza == NAT_literal && table->tipo == TYPE_STRING)) {
         free(table->dado.val_str);
-    }
-    if (table->label != NULL) {
-        free(table->label);
     }
     free(table);
 
@@ -708,7 +705,7 @@ int deslocamento_funcao_atual() {
     return ant->deslocamento;
 }
 
-char *label_funcao(char *fun_name) {
+int label_funcao(char *fun_name) {
     struct elem_table *elemento = encontra_elemento_stack(stack, fun_name);
     return elemento->label;
 }

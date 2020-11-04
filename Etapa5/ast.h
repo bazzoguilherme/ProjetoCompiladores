@@ -116,12 +116,12 @@ typedef enum OP {
 } OP;
 
 struct code {
-    char* label; // NULL or Lx
+    int label; // -1 or Lx
     OP operation; // e.g. add r1, r2 => r3
-    char* arg1;
-    char* arg2;
-    char* dest1;
-    char* dest2;
+    int arg1;
+    int arg2;
+    int dest1;
+    int dest2;
     struct code *prox; // montagem de "cabeça para baixo"
 };
 
@@ -130,7 +130,7 @@ typedef struct AST {
     Type_Exp tipo_exp;
     struct valor_lexico_t *valor_lexico;
     struct AST *children[MAX_FILHOS];
-    char *local;
+    int local;
     struct code *codigo;
     struct AST *prox;
 } AST;
