@@ -33,8 +33,13 @@ int lex2int(struct valor_lexico_t *literal) {
 
 struct code *concat(struct code *code1, struct code *code2, struct code *code3) {
     struct code *aux = code1;
-    if (code1 == NULL)
-        return NULL;
+    if (code1 == NULL) {
+        if (code2!=NULL) {
+            return concat(code2, code3, NULL);
+        }
+        return code3;
+    }
+        
 
     while(aux->prox != NULL)
         aux = aux->prox;
