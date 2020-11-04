@@ -84,6 +84,8 @@ struct AST *create_AST(Type_Exp ast_type_exp, struct valor_lexico_t *val_lex, Ty
     new_node->children[2] = f3;
     new_node->children[3] = f4;
     new_node->codigo = NULL;
+    new_node->tl = NULL;
+    new_node->fl = NULL;
     new_node->prox = next_node;
     return new_node;
 }

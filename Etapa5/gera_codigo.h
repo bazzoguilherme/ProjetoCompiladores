@@ -21,6 +21,9 @@
 #define RSP  -4
 #define RPC  -5
 
+#define REMENDO_T 1
+#define REMENDO_F 0
+
 int gera_regis();
 int gera_label();
 
@@ -45,6 +48,12 @@ struct code *retorno_funcao();
 struct code *gera_atribuicao(struct AST *atrib, struct AST *expr);
 
 struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, int dest);
+
+struct code *rot();
+struct l_remendo *lista_rem(struct code *c);
+void remenda(struct AST *ast, int t_f, int label);
+void remenda_lista(struct l_remendo *lista_remendo, int label);
+struct l_remendo *concat_remendo(struct l_remendo *r1, struct l_remendo *r2);
 
 OP op_operacao(struct valor_lexico_t *operacao);
 OP op_simples(char op);

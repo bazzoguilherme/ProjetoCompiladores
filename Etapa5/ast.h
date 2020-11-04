@@ -115,6 +115,11 @@ typedef enum OP {
     op_jumpI,
 } OP;
 
+struct l_remendo {
+    int *remendo;
+    struct l_remendo *prox;
+};
+
 struct code {
     int label; // -1 or Lx
     OP operation; // e.g. add r1, r2 => r3
@@ -132,6 +137,8 @@ typedef struct AST {
     struct AST *children[MAX_FILHOS];
     int local;
     struct code *codigo;
+    struct l_remendo *tl; // Remendos caso true
+    struct l_remendo *fl; // Remendos caso false
     struct AST *prox;
 } AST;
 

@@ -171,6 +171,49 @@ struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1,
     return concat(f1->codigo, f2->codigo, c);
 }
 
+
+
+struct code *rot() {
+    return gera_code(gera_label(), nop, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
+}
+
+struct l_remendo *lista_rem(struct code *c) {
+    struct l_remendo *rem = (struct l_remendo *) malloc(sizeof(struct l_remendo));
+    rem->remendo = &(c->label);
+    rem->prox = NULL;
+    return rem;
+}
+
+void remenda(struct AST *ast, int t_f, int label) {
+    if (t_f == REMENDO_T) {
+        remenda_lista(ast->tl, label);
+        ast->tl = NULL;
+    } else {
+        remenda_lista(ast->fl, label);
+        ast->fl = NULL;
+    }
+}
+
+void remenda_lista(struct l_remendo *lista_remendo, int label) {
+    if (lista_remendo == NULL) return;
+    *(lista_remendo->remendo) = label;
+    remenda_lista(lista_remendo->prox, label);
+}
+
+struct l_remendo *concat_remendo(struct l_remendo *r1, struct l_remendo *r2) {
+    struct l_remendo *aux = r1;
+    if(aux == NULL) {
+        return r2;
+    }
+    while(aux->prox != NULL) {
+        aux = aux->prox;
+    }
+    aux->prox = r2;
+    return r1;
+}
+
+
+
 OP op_operacao(struct valor_lexico_t *operacao) {
     if (operacao->tipo == VAL_ESPECIAL) { // char
         return op_simples(operacao->valor.val_char);
