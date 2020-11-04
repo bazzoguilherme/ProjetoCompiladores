@@ -100,7 +100,7 @@ struct code *gera_load_var(OP op, struct AST *ast, int dest) {
 }
 
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
-    struct code *atualiza_rfp = gera_code(NULL_LABEL, op_i2i, RSP, NULL_REGIS, RFP, NULL_REGIS, NULL); // Atualiza RFP
+    struct code *atualiza_rfp = gera_code(label_funcao(nome_funcao->valor.val_str), op_i2i, RSP, NULL_REGIS, RFP, NULL_REGIS, NULL); // Atualiza RFP
     int desloc, escopo;
     desloc = deslocamento_funcao_atual();
     struct code *atualiza_rsp = gera_code(NULL_LABEL, op_addI, RSP, desloc, RSP, NULL_REGIS, NULL); // Atualiza RSP
