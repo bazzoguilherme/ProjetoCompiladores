@@ -34,6 +34,7 @@ struct code *gera_args(struct AST *params);
 struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params, char *dest);
 struct code *gera_retorno(struct AST *retorno);
 struct code *retorno_funcao();
+struct code *gera_atribuicao(struct AST *atrib, struct AST *expr);
 
 struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, char *dest);
 

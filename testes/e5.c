@@ -18,6 +18,7 @@ int main(int argc, int argv) {
         int a;
     };
 
+    gl2 = 15;
     a = a + 2;
     a = f(10);
     // a = f2(10);

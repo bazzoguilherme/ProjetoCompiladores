@@ -161,6 +161,12 @@ struct code *retorno_funcao() {
     return end_retorno;
 }
 
+struct code *gera_atribuicao(struct AST *atrib, struct AST *expr) {
+    int desloc, escopo;
+    desloc = deslocamento_symbol(atrib->valor_lexico->valor.val_str, &escopo);
+    return gera_code(NULL, op_storeAI, expr->local, NULL, ((escopo == GLOBAL) ? RBSS:RFP), int2str(desloc), NULL);
+}
+
 struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, char *dest) {
     struct code *c = gera_code(NULL, op_operacao(operacao), f1->local, f2->local, dest, NULL, NULL);
     return concat(f1->codigo, f2->codigo, c);

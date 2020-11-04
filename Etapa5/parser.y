@@ -201,7 +201,11 @@ id_local: TK_IDENTIFICADOR {
 
 assign: TK_OC_LE { $$ = $1; };
 
-atribuicao: id_ou_vet_expr '=' expressao { $$ = create_ASSIGN(AST_ASSIGN, $1, $3); };
+atribuicao: id_ou_vet_expr '=' expressao { 
+	$$ = create_ASSIGN(AST_ASSIGN, $1, $3);
+	printf("\tAtrib\n");
+	$$->codigo = gera_atribuicao($1, $3);
+	print_code($$->codigo); };
 
 
 io_dados: entrada { $$ = $1; }
