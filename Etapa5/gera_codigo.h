@@ -28,6 +28,7 @@ OP op_operacao(struct valor_lexico_t *operacao);
 OP op_simples(char op);
 OP op_composta(char *op);
 
+void print_code(struct code *codigo);
 
 char *traduz_op(OP op);
 

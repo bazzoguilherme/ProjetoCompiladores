@@ -319,6 +319,7 @@ declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao {
 	$$ = create_FUNCAO(AST_FUNCAO, $1, $3); 
 	$$->codigo = gera_decl_funcao($1);
 	$$->codigo = concat_codigos_ast($$, $3, NULL);
+	// print_code($$->codigo);
 	delete_escopo();
 	};
 
@@ -354,7 +355,7 @@ parametro: tipo_const tipo TK_IDENTIFICADOR {
 bloco_init: '{' { new_escopo(); }; 
 bloco_end: comandos '}' { $$ = $1; delete_escopo(); };
 
-bloco_funcao: '{' comandos '}' { $$ = $2; exp_table(); };
+bloco_funcao: '{' comandos '}' { $$ = $2; };
 
 comandos: comando comandos { $$ = create_NODE($1, $2); }
 	| { $$ = NULL; } ;
@@ -396,6 +397,7 @@ chamada_funcao: TK_IDENTIFICADOR '(' parametro_chamada_funcao ')' {
 	verifica_chamada_funcao($1, $3);
 	$$ = create_FUN_CALL(AST_FUN_CALL, $1, $3);
 	$$->codigo = gera_chamada_funcao($1, $3);
+	print_code($$->codigo);
 	};
 
 parametro_chamada_funcao: lista_parametro_chamada_funcao { $$ = $1;}

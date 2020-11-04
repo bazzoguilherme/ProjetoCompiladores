@@ -80,7 +80,7 @@ struct code *gera_code(char *label, OP op, char* arg1, char *arg2, char *dest1, 
     codigo->dest1 = dest1;
     codigo->dest2 = dest2;
     codigo->prox = prox;
-    printf("cria_code: %s %s%c %s => %s%c %s\n", traduz_op(op), arg1, ((arg2 == NULL) ? ' ' : ','), ((arg2 == NULL) ? "" : arg2), dest1, ((dest2 == NULL) ? ' ' : ','), ((dest2 == NULL) ? "" : dest2));
+    // printf("cria_code: %s %s%c %s => %s%c %s\n", traduz_op(op), arg1, ((arg2 == NULL) ? ' ' : ','), ((arg2 == NULL) ? "" : arg2), dest1, ((dest2 == NULL) ? ' ' : ','), ((dest2 == NULL) ? "" : dest2));
     return codigo;
 }
 
@@ -91,8 +91,8 @@ struct code *gera_loadI(OP op, struct valor_lexico_t *arg1, char *dest){
 struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_lexico_t *arg1, char *dest) {
     struct code *c = gera_loadI(op, arg1, dest);
     if (sinal != NULL && sinal->valor.val_char == '-') { // Inverte valor registrador
-        struct code *sub = gera_code(NULL, op_rsubI, "0", dest, dest, NULL, c);
-        c = sub;
+        struct code *sub = gera_code(NULL, op_rsubI, "0", dest, dest, NULL, NULL);
+        c->prox = sub;
     }
     return c;
 }
@@ -132,22 +132,22 @@ struct code *gera_args(struct AST *params) {
 }
 
 struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params) {
-    printf("CHAMADA FUNCAO\n");
-    struct code *store_rsp = gera_code(NULL, op_storeAI, "rsp", NULL, "rsp", int2str(DESL_RSP), NULL);
-    struct code *store_rfp = gera_code(NULL, op_storeAI, "rfp", NULL, "rsp", int2str(DESL_RFP), NULL);
+    // posicao retorno
+    char *reg = gera_regis();
+    struct code *jump_fun = gera_code(NULL, op_jump, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, NULL);
+    struct code *store_pos_retorno = gera_code(NULL, op_storeAI, reg, NULL, "rsp", int2str(LOCAL_RETORNO), jump_fun);
+    struct code *pos_retorno = gera_code(NULL, op_addI, "rpc", int2str(3), reg, NULL, store_pos_retorno);
 
     // argumentos
-    printf("ARGUMENTOS\n");
     struct code *store_args = gera_args(params);
 
-    // posicao retorno
-    printf("RETORNO\n");
-    char *reg = gera_regis();
-    struct code *pos_retorno = gera_code(NULL, op_addI, "rpc", int2str(3), reg, NULL, NULL);
-    struct code *store_pos_retorno = gera_code(NULL, op_storeAI, reg, NULL, "rsp", int2str(LOCAL_RETORNO), NULL);
-    struct code *jump_fun = gera_code(NULL, op_jump, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, NULL);
+    store_args = concat(store_args, pos_retorno, NULL);
+
+    struct code *store_rfp = gera_code(NULL, op_storeAI, "rfp", NULL, "rsp", int2str(DESL_RFP), store_args);
+    struct code *store_rsp = gera_code(NULL, op_storeAI, "rsp", NULL, "rsp", int2str(DESL_RSP), store_rfp);
 
     printf("\n");
+    return store_rsp;
 }
 
 OP op_operacao(struct valor_lexico_t *operacao) {
@@ -199,6 +199,29 @@ OP op_simples(char op) {
 //         return op_or;
 //     }
 // }
+
+void print_code(struct code *codigo) {
+    if (codigo == NULL) return;
+
+    if (codigo->label != NULL)
+        printf("%s: ", codigo->label);
+    
+    printf("%s", traduz_op(codigo->operation));
+
+    if (codigo->arg1 != NULL)
+        printf(" %s",codigo->arg1);
+    if (codigo->arg2 != NULL)
+        printf(", %s => ",codigo->arg2);
+    else
+        printf(" => ");
+    if (codigo->dest1 != NULL)
+        printf("%s",codigo->dest1);
+    if (codigo->dest2 != NULL)
+        printf(", %s ",codigo->dest2);
+    
+    printf("\n");
+    print_code(codigo->prox);
+}
 
 char *traduz_op(OP op) {
     switch (op)

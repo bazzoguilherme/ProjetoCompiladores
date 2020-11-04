@@ -36,8 +36,8 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 
 void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
-    print_pointers(ast);
-    print_ast(ast);
+    // print_pointers(ast);
+    // print_ast(ast);
 }
 
 void print_pointers(struct AST *ast) {
