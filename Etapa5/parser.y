@@ -319,7 +319,9 @@ declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao {
 	$$ = create_FUNCAO(AST_FUNCAO, $1, $3); 
 	$$->codigo = gera_decl_funcao($1);
 	$$->codigo = concat_codigos_ast($$, $3, NULL);
-	// print_code($$->codigo);
+	printf("retorno\n");
+	print_code(retorno_funcao());
+	printf("\n\n");
 	delete_escopo();
 	};
 

@@ -4,6 +4,15 @@
 
 #include "ast.h"
 
+#define MAX_TAM_REGIS 12
+#define MAX_TAM_LABEL 12
+#define INT_SIZE_STR 12
+
+#define RBSS "rbss"
+#define RFP "rfp"
+#define RSP "rsp"
+#define RPC "rpc"
+
 char *gera_regis();
 char *gera_label();
 
@@ -23,6 +32,7 @@ struct code *gera_load_var(OP op, struct AST *ast, char *dest);
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao);
 struct code *gera_args(struct AST *params);
 struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params);
+struct code *retorno_funcao();
 
 OP op_operacao(struct valor_lexico_t *operacao);
 OP op_simples(char op);

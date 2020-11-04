@@ -6,9 +6,6 @@
 #include "symbol_table.h"
 #include "gera_codigo.h"
 
-#define MAX_TAM_REGIS 12
-#define MAX_TAM_LABEL 12
-#define INT_SIZE_STR 12
 
 int regis = 0, label = 0;
 
@@ -100,14 +97,14 @@ struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_
 struct code *gera_load_var(OP op, struct AST *ast, char *dest) {
     int desloc, escopo;
     desloc = deslocamento_symbol(ast->valor_lexico->valor.val_str, &escopo);
-    return gera_code(NULL, op, ((escopo == GLOBAL) ? "rbss":"rfp"), int2str(desloc), dest, NULL, NULL);
+    return gera_code(NULL, op, ((escopo == GLOBAL) ? RBSS:RFP), int2str(desloc), dest, NULL, NULL);
 }
 
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
-    struct code *atualiza_rfp = gera_code(NULL, op_i2i, "rsp", NULL, "rfp", NULL, NULL); // Atualiza RFP
+    struct code *atualiza_rfp = gera_code(NULL, op_i2i, RSP, NULL, RSP, NULL, NULL); // Atualiza RFP
     int desloc, escopo;
     desloc = deslocamento_funcao_atual();
-    struct code *atualiza_rsp = gera_code(NULL, op_addI, "rsp", int2str(desloc), "rsp", NULL, NULL); // Atualiza RSP
+    struct code *atualiza_rsp = gera_code(NULL, op_addI, RSP, int2str(desloc), RSP, NULL, NULL); // Atualiza RSP
 
     atualiza_rfp->prox = atualiza_rsp;
     
@@ -121,10 +118,10 @@ struct code *gera_args(struct AST *params) {
     for (i = INIT_ESC_NOMEADO; aux != NULL; i += 4) {
         if (i == INIT_ESC_NOMEADO) {
             c = aux->codigo;
-            c = concat(c, gera_code(NULL, op_storeAI, aux->local, NULL, "rsp", int2str(i), NULL), NULL);
+            c = concat(c, gera_code(NULL, op_storeAI, aux->local, NULL, RSP, int2str(i), NULL), NULL);
         } else {
             c_aux = aux->codigo;
-            c = concat(c, c_aux, gera_code(NULL, op_storeAI, aux->local, NULL, "rsp", int2str(i), NULL));
+            c = concat(c, c_aux, gera_code(NULL, op_storeAI, aux->local, NULL, RSP, int2str(i), NULL));
         }
         aux = aux->prox;
     }
@@ -134,20 +131,28 @@ struct code *gera_args(struct AST *params) {
 struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *params) {
     // posicao retorno
     char *reg = gera_regis();
-    struct code *jump_fun = gera_code(NULL, op_jump, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, NULL);
-    struct code *store_pos_retorno = gera_code(NULL, op_storeAI, reg, NULL, "rsp", int2str(LOCAL_RETORNO), jump_fun);
-    struct code *pos_retorno = gera_code(NULL, op_addI, "rpc", int2str(3), reg, NULL, store_pos_retorno);
+    struct code *jump_fun = gera_code(NULL, op_jumpI, NULL, NULL, label_funcao(fun_name->valor.val_str), NULL, NULL);
+    struct code *store_pos_retorno = gera_code(NULL, op_storeAI, reg, NULL, RSP, int2str(LOCAL_RETORNO), jump_fun);
+    struct code *pos_retorno = gera_code(NULL, op_addI, RPC, int2str(3), reg, NULL, store_pos_retorno);
 
     // argumentos
     struct code *store_args = gera_args(params);
 
     store_args = concat(store_args, pos_retorno, NULL);
 
-    struct code *store_rfp = gera_code(NULL, op_storeAI, "rfp", NULL, "rsp", int2str(DESL_RFP), store_args);
-    struct code *store_rsp = gera_code(NULL, op_storeAI, "rsp", NULL, "rsp", int2str(DESL_RSP), store_rfp);
+    struct code *store_rfp = gera_code(NULL, op_storeAI, RFP, NULL, RSP, int2str(DESL_RFP), store_args);
+    struct code *store_rsp = gera_code(NULL, op_storeAI, RSP, NULL, RSP, int2str(DESL_RSP), store_rfp);
 
-    printf("\n");
     return store_rsp;
+}
+
+struct code *retorno_funcao() {
+    char *reg_retorno = gera_regis();
+    struct code *jump = gera_code(NULL, op_jump, NULL, NULL, reg_retorno, NULL, NULL);
+    struct code *rfp_salvo = gera_code(NULL, op_loadAI, RFP, int2str(DESL_RFP), RFP, NULL, jump);
+    struct code *rsp_salvo = gera_code(NULL, op_loadAI, RFP, int2str(DESL_RSP), RSP, NULL, rfp_salvo);
+    struct code *end_retorno = gera_code(NULL, op_loadAI, RFP, "0", reg_retorno, NULL, rsp_salvo);
+    return end_retorno;
 }
 
 OP op_operacao(struct valor_lexico_t *operacao) {
