@@ -485,27 +485,27 @@ void traduz_op(struct code *c) {
         break;
     case op_cmp_LT:
         printf("cmp_LT");
-        print_rr_d(c);
+        print_rr_d_cmp(c);
         break;
     case op_cmp_LE:
         printf("cmp_LE");
-        print_rr_d(c);
+        print_rr_d_cmp(c);
         break;
     case op_cmp_EQ:
         printf("cmp_EQ");
-        print_rr_d(c);
+        print_rr_d_cmp(c);
         break;
     case op_cmp_GE:
         printf("cmp_GE");
-        print_rr_d(c);
+        print_rr_d_cmp(c);
         break;
     case op_cmp_GT:
         printf("cmp_GT");
-        print_rr_d(c);
+        print_rr_d_cmp(c);
         break;
     case op_cmp_NE:
         printf("cmp_NE");
-        print_rr_d(c);
+        print_rr_d_cmp(c);
         break;
     case op_cbr:
         printf("cbr");
@@ -513,11 +513,11 @@ void traduz_op(struct code *c) {
         break;
     case op_jump:
         printf("jump");
-        print_r(c);
+        print_r_jmp(c);
         break;
     case op_jumpI:
         printf("jumpI");
-        print_L(c);
+        print_L_jmp(c);
         break;
     default:
         printf("halt");
@@ -567,6 +567,15 @@ void print_rr_d(struct code *c) {
     traduz_regis(c->dest1);
 }
 
+void print_rr_d_cmp(struct code *c) {
+    printf(" ");
+    traduz_regis(c->arg1);
+    printf(", ");
+    traduz_regis(c->arg2);
+    printf(" -> ");
+    traduz_regis(c->dest1);
+}
+
 void print_rc_d(struct code *c) {
     printf(" ");
     traduz_regis(c->arg1);
@@ -611,7 +620,7 @@ void print_r_dc(struct code *c) {
 void print_r_LL(struct code *c) {
     printf(" ");
     traduz_regis(c->arg1);
-    printf(" => ");
+    printf(" -> ");
     traduz_label(c->dest1);
     printf(", ");
     traduz_label(c->dest2);
@@ -624,5 +633,15 @@ void print_r(struct code *c) {
 
 void print_L(struct code *c) {
     printf(" => ");
+    traduz_label(c->dest1);
+}
+
+void print_r_jmp(struct code *c) {
+    printf(" -> ");
+    traduz_regis(c->dest1);
+}
+
+void print_L_jmp(struct code *c) {
+    printf(" -> ");
     traduz_label(c->dest1);
 }
