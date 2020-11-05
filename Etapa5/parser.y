@@ -399,10 +399,13 @@ controle_fluxo: TK_PR_IF '(' expressao ')' bloco_init bloco_end else_opt {
 else_opt: TK_PR_ELSE bloco_init bloco_end { $$ = $3; }
 	| { $$ = NULL; } ;
 
-while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco_init bloco_end { $$ = create_WHILE(AST_WHILE, $3, $7); };
+while: TK_PR_WHILE '(' expressao ')' TK_PR_DO bloco_init bloco_end { 
+	$$ = create_WHILE(AST_WHILE, $3, $7);
+	$$->codigo = gera_WHILE($3, $7); };
 
-for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco_init bloco_end
-	{ $$ = create_FOR(AST_FOR, $3, $5, $7, $10); } ;
+for: TK_PR_FOR '(' atribuicao ':' expressao ':' atribuicao ')' bloco_init bloco_end { 
+	$$ = create_FOR(AST_FOR, $3, $5, $7, $10);
+	$$->codigo = gera_FOR($3, $5, $7, $10); } ;
 
 retorno: TK_PR_RETURN expressao { 
 	verifica_retorno_funcao($2);

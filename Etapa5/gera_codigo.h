@@ -54,6 +54,8 @@ void gera_or(struct AST *node);
 void gera_not(struct AST *node);
 
 struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt);
+struct code *gera_WHILE(struct AST *cond, struct AST *bloco);
+struct code *gera_FOR(struct AST *atrib1, struct AST *cond, struct AST *atrib2, struct AST *bloco);
 
 struct code *rot();
 struct l_remendo *lista_rem(int *pos_remendo);

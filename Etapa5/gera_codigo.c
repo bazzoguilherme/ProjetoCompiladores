@@ -231,7 +231,37 @@ struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt) 
     return c;
 }
 
+struct code *gera_WHILE(struct AST *cond, struct AST *bloco) {
+    struct code *x = rot();
+    struct code *y = rot();
+    struct code *z = rot();
+    struct code *z_zump = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, z->label, NULL_REGIS, NULL);
 
+    remenda(cond, REMENDO_T, x->label);
+    remenda(cond, REMENDO_F, y->label);
+
+    struct code *c = concat(z, cond->codigo, x);
+    c = concat(c, (bloco == NULL) ? NULL : bloco->codigo, z_zump);
+    c = concat(c, y, NULL);
+
+    return c;
+}
+
+struct code *gera_FOR(struct AST *atrib1, struct AST *cond, struct AST *atrib2, struct AST *bloco) {
+    struct code *x = rot();
+    struct code *y = rot();
+    struct code *z = rot();
+    struct code *z_zump = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, z->label, NULL_REGIS, NULL);
+
+    remenda(cond, REMENDO_T, x->label);
+    remenda(cond, REMENDO_F, y->label);
+
+    struct code *c = concat(atrib1->codigo, z, cond->codigo);
+    c = concat(c, x, (bloco == NULL) ? NULL : bloco->codigo);
+    c = concat(c, atrib2->codigo, z_zump);
+    c = concat(c, y, NULL);
+    return c;
+}
 
 struct code *rot() {
     return gera_code(gera_label(), nop, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
@@ -317,11 +347,12 @@ OP op_composta(char *op) {
         return op_cmp_EQ;
     } else if (strcmp(op, "!=") == 0) {
         return op_cmp_NE;
-    } else if (strcmp(op, "&&") == 0) {
-        return op_and;
-    } else if (strcmp(op, "||") == 0) {
-        return op_or;
-    }
+    } 
+    // else if (strcmp(op, "&&") == 0) {
+    //     return op_and;
+    // } else if (strcmp(op, "||") == 0) {
+    //     return op_or;
+    // }
 }
 
 void print_code(struct code *codigo) {

@@ -127,7 +127,7 @@ struct code {
     int arg2;
     int dest1;
     int dest2;
-    struct code *prox; // montagem de "cabeça para baixo"
+    struct code *prox;
 };
 
 typedef struct AST {
