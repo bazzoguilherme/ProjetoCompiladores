@@ -166,6 +166,14 @@ struct code *gera_atribuicao(struct AST *atrib, struct AST *expr) {
     return gera_code(NULL_LABEL, op_storeAI, expr->local, NULL_REGIS, ((escopo == GLOBAL) ? RBSS:RFP), desloc, NULL);
 }
 
+struct code *gera_inicializacao(struct AST *init) {
+    if (init == NULL) {
+        return NULL;
+    }
+    struct code *c = gera_atribuicao(init->children[0], init->children[1]);
+    return concat(init->children[1]->codigo, c, gera_inicializacao(init->prox));
+}
+
 struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, int dest) {
     struct code *c = gera_code(NULL_LABEL, op_operacao(operacao), f1->local, f2->local, dest, NULL_REGIS, NULL);
     return concat(f1->codigo, f2->codigo, c);

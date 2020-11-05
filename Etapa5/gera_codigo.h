@@ -46,6 +46,7 @@ struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *pa
 struct code *gera_retorno(struct AST *retorno);
 struct code *retorno_funcao();
 struct code *gera_atribuicao(struct AST *atrib, struct AST *expr);
+struct code *gera_inicializacao(struct AST *init);
 
 struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, int dest);
 void gera_relop(struct AST *node);

@@ -183,7 +183,8 @@ declaracao_local: TK_PR_STATIC tipo id_local lista_var_local {
 	| tipo id_local lista_var_local { 
 		adiciona_lista_elem_comTipo($1);
 		$$ = create_NODE($2, $3);
-		atualiza_tipo_nodos_decl($$, $1); };
+		atualiza_tipo_nodos_decl($$, $1);
+		if ($$ != NULL) $$->codigo = gera_inicializacao($$); };
 
 lista_var_local: ',' id_local lista_var_local { $$ = create_NODE($2, $3); }
 	| { $$ = NULL; };
