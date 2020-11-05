@@ -182,7 +182,6 @@ void gera_relop(struct AST *node) {
 
     node->tl = lista_rem(&cbr->dest1);
     node->fl = lista_rem(&cbr->dest2);
-    printf("RELOP\n");
 }
 
 void gera_and(struct AST *node) {
