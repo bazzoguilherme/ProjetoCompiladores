@@ -245,7 +245,10 @@ expr_log_comp_and: expr_log_comp_and TK_OC_AND expr_log { $$ = create_EXPRESSAO_
 expr_log: expr_log op_binaria_logica expr_comp { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
 	| expr_comp { $$ = $1; };
         
-expr_comp: expr_comp op_binaria_comparacao expr_soma { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+expr_comp: expr_comp op_binaria_comparacao expr_soma { 
+		$$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3);
+		$$->local = gera_regis();
+		gera_relop($$); }
 	| expr_soma { $$ = $1; };
 
 expr_soma: expr_soma op_binaria_soma expr_produto { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); 

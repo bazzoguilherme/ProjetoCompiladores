@@ -171,15 +171,27 @@ struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1,
     return concat(f1->codigo, f2->codigo, c);
 }
 
+void gera_relop(struct AST *node) {
+    int dest = node->local;
+    struct valor_lexico_t *val_lex = node->valor_lexico;
+    int x, y;
 
+    struct code *cbr = gera_code(NULL_LABEL, op_cbr, dest, NULL_REGIS, x, y, NULL);
+    struct code *comparacao = gera_code(NULL_LABEL, op_operacao(val_lex), node->children[0]->local, node->children[1]->local, dest, NULL_REGIS, cbr);
+
+    node->codigo = concat(node->children[0]->codigo, node->children[1]->codigo, comparacao);
+
+    node->tl = lista_rem(&x);
+    node->fl = lista_rem(&y);
+}
 
 struct code *rot() {
     return gera_code(gera_label(), nop, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
 }
 
-struct l_remendo *lista_rem(struct code *c) {
+struct l_remendo *lista_rem(int *pos_remendo) {
     struct l_remendo *rem = (struct l_remendo *) malloc(sizeof(struct l_remendo));
-    rem->remendo = &(c->label);
+    rem->remendo = pos_remendo;
     rem->prox = NULL;
     return rem;
 }
@@ -218,7 +230,7 @@ OP op_operacao(struct valor_lexico_t *operacao) {
     if (operacao->tipo == VAL_ESPECIAL) { // char
         return op_simples(operacao->valor.val_char);
     } else { // Op-composto
-        // return op_composta(operacao->valor.val_str);
+        return op_composta(operacao->valor.val_str);
     }
 }
 
@@ -237,32 +249,32 @@ OP op_simples(char op) {
     case '/':
         return op_div;
         break;
-    // case '<':
-    //     return op_cmp_LT;
-    //     break;
-    // case '>':
-    //     return op_cmp_GT;
-    //     break;
+    case '<':
+        return op_cmp_LT;
+        break;
+    case '>':
+        return op_cmp_GT;
+        break;
     default:
         break;
     }
 }
 
-// OP op_composta(char *op) {
-//     if (strcmp(op, "<=") == 0) {
-//         return op_cmp_LE;
-//     } else if (strcmp(op, ">=") == 0) {
-//         return op_cmp_GE;
-//     } else if (strcmp(op, "==") == 0) {
-//         return op_cmp_EQ;
-//     } else if (strcmp(op, "!=") == 0) {
-//         return op_cmp_NE;
-//     } else if (strcmp(op, "&&") == 0) {
-//         return op_and;
-//     } else if (strcmp(op, "||") == 0) {
-//         return op_or;
-//     }
-// }
+OP op_composta(char *op) {
+    if (strcmp(op, "<=") == 0) {
+        return op_cmp_LE;
+    } else if (strcmp(op, ">=") == 0) {
+        return op_cmp_GE;
+    } else if (strcmp(op, "==") == 0) {
+        return op_cmp_EQ;
+    } else if (strcmp(op, "!=") == 0) {
+        return op_cmp_NE;
+    } else if (strcmp(op, "&&") == 0) {
+        return op_and;
+    } else if (strcmp(op, "||") == 0) {
+        return op_or;
+    }
+}
 
 void print_code(struct code *codigo) {
     if (codigo == NULL) return;
