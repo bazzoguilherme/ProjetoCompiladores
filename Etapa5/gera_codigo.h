@@ -53,6 +53,8 @@ void gera_and(struct AST *node);
 void gera_or(struct AST *node);
 void gera_not(struct AST *node);
 
+struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt);
+
 struct code *rot();
 struct l_remendo *lista_rem(int *pos_remendo);
 void remenda(struct AST *ast, int t_f, int label);

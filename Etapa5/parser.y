@@ -392,7 +392,9 @@ comando: declaracao_local ';' { $$ = $1; }
 	| for ';' { $$ = $1; }
 	| bloco_init bloco_end ';' { $$ = $2; };
 
-controle_fluxo: TK_PR_IF '(' expressao ')' bloco_init bloco_end else_opt { $$ = create_IF(AST_IF, $3, $6, $7); };
+controle_fluxo: TK_PR_IF '(' expressao ')' bloco_init bloco_end else_opt { 
+	$$ = create_IF(AST_IF, $3, $6, $7);
+	$$->codigo = gera_IF($3, $6, $7); };
 
 else_opt: TK_PR_ELSE bloco_init bloco_end { $$ = $3; }
 	| { $$ = NULL; } ;

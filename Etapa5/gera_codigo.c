@@ -182,13 +182,14 @@ void gera_relop(struct AST *node) {
 
     node->tl = lista_rem(&cbr->dest1);
     node->fl = lista_rem(&cbr->dest2);
+    printf("RELOP\n");
 }
 
 void gera_and(struct AST *node) {
     struct code *x = rot();
     remenda(node->children[0], REMENDO_T, x->label);
     node->tl = node->children[1]->tl;
-    node->fl = concat_remendo(node->children[0]->fl, node->children[0]->fl);
+    node->fl = concat_remendo(node->children[0]->fl, node->children[1]->fl);
     node->codigo = concat(node->children[0]->codigo, x, node->children[1]->codigo);
 }
 
@@ -196,7 +197,7 @@ void gera_or(struct AST *node) {
     struct code *x = rot();
     remenda(node->children[0], REMENDO_F, x->label);
     node->fl = node->children[1]->fl;
-    node->tl = concat_remendo(node->children[0]->tl, node->children[0]->tl);
+    node->tl = concat_remendo(node->children[0]->tl, node->children[1]->tl);
     node->codigo = concat(node->children[0]->codigo, x, node->children[1]->codigo);
 }
 
@@ -205,6 +206,33 @@ void gera_not(struct AST *node) {
     node->tl = node->children[0]->fl;
     node->fl = node->children[0]->tl;
 }
+
+
+struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt) {
+    struct code *x = rot();
+    struct code *y = rot();
+    struct code *z = NULL;
+    struct code *z_zump1 = NULL;
+    struct code *z_zump2 = NULL;
+
+    remenda(cond, REMENDO_T, x->label);
+    remenda(cond, REMENDO_F, y->label);
+
+    struct code* c = concat(cond->codigo, x, (bloco == NULL) ? NULL : bloco->codigo);
+    if (else_opt == NULL) {
+        c = concat(c, y, NULL);
+    } else {
+        z = rot();
+        z_zump1 = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, z->label, NULL_REGIS, NULL);
+        z_zump2 = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, z->label, NULL_REGIS, NULL);
+        z_zump1 = concat(z_zump1, y, else_opt->codigo);
+        z_zump1 = concat(z_zump1, z_zump2, z);
+        c = concat(c, z_zump1, NULL);
+    }
+    return c;
+}
+
+
 
 struct code *rot() {
     return gera_code(gera_label(), nop, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
