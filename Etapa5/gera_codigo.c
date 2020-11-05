@@ -200,6 +200,12 @@ void gera_or(struct AST *node) {
     node->codigo = concat(node->children[0]->codigo, x, node->children[1]->codigo);
 }
 
+void gera_not(struct AST *node) {
+    node->codigo = node->children[0]->codigo;
+    node->tl = node->children[0]->fl;
+    node->fl = node->children[0]->tl;
+}
+
 struct code *rot() {
     return gera_code(gera_label(), nop, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
 }
