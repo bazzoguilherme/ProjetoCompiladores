@@ -18,7 +18,7 @@ int main(int argc, int argv) {
         int a;
     };
 
-    gl2 = 15 < 10;
+    gl2 = 15 < 10 && 10;
     a = a + 2;
     a = f(10);
     // a = f2(10);

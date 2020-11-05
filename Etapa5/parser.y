@@ -236,10 +236,14 @@ expr: expr_log_comp_or { $$ = $1; }
 	| expr_log_comp_or '?' expressao ':' expressao { $$ = create_TERNARIO(AST_TERNARIO, $1, $3, $5); }
 	;
 
-expr_log_comp_or: expr_log_comp_or TK_OC_OR expr_log_comp_and { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+expr_log_comp_or: expr_log_comp_or TK_OC_OR expr_log_comp_and { 
+		$$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3);
+		gera_or($$); }
 	| expr_log_comp_and { $$ = $1; };
 
-expr_log_comp_and: expr_log_comp_and TK_OC_AND expr_log { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }
+expr_log_comp_and: expr_log_comp_and TK_OC_AND expr_log { 
+		$$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3);
+		gera_and($$); }
 	| expr_log { $$ = $1; };
 
 expr_log: expr_log op_binaria_logica expr_comp { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); }

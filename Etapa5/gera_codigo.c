@@ -174,15 +174,30 @@ struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1,
 void gera_relop(struct AST *node) {
     int dest = node->local;
     struct valor_lexico_t *val_lex = node->valor_lexico;
-    int x, y;
 
-    struct code *cbr = gera_code(NULL_LABEL, op_cbr, dest, NULL_REGIS, x, y, NULL);
+    struct code *cbr = gera_code(NULL_LABEL, op_cbr, dest, NULL_REGIS, 0, 0, NULL);
     struct code *comparacao = gera_code(NULL_LABEL, op_operacao(val_lex), node->children[0]->local, node->children[1]->local, dest, NULL_REGIS, cbr);
 
     node->codigo = concat(node->children[0]->codigo, node->children[1]->codigo, comparacao);
 
-    node->tl = lista_rem(&x);
-    node->fl = lista_rem(&y);
+    node->tl = lista_rem(&cbr->dest1);
+    node->fl = lista_rem(&cbr->dest2);
+}
+
+void gera_and(struct AST *node) {
+    struct code *x = rot();
+    remenda(node->children[0], REMENDO_T, x->label);
+    node->tl = node->children[1]->tl;
+    node->fl = concat_remendo(node->children[0]->fl, node->children[0]->fl);
+    node->codigo = concat(node->children[0]->codigo, x, node->children[1]->codigo);
+}
+
+void gera_or(struct AST *node) {
+    struct code *x = rot();
+    remenda(node->children[0], REMENDO_F, x->label);
+    node->fl = node->children[1]->fl;
+    node->tl = concat_remendo(node->children[0]->tl, node->children[0]->tl);
+    node->codigo = concat(node->children[0]->codigo, x, node->children[1]->codigo);
 }
 
 struct code *rot() {
@@ -208,7 +223,7 @@ void remenda(struct AST *ast, int t_f, int label) {
 
 void remenda_lista(struct l_remendo *lista_remendo, int label) {
     if (lista_remendo == NULL) return;
-    *(lista_remendo->remendo) = label;
+    *lista_remendo->remendo = label;
     remenda_lista(lista_remendo->prox, label);
 }
 

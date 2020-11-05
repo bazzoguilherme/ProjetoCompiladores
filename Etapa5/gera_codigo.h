@@ -49,6 +49,8 @@ struct code *gera_atribuicao(struct AST *atrib, struct AST *expr);
 
 struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, int dest);
 void gera_relop(struct AST *node);
+void gera_and(struct AST *node);
+void gera_or(struct AST *node);
 
 struct code *rot();
 struct l_remendo *lista_rem(int *pos_remendo);
