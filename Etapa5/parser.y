@@ -198,7 +198,9 @@ id_local: TK_IDENTIFICADOR {
 	| TK_IDENTIFICADOR assign TK_IDENTIFICADOR { 
 		verif_utilizacao_identificador($3, NAT_variavel);
 		cria_simbolo_parcial($1, NAT_variavel, 1);
-		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3); } ;
+		$$ = create_DECL_ASSIGN_id(AST_DECL_ASSIGN, $2, $1, $3);
+		$$->children[1]->local = gera_regis(); 
+		$$->children[1]->codigo = gera_load_var(op_loadAI, $$->children[1], $$->children[1]->local); } ;
 
 assign: TK_OC_LE { $$ = $1; };
 

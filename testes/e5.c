@@ -9,8 +9,8 @@ int f2(int x) {
 }
 
 int main(int argc, int argv) {
-    int a <= -10;
-    int b;
+    int a <= 9, aa, ab <= 3, ac;
+    int b <= a;
 
     {
         int c;
@@ -18,9 +18,9 @@ int main(int argc, int argv) {
         int a;
     };
     int i;
-    for (i = 0 : i < 10 : i = i + 1) {
-        a = a + 2;
-    };
+    // for (i = 0 : i < 10 : i = i + 1) {
+    //     a = a + 2;
+    // };
 
     // while( 5 < a ) do {
     //     a = a - 1;
