@@ -1,0 +1,23 @@
+L0: i2i rsp => rfp
+addI rsp, 20 => rsp
+loadAI rfp, 0 => r0
+loadAI rfp, 12 => rsp
+loadAI rfp, 8 => rfp
+jump -> r0
+L1: i2i rsp => rfp
+addI rsp, 24 => rsp
+loadAI rfp, 0 => r1
+loadAI rfp, 12 => rsp
+loadAI rfp, 8 => rfp
+jump -> r1
+L2: i2i rsp => rfp
+addI rsp, 52 => rsp
+loadI 9 => r2
+rsubI r2, 0 => r2
+storeAI r2 => rfp, 32
+loadI 3 => r3
+storeAI r3 => rfp, 40
+loadAI rfp, 0 => r4
+loadAI rfp, 12 => rsp
+loadAI rfp, 8 => rfp
+jump -> r4

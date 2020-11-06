@@ -146,7 +146,8 @@ extern void libera(void *arvore);
 %%
 
 programa: declaracao_global programa { $$ = $2; }
-	| declaracao_funcao programa { $$ = create_NODE($1, $2); arvore = (void*) $$; }
+	| declaracao_funcao programa { $$ = create_NODE($1, $2); arvore = (void*) $$; 
+					$$->codigo = concat($1->codigo, ($2 == NULL) ? NULL : $2->codigo, NULL); }
 	| { $$ = NULL; }
 	;
 	
@@ -340,8 +341,6 @@ declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao {
 	$$->codigo = gera_decl_funcao($1);
 	$$->codigo = concat_codigos_ast($$, $3, NULL);
 	$$->codigo = concat($$->codigo, retorno_funcao(), NULL);
-	printf("\n\nFUN\n");
-	print_code($$->codigo);
 	delete_escopo();
 	};
 

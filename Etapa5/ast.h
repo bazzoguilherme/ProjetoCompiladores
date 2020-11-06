@@ -113,6 +113,7 @@ typedef enum OP {
     op_cbr,
     op_jump,
     op_jumpI,
+    op_halt,
 } OP;
 
 struct l_remendo {

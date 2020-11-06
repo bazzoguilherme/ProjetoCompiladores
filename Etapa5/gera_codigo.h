@@ -59,6 +59,9 @@ struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt);
 struct code *gera_WHILE(struct AST *cond, struct AST *bloco);
 struct code *gera_FOR(struct AST *atrib1, struct AST *cond, struct AST *atrib2, struct AST *bloco);
 
+struct code *gera_halt(int label);
+struct code *instrucoes_iniciais(int label_jump);
+
 struct code *rot();
 struct l_remendo *lista_rem(int *pos_remendo);
 void remenda(struct AST *ast, int t_f, int label);
@@ -87,4 +90,7 @@ void print_r(struct code *c);
 void print_L(struct code *c);
 void print_r_jmp(struct code *c);
 void print_L_jmp(struct code *c);
+
+void libera_codigo(struct code *c);
+void libera_remendo(struct l_remendo *r);
 #endif

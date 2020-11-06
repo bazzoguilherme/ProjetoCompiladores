@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "exp_ast.h"
-
+#include "gera_codigo.h"
 #include "symbol_table.h"
 
 extern struct stack_symbol_table *stack;
 
 void libera(void *arvore) {
-    libera_ast((struct AST *) arvore);
+    struct AST *ast = (struct AST *) arvore;
+    if (ast!=NULL) libera_codigo(ast->codigo);
+    libera_ast(ast);
     free_stack(stack);
 }
 
@@ -36,6 +38,10 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 
 void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
+    if (ast != NULL){
+        // struct code *halt = NULL;
+        print_code(ast->codigo);
+    }
     // print_pointers(ast);
     // print_ast(ast);
 }

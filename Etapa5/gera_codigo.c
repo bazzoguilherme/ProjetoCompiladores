@@ -285,6 +285,18 @@ struct code *gera_FOR(struct AST *atrib1, struct AST *cond, struct AST *atrib2, 
     return c;
 }
 
+struct code *gera_halt(int label) {
+    return gera_code(label, op_halt, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
+}
+
+struct code *instrucoes_iniciais(int label_jump) { // Jump to 'main' or 'halt' if not present
+    struct code *jmp = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, label_jump, NULL_REGIS, NULL);
+    struct code *rbss_default = gera_code(NULL_LABEL, op_loadI, 500, NULL_REGIS, RBSS, NULL_REGIS, jmp);
+    struct code *rsp_default = gera_code(NULL_LABEL, op_loadI, 1024, NULL_REGIS, RSP, NULL_REGIS, rbss_default);
+    struct code *rfp_default = gera_code(NULL_LABEL, op_loadI, 1024, NULL_REGIS, RFP, NULL_REGIS, rsp_default);
+    return rfp_default;
+}
+
 struct code *rot() {
     return gera_code(gera_label(), nop, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
 }
@@ -299,9 +311,11 @@ struct l_remendo *lista_rem(int *pos_remendo) {
 void remenda(struct AST *ast, int t_f, int label) {
     if (t_f == REMENDO_T) {
         remenda_lista(ast->tl, label);
+        libera_remendo(ast->tl);
         ast->tl = NULL;
     } else {
         remenda_lista(ast->fl, label);
+        libera_remendo(ast->fl);
         ast->fl = NULL;
     }
 }
@@ -666,4 +680,16 @@ void print_r_jmp(struct code *c) {
 void print_L_jmp(struct code *c) {
     printf(" -> ");
     traduz_label(c->dest1);
+}
+
+void libera_codigo(struct code *c) {
+    if (c == NULL) return;
+    libera_codigo(c->prox);
+    free(c);
+}
+
+void libera_remendo(struct l_remendo *r) {
+    if (r == NULL) return;
+    libera_remendo(r->prox);
+    free(r);
 }
