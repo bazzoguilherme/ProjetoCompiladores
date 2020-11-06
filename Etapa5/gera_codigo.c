@@ -87,7 +87,7 @@ struct code *gera_loadI(OP op, struct valor_lexico_t *arg1, int dest){
 struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_lexico_t *arg1, int dest) {
     struct code *c = gera_loadI(op, arg1, dest);
     if (sinal != NULL && sinal->valor.val_char == '-') { // Inverte valor registrador
-        struct code *sub = gera_code(NULL_LABEL, op_rsubI, 0, dest, dest, NULL_REGIS, NULL);
+        struct code *sub = gera_code(NULL_LABEL, op_rsubI, dest, 0, dest, NULL_REGIS, NULL);
         c->prox = sub;
     }
     return c;
@@ -177,6 +177,20 @@ struct code *gera_inicializacao(struct AST *init) {
 struct code *gera_expressao_bin(struct valor_lexico_t *operacao, struct AST *f1, struct AST *f2, int dest) {
     struct code *c = gera_code(NULL_LABEL, op_operacao(operacao), f1->local, f2->local, dest, NULL_REGIS, NULL);
     return concat(f1->codigo, f2->codigo, c);
+}
+
+void gera_unario(struct AST *exp_un) {
+    char operador_unario = exp_un->valor_lexico->valor.val_char;
+    if (operador_unario == '+') { // transfere para cima
+        exp_un->local = exp_un->children[0]->local;
+        exp_un->codigo = exp_un->children[0]->codigo;
+    } else if (operador_unario == '-') { // adiciona inversao de sinal
+        exp_un->local = gera_regis();
+        struct code *sub = gera_code(NULL_LABEL, op_rsubI, exp_un->children[0]->local, 0, exp_un->local, NULL_REGIS, NULL);
+        exp_un->codigo = concat(exp_un->children[0]->codigo, sub, NULL);
+    } else if (operador_unario == '!') {
+        gera_not(exp_un);
+    }
 }
 
 void gera_relop(struct AST *node) {

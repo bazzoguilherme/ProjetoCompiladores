@@ -276,10 +276,10 @@ F: '(' expressao ')' { $$ = $2; }
 	| expr_arit { $$ = $1;}
 	| expr_log_literal { $$ = $1; }
 	| literal_char_str { $$ = $1; }
-	| op_unaria expr_arit { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
+	| op_unaria expr_arit { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); gera_unario($$); }
 	| op_unaria expr_log_literal { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
 	| op_unaria literal_char_str { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $2); }
-	| op_unaria_prio_dir '(' expressao ')' { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $3); };
+	| op_unaria_prio_dir '(' expressao ')' { $$ = create_EXPRESSAO_UN(AST_OP_UN, $1, $3); gera_unario($$); };
 
 expr_arit: id_ou_vet_expr { 
 		$$ = $1; 
