@@ -5,7 +5,7 @@ int f(int x) {
 }
 
 int f2(int x, int y) {
-    // return x + y;
+    return x + y;
 }
 
 int main(int argc, int argv) {

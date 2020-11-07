@@ -148,7 +148,7 @@ struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *pa
 
 struct code *gera_retorno(struct AST *retorno) {
     struct code *c = gera_code(NULL_LABEL, op_storeAI, retorno->local, NULL_REGIS, RFP, RETORNO_FUNC, NULL);
-    return concat(c, retorno_funcao(), NULL);
+    return concat(retorno->codigo, c, retorno_funcao());
 }
 
 struct code *retorno_funcao() {
