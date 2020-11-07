@@ -59,8 +59,8 @@ struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt);
 struct code *gera_WHILE(struct AST *cond, struct AST *bloco);
 struct code *gera_FOR(struct AST *atrib1, struct AST *cond, struct AST *atrib2, struct AST *bloco);
 
-struct code *gera_halt(int label);
-struct code *instrucoes_iniciais(int label_jump);
+struct code *gera_halt();
+struct code *instrucoes_iniciais();
 
 struct code *rot();
 struct l_remendo *lista_rem(int *pos_remendo);
@@ -71,6 +71,8 @@ struct l_remendo *concat_remendo(struct l_remendo *r1, struct l_remendo *r2);
 OP op_operacao(struct valor_lexico_t *operacao);
 OP op_simples(char op);
 OP op_composta(char *op);
+
+void update_current_fun_name(struct valor_lexico_t *fun);
 
 void print_code(struct code *codigo);
 

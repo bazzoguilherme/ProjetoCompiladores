@@ -346,10 +346,11 @@ declaracao_funcao: declaracao_header decl_header_parametros bloco_funcao {
 
 declaracao_header: TK_PR_STATIC tipo TK_IDENTIFICADOR { 
 		insere_simbolo($3, NAT_funcao, $2);
-		$$ = $3; }
+		$$ = $3; update_current_fun_name($3); }
 	| tipo TK_IDENTIFICADOR { 
 		insere_simbolo($2, NAT_funcao, $1);
-		$$ = $2; } ;
+		$$ = $2;
+		update_current_fun_name($2); } ;
 
 tipo_const: TK_PR_CONST
 	| ;

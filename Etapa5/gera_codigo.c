@@ -7,7 +7,8 @@
 #include "gera_codigo.h"
 
 
-int regis = 0, label = 0;
+int regis = 0, label = 1; // L0 reservado para halt
+char *fun_atual;
 
 int gera_regis() {
     return regis++;
@@ -152,8 +153,11 @@ struct code *gera_retorno(struct AST *retorno) {
 }
 
 struct code *retorno_funcao() {
+    if (strcmp(fun_atual, "main")==0) {
+        return gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, 0, NULL_REGIS, NULL);
+    }
     int reg_retorno = gera_regis();
-    struct code *jump = gera_code(NULL_LABEL, op_jump, NULL_REGIS, NULL_REGIS, reg_retorno, NULL_REGIS, NULL);
+    struct code *jump = gera_code(NULL_LABEL, op_jump, NULL_REGIS, NULL_REGIS, reg_retorno, NULL_REGIS, NULL);;
     struct code *rfp_salvo = gera_code(NULL_LABEL, op_loadAI, RFP, DESL_RFP, RFP, NULL_REGIS, jump);
     struct code *rsp_salvo = gera_code(NULL_LABEL, op_loadAI, RFP, DESL_RSP, RSP, NULL_REGIS, rfp_salvo);
     struct code *end_retorno = gera_code(NULL_LABEL, op_loadAI, RFP, 0, reg_retorno, NULL_REGIS, rsp_salvo);
@@ -285,12 +289,12 @@ struct code *gera_FOR(struct AST *atrib1, struct AST *cond, struct AST *atrib2, 
     return c;
 }
 
-struct code *gera_halt(int label) {
-    return gera_code(label, op_halt, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL);
+struct code *gera_halt() {
+    return gera_code(0, op_halt, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL_REGIS, NULL); // L0 default halt
 }
 
-struct code *instrucoes_iniciais(int label_jump) { // Jump to 'main' or 'halt' if not present
-    struct code *jmp = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, label_jump, NULL_REGIS, NULL);
+struct code *instrucoes_iniciais() { // Jump to 'main' or 'halt' if not present
+    struct code *jmp = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, label_funcao("main"), NULL_REGIS, gera_halt());
     struct code *rbss_default = gera_code(NULL_LABEL, op_loadI, 500, NULL_REGIS, RBSS, NULL_REGIS, jmp);
     struct code *rsp_default = gera_code(NULL_LABEL, op_loadI, 1024, NULL_REGIS, RSP, NULL_REGIS, rbss_default);
     struct code *rfp_default = gera_code(NULL_LABEL, op_loadI, 1024, NULL_REGIS, RFP, NULL_REGIS, rsp_default);
@@ -389,6 +393,10 @@ OP op_composta(char *op) {
     // } else if (strcmp(op, "||") == 0) {
     //     return op_or;
     // }
+}
+
+void update_current_fun_name(struct valor_lexico_t *fun) {
+    fun_atual = fun->valor.val_str;
 }
 
 void print_code(struct code *codigo) {

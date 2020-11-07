@@ -707,7 +707,7 @@ int deslocamento_funcao_atual() {
 
 int label_funcao(char *fun_name) {
     struct elem_table *elemento = encontra_elemento_stack(stack, fun_name);
-    return elemento->label;
+    return (elemento != NULL) ? elemento->label : 0;
 }
 
 int erro_semantico(int err) {

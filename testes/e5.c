@@ -39,4 +39,9 @@ int main(int argc, int argv) {
     // a = a + 2;
     // a = f(10);
     // a = f2(1, 2);
+    return 0;
+}
+
+int sem_motivo() {
+    return -1;
 }
