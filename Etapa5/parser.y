@@ -237,8 +237,10 @@ tipo: TK_PR_INT { $$ = TYPE_INT; }
 expressao: expr { $$ = $1; };
 
 expr: expr_log_comp_or { $$ = $1; }
-	| expr_log_comp_or '?' expressao ':' expressao { $$ = create_TERNARIO(AST_TERNARIO, $1, $3, $5); }
-	;
+	| expr_log_comp_or '?' expressao ':' expressao { 
+		$$ = create_TERNARIO(AST_TERNARIO, $1, $3, $5); 
+		$$->local = gera_regis();
+		$$->codigo = gera_IF_ternario($1, $3, $5, $$->local); };
 
 expr_log_comp_or: expr_log_comp_or TK_OC_OR expr_log_comp_and { 
 		$$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3);

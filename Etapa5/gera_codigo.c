@@ -257,6 +257,31 @@ struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt) 
     return c;
 }
 
+struct code *gera_IF_ternario(struct AST *cond, struct AST *expr1, struct AST *expr2, int reg) {
+    struct code *x = rot();
+    struct code *y = rot();
+    struct code *z = NULL;
+    struct code *z_zump1 = NULL;
+    struct code *z_zump2 = NULL;
+
+    remenda(cond, REMENDO_T, x->label);
+    remenda(cond, REMENDO_F, y->label);
+    //(int label, OP op, int arg1, int arg2, int dest1, int dest2, struct code *prox)
+    
+    struct code* c = concat(cond->codigo, x, gera_code(NULL_LABEL, op_loadI, expr1->valor_lexico->valor.val_int, NULL_REGIS, expr1->local, NULL_REGIS, NULL));
+    c = concat(c, gera_code(NULL_LABEL, op_i2i, expr1->local, NULL_REGIS, reg, NULL_REGIS, NULL), NULL);
+
+    z = rot();
+    z_zump1 = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, z->label, NULL_REGIS, NULL);
+    z_zump2 = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, z->label, NULL_REGIS, NULL);
+    z_zump1 = concat(z_zump1, y, gera_code(NULL_LABEL, op_loadI, expr2->valor_lexico->valor.val_int, NULL_REGIS, expr2->local, NULL_REGIS, NULL));
+    z_zump1 = concat(z_zump1, gera_code(NULL_LABEL, op_i2i, expr2->local, NULL_REGIS, reg, NULL_REGIS, NULL), NULL);
+    z_zump1 = concat(z_zump1, z_zump2, z);
+    c = concat(c, z_zump1, NULL);
+
+    return c;
+}
+
 struct code *gera_WHILE(struct AST *cond, struct AST *bloco) {
     struct code *x = rot();
     struct code *y = rot();

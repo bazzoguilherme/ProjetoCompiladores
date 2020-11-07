@@ -58,6 +58,7 @@ void gera_not(struct AST *node);
 struct code *gera_IF(struct AST *cond, struct AST *bloco, struct AST *else_opt);
 struct code *gera_WHILE(struct AST *cond, struct AST *bloco);
 struct code *gera_FOR(struct AST *atrib1, struct AST *cond, struct AST *atrib2, struct AST *bloco);
+struct code *gera_IF_ternario(struct AST *cond, struct AST *expr1, struct AST *expr2, int reg);
 
 struct code *gera_halt();
 struct code *instrucoes_iniciais();
