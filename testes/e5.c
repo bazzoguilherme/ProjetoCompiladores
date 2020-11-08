@@ -73,7 +73,7 @@ int main() {
     fun_add = add(2, 3);
     fun_mult = mult(2, 3);
 
-    fun3param1 = multi_add(2, 2, 3);
+    fun3param1 = multi_add(1+1, 2, 1+1+1);
 
     fib0 = fib(0);
     fib1 = fib(1);
