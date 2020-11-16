@@ -747,7 +747,7 @@ void print_global_info() {
             printf("\t.comm\t%s,4\n", elemento->key);
         } else if (elemento->natureza == NAT_funcao){
             printf("\t.globl\t%s\n", elemento->key);
-            printf("\t.type\t%s, @funcion\n", elemento->key);
+            printf("\t.type\t%s, @function\n", elemento->key);
         } 
         elemento = elemento->next_elem;
     }
