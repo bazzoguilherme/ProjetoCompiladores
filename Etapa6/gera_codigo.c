@@ -9,6 +9,7 @@
 
 int regis = 0, label = 1; // L0 reservado para halt
 char *fun_atual;
+extern struct stack_symbol_table *stack;
 
 int gera_regis() {
     return regis++;
@@ -725,4 +726,29 @@ void libera_remendo(struct l_remendo *r) {
     if (r == NULL) return;
     libera_remendo(r->prox);
     free(r);
+}
+
+
+
+void generateAsm(struct code *c) {
+    print_initial_info();
+    print_global_info();
+}
+
+void print_initial_info() {
+    printf("\t.file\t\"programa.c\"\n");
+    printf("\t.text\n");
+}
+
+void print_global_info() {
+    struct elem_table *elemento = stack->topo;
+    while(elemento!=NULL){
+        if (elemento->natureza == NAT_variavel){
+            printf("\t.comm\t%s,4\n", elemento->key);
+        } else if (elemento->natureza == NAT_funcao){
+            printf("\t.globl\t%s\n", elemento->key);
+            printf("\t.type\t%s, @funcion\n", elemento->key);
+        } 
+        elemento = elemento->next_elem;
+    }
 }

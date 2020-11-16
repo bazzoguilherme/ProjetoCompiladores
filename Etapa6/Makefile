@@ -1,4 +1,4 @@
-filename=etapa5
+filename=etapa6
 BISON=bison
 LEX=flex
 GCC=gcc

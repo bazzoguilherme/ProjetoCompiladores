@@ -1,6 +1,6 @@
 	.file	"main.c"
 	.text
-	.comm	global,4,4
+	.comm	global,4
 	.globl	main
 	.type	main, @function
 main:

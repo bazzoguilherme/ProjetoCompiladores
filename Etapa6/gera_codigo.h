@@ -96,4 +96,9 @@ void print_L_jmp(struct code *c);
 
 void libera_codigo(struct code *c);
 void libera_remendo(struct l_remendo *r);
+
+
+void generateAsm(struct code *c);
+void print_initial_info();
+void print_global_info();
 #endif
