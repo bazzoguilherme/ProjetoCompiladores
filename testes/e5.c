@@ -42,47 +42,47 @@ int fib(int a) {
 int main() {
 
     simples1 = 2 + 5;
-    simples2 = simples1 * 3;
+    simples2 = simples1 * (3  * (simples1 * 10));
     
-    int i<=1;
+    // int i<=1;
 
-    if (i == 2) {
-        if_test = 1;
-    } else {
-        if_test = 0;
-    };
+    // if (i == 2) {
+    //     if_test = 1;
+    // } else {
+    //     if_test = 0;
+    // };
 
-    while_test = 0;
-    int w <= 10;
-    while(w > 0) do {
-        w = w-1;
-        while_test = while_test + 1;
-    };
+    // while_test = 0;
+    // int w <= 10;
+    // while(w > 0) do {
+    //     w = w-1;
+    //     while_test = while_test + 1;
+    // };
 
 
-    int f <= 0;
-    for (f = 0 : f < 20 : f = f+1) {
+    // int f <= 0;
+    // for (f = 0 : f < 20 : f = f+1) {
 
-    };
-    for_test = f;
+    // };
+    // for_test = f;
 
-    ternario_test = (f == 20 && while_test == 10) ? 11 : -1;
+    // ternario_test = (f == 20 && while_test == 10) ? 11 : -1;
 
-    fun1 = inc(i);
+    // fun1 = inc(i);
 
-    fun_add = add(2, 3);
-    fun_mult = mult(2, 3);
+    // fun_add = add(2, 3);
+    // fun_mult = mult(2, 3);
 
-    fun3param1 = multi_add(1+1, 2, 1+1+1);
+    // fun3param1 = multi_add(1+1, 2, 1+1+1);
 
-    fib0 = fib(0);
-    fib1 = fib(1);
-    fib2 = fib(2);
-    fib3 = fib(3);
-    fib4 = fib(4);
-    fib5 = fib(5);
-    fib6 = fib(6);
-    fib7 = fib(7);
-    fib8 = fib(8);
+    // fib0 = fib(0);
+    // fib1 = fib(1);
+    // fib2 = fib(2);
+    // fib3 = fib(3);
+    // fib4 = fib(4);
+    // fib5 = fib(5);
+    // fib6 = fib(6);
+    // fib7 = fib(7);
+    // fib8 = fib(8);
 
 }
