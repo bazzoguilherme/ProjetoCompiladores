@@ -206,6 +206,14 @@ void free_stack(struct stack_symbol_table *stack) {
     free(stack);
 }
 
+struct stack_symbol_table *get_escopo_global(){
+    struct stack_symbol_table *aux = stack;
+    while(aux!=NULL && aux->down_table != NULL) {
+        aux = aux->down_table;
+    }
+    return aux;
+}
+
 union val_lex dupl_union(union val_lex dado, Type_Natureza nat, Type tipo){
     union val_lex new_u;
     new_u.val_char = dado.val_char;
@@ -258,13 +266,13 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
     if (stack == NULL) {
         stack = escopo_global();
     }
-    
-    struct elem_table *elemento = stack->topo;
+    struct stack_symbol_table *global_stack = get_escopo_global();
+    struct elem_table *elemento = global_stack->topo;
     struct elem_table *busca_lit = NULL;
 
     char *key_lit = literal_key(literal);
 
-    if ((busca_lit = encontra_literal_tabela(stack->topo, key_lit, tipo)) != NULL) {
+    if ((busca_lit = encontra_literal_tabela(global_stack->topo, key_lit, tipo)) != NULL) {
        // Atualiza elemento 
        free(key_lit);
        busca_lit->localizacao = literal->linha;
@@ -274,10 +282,10 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
             elemento = create_elem(key_lit, literal->linha, nat, tipo, 
                                 tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
                                 dupl_union(literal->valor, nat, tipo));
-            elemento->deslocamento = stack->deslocamento;
-            stack->deslocamento += elemento->tamanho;
+            elemento->deslocamento = global_stack->deslocamento;
+            global_stack->deslocamento += elemento->tamanho;
 
-            stack->topo = elemento;
+            global_stack->topo = elemento;
         } else {
             while(elemento->next_elem != NULL) {
                 elemento = elemento->next_elem;
@@ -285,8 +293,8 @@ void insere_literal(struct valor_lexico_t *literal, Type_Natureza nat, Type tipo
             struct elem_table *aux = create_elem(key_lit, literal->linha, nat, tipo, 
                                 tamanho_byte(tipo) * ((tipo == TYPE_STRING) ? strlen(literal->valor.val_str) : 1), // Define tamanho 
                                 dupl_union(literal->valor, nat, tipo));
-            aux->deslocamento = stack->deslocamento;
-            stack->deslocamento += aux->tamanho;
+            aux->deslocamento = global_stack->deslocamento;
+            global_stack->deslocamento += aux->tamanho;
             
             elemento->next_elem = aux;
         }

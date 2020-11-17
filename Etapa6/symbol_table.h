@@ -79,6 +79,8 @@ void delete_escopo();
 void free_table(struct elem_table *table);
 void free_stack(struct stack_symbol_table *stack);
 
+struct stack_symbol_table *get_escopo_global();
+
 union val_lex dupl_union(union val_lex dado, Type_Natureza nat, Type tipo);
 
 void insere_simbolo(struct valor_lexico_t *symbol, Type_Natureza nat, Type tipo);

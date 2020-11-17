@@ -102,14 +102,18 @@ struct code *gera_load_var(OP op, struct AST *ast, int dest) {
 }
 
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
-    struct code *atualiza_rfp = gera_code(label_funcao(nome_funcao->valor.val_str), op_i2i, RSP, NULL_REGIS, RFP, NULL_REGIS, NULL); // Atualiza RFP
+    struct code *atualiza_inicial;
+    if (strcmp("main", fun_atual) == 0)
+        atualiza_inicial = gera_code(label_funcao(nome_funcao->valor.val_str), op_i2i, RFP, NULL_REGIS, RSP, NULL_REGIS, NULL); // Atualiza RFP
+    else
+        atualiza_inicial = gera_code(label_funcao(nome_funcao->valor.val_str), op_i2i, RSP, NULL_REGIS, RFP, NULL_REGIS, NULL); // Atualiza RFP
     int desloc, escopo;
     desloc = deslocamento_funcao_atual();
     struct code *atualiza_rsp = gera_code(NULL_LABEL, op_addI, RSP, desloc, RSP, NULL_REGIS, NULL); // Atualiza RSP
 
-    atualiza_rfp->prox = atualiza_rsp;
+    atualiza_inicial->prox = atualiza_rsp;
     
-    return atualiza_rfp;
+    return atualiza_inicial;
 }
 
 struct code *gera_args(struct AST *params) {
