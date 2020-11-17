@@ -262,13 +262,13 @@ expr_comp: expr_comp op_binaria_comparacao expr_soma {
 	| expr_soma { $$ = $1; };
 
 expr_soma: expr_soma op_binaria_soma expr_produto { $$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3); 
-		$$->local = gera_regis();
+		$$->local = $1->local;
 		$$->codigo = gera_expressao_bin($2, $1, $3, $$->local);}
 	| expr_produto { $$ = $1; };
 
 expr_produto: expr_produto op_binaria_produto expr_expoente { 
 		$$ = create_EXPRESSAO_BIN(AST_OP_BIN, $2, $1, $3);
-		$$->local = gera_regis();
+		$$->local = $1->local;
 		$$->codigo = gera_expressao_bin($2, $1, $3, $$->local); }
 	| expr_expoente { $$ = $1; };
 

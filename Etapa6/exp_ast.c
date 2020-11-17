@@ -40,7 +40,8 @@ void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
     if (ast != NULL){
         ast->codigo = concat(instrucoes_iniciais(), ast->codigo, NULL);
-        generateAsm(ast->codigo);
+        // generateAsm(ast->codigo);
+        print_code(ast->codigo);
     }
     // print_pointers(ast);
     // print_ast(ast);
