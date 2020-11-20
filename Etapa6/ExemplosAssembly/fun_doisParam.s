@@ -1,28 +1,30 @@
 	.file	"fun_doisParam.c"
 	.text
-	.globl	mult
-	.type	mult, @function
-mult:
+	.comm	simples1,4,4
+	.comm	simples2,4,4
+	.globl	inc
+	.type	inc, @function
+inc:
+.LFB0:
 	endbr64
 	pushq	%rbp
 	movq	%rsp, %rbp
-	movl	%edi, -20(%rbp)
-	movl	%esi, -24(%rbp)
-	cmpl	$0, -20(%rbp)
+	subq	$16, %rsp
+	movl	%edi, -4(%rbp)
+	cmpl	$10, -4(%rbp)
 	jle	.L2
-	movl	-20(%rbp), %eax
-	imull	-24(%rbp), %eax
-	movl	%eax, -4(%rbp)
+	movl	-4(%rbp), %eax
 	jmp	.L3
 .L2:
-	movl	-24(%rbp), %eax
-	movl	%eax, -4(%rbp)
-.L3:
 	movl	-4(%rbp), %eax
-	popq	%rbp
+	addl	$1, %eax
+	movl	%eax, %edi
+	call	inc
+.L3:
+	leave
 	ret
 .LFE0:
-	.size	mult, .-mult
+	.size	inc, .-inc
 	.globl	main
 	.type	main, @function
 main:
@@ -30,16 +32,13 @@ main:
 	endbr64
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$16, %rsp
-	movl	$2, -8(%rbp)
-	movl	-8(%rbp), %edx
-	movl	-8(%rbp), %eax
-	movl	%edx, %esi
+	movl	$0, simples1(%rip)
+	movl	simples1(%rip), %eax
 	movl	%eax, %edi
-	call	mult
-	movl	%eax, -4(%rbp)
-	movl	$0, %eax
-	leave
+	call	inc
+	movl	%eax, simples1(%rip)
+	movl	simples1(%rip), %eax
+	popq	%rbp
 	ret
 .LFE1:
 	.size	main, .-main

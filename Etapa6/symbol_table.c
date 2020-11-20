@@ -742,6 +742,17 @@ char *var_globl_desloc(int desloc) {
     return "";
 }
 
+char *get_function_name(int label_fun) {
+    struct elem_table *gl = get_escopo_global()->topo;
+    while(gl != NULL) {
+        if (gl->label == label_fun) {
+            return gl->key;
+        }
+        gl = gl->next_elem;
+    }
+    return "";
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);

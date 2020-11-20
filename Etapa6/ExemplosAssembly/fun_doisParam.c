@@ -1,18 +1,16 @@
-int mult (int z, int w)
-{
-int x;
-if (z > 0) {
-x = z * w;
-}else{
-x = w;
+int simples1; // 7
+int simples2; // 21
+
+int inc(int x) {
+    if (x > 10){
+        return x;
+    }
+    return inc(x+1);
 }
-return x;
-}
-int main()
-{
-int x;
-int y;
-x = 2;
-y = mult (x, x);
-return 0;
+
+int main() {
+    simples1 = 0;
+
+    simples1 = inc(simples1);
+    return simples1;
 }

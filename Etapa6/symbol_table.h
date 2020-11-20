@@ -134,6 +134,7 @@ int deslocamento_funcao_atual();
 int label_funcao(char *fun_name);
 void printa_label_fun(int labl);
 char *var_globl_desloc(int desloc);
+char *get_function_name(int label_fun);
 
 int erro_semantico(int err);
 

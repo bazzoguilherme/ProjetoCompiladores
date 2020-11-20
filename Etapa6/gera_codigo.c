@@ -795,6 +795,10 @@ void Asm_LoadAI_pilha(struct code *c) {
     printf("\tmovl\t%%eax, (%%rsp)\n");
 }
 
+void printa_call_function(int label_fun) {
+    printf("\tcall\t%s\n", get_function_name(label_fun));
+}
+
 void print_AsmCode(struct code *c) {
     if (c == NULL) return;
     if (c->label != NULL_LABEL) {
@@ -841,7 +845,10 @@ void print_AsmCode(struct code *c) {
         printf("\tmovl\t%%eax, (%%rsp)\n");
         break;
     case op_addI:
-        if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
+        if (c->arg1 == RPC){
+            printa_call_function(c->prox->prox->dest1);
+            c = c->prox->prox;
+        } else if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
             printf("\taddq\t$%d, %%%s\n", c->arg2, converte_AsmReg(c->arg1));
         } else {
             if (c->arg1 < 0) {
@@ -932,7 +939,7 @@ void print_AsmCode(struct code *c) {
         printf("\taddq\t$4, %%rsp\n");
         printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
-        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjge\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
@@ -941,7 +948,7 @@ void print_AsmCode(struct code *c) {
         printf("\taddq\t$4, %%rsp\n");
         printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
-        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjg\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
@@ -950,7 +957,7 @@ void print_AsmCode(struct code *c) {
         printf("\taddq\t$4, %%rsp\n");
         printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
-        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjne\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
@@ -959,7 +966,7 @@ void print_AsmCode(struct code *c) {
         printf("\taddq\t$4, %%rsp\n");
         printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
-        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjl\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
@@ -968,7 +975,7 @@ void print_AsmCode(struct code *c) {
         printf("\taddq\t$4, %%rsp\n");
         printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
-        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjle\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
@@ -977,14 +984,14 @@ void print_AsmCode(struct code *c) {
         printf("\taddq\t$4, %%rsp\n");
         printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
-        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tje\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
-    case op_jump:
-        // printf("jump");
-        // print_r_jmp(c);
-        break;
+    // case op_jump:
+    //     // printf("jump");
+    //     // print_r_jmp(c);
+    //     break;
     case op_jumpI:
         // printf("jumpI");
         // print_L_jmp(c);

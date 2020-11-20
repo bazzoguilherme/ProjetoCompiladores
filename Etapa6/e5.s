@@ -68,13 +68,9 @@ mult:
 	.type	multi_add, @function
 multi_add:
 .LFB3:
-	.cfi_startproc
 	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	movl	%edi, -4(%rbp)
 	movl	%esi, -8(%rbp)
 	movl	%edx, -12(%rbp)
@@ -84,9 +80,7 @@ multi_add:
 	movl	-12(%rbp), %eax
 	addl	%edx, %eax
 	popq	%rbp
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
 .LFE3:
 	.size	multi_add, .-multi_add
 	.globl	fib

@@ -10,9 +10,9 @@ int fun_mult; // 6
 int fun3param1; // 7
 int fib0, fib1, fib2, fib3, fib4, fib5, fib6, fib7, fib8;
 
-// int inc(int x) {
-//     return x+1;
-// }
+int inc(int x) {
+    return x+1;
+}
 
 // int add(int a, int b) {
 //     return a+b;
@@ -42,14 +42,15 @@ int fib0, fib1, fib2, fib3, fib4, fib5, fib6, fib7, fib8;
 int main() {
     // int a<=1;
     simples1 = 0;
-    if (2 < 5 && 3 == 4) {
-        simples1 = 1;
-    } else {
-        simples1 = 9;
-    };
+    // if (2 < 5 && 3 == 4) {
+    //     simples1 = 1;
+    // } else {
+    //     simples1 = 9;
+    // };
     // simples2 = simples1 + 1;
     // simples2 = simples1 * (3  * (simples1 * 10));
     
+    simples1 = inc(simples1);
     // int i<=1;
 
     // if (i == 2) {
