@@ -1,0 +1,91 @@
+L1: i2i rsp => rfp
+subI rsp, 16 => rsp
+loadI 0 => r0
+storeAI r0 => rbss, 0
+loadI 2 => r1
+loadI 5 => r2
+cmp_LT r1, r2 -> r3
+cbr r3 -> L2, L4
+L2: nop
+loadI 3 => r4
+loadI 4 => r5
+cmp_EQ r4, r5 -> r6
+cbr r6 -> L3, L4
+L3: nop
+loadI 1 => r7
+storeAI r7 => rbss, 0
+jumpI -> L5
+L4: nop
+loadI 9 => r8
+storeAI r8 => rbss, 0
+jumpI -> L5
+L5: nop
+jumpI -> L0
+	.file	"programa.c"
+	.text
+	.comm	simples1,4
+	.comm	simples2,4
+	.comm	if_test,4
+	.comm	while_test,4
+	.comm	for_test,4
+	.comm	ternario_test,4
+	.comm	fun1,4
+	.comm	fun_add,4
+	.comm	fun_mult,4
+	.comm	fun3param1,4
+	.comm	fib0,4
+	.comm	fib1,4
+	.comm	fib2,4
+	.comm	fib3,4
+	.comm	fib4,4
+	.comm	fib5,4
+	.comm	fib6,4
+	.comm	fib7,4
+	.comm	fib8,4
+	.globl	main
+	.type	main, @function
+.L1:
+main:
+	endbr64
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$16, %rsp
+	subq	$4, %rsp
+	movl	$0, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, simples1(%rip)
+	subq	$4, %rsp
+	movl	$2, (%rsp)
+	subq	$4, %rsp
+	movl	$5, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	cmp	%edx, %eax
+	jge	.L4
+.L2:
+	subq	$4, %rsp
+	movl	$3, (%rsp)
+	subq	$4, %rsp
+	movl	$4, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	cmp	%edx, %eax
+	jne	.L4
+.L3:
+	subq	$4, %rsp
+	movl	$1, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, simples1(%rip)
+.L4:
+	subq	$4, %rsp
+	movl	$9, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, simples1(%rip)
+.L5:

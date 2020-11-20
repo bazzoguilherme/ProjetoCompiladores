@@ -39,9 +39,9 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 void exporta (void *arvore){
 	struct AST *ast = (struct AST*) arvore;
     if (ast != NULL){
-        ast->codigo = concat(instrucoes_iniciais(), ast->codigo, NULL);
-        // generateAsm(ast->codigo);
+        // ast->codigo = concat(instrucoes_iniciais(), ast->codigo, NULL);
         print_code(ast->codigo);
+        generateAsm(ast->codigo);
     }
     // print_pointers(ast);
     // print_ast(ast);

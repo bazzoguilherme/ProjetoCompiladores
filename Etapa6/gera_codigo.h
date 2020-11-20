@@ -101,4 +101,6 @@ void libera_remendo(struct l_remendo *r);
 void generateAsm(struct code *c);
 void print_initial_info();
 void print_global_info();
+void print_AsmCode(struct code *c);
+
 #endif

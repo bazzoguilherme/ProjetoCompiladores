@@ -98,18 +98,18 @@ struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_
 struct code *gera_load_var(OP op, struct AST *ast, int dest) {
     int desloc, escopo;
     desloc = deslocamento_symbol(ast->valor_lexico->valor.val_str, &escopo);
-    return gera_code(NULL_LABEL, op, ((escopo == GLOBAL) ? RBSS:RFP), desloc, dest, NULL_REGIS, NULL);
+    return gera_code(NULL_LABEL, op, ((escopo == GLOBAL) ? RBSS:RFP), ((escopo == GLOBAL) ? desloc : -desloc), dest, NULL_REGIS, NULL);
 }
 
 struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
     struct code *atualiza_inicial;
-    if (strcmp("main", fun_atual) == 0)
-        atualiza_inicial = gera_code(label_funcao(nome_funcao->valor.val_str), op_i2i, RFP, NULL_REGIS, RSP, NULL_REGIS, NULL); // Atualiza RFP
-    else
+    // if (strcmp("main", fun_atual) == 0)
+    //     atualiza_inicial = gera_code(label_funcao(nome_funcao->valor.val_str), op_i2i, RFP, NULL_REGIS, RSP, NULL_REGIS, NULL); // Atualiza RFP
+    // else
         atualiza_inicial = gera_code(label_funcao(nome_funcao->valor.val_str), op_i2i, RSP, NULL_REGIS, RFP, NULL_REGIS, NULL); // Atualiza RFP
     int desloc, escopo;
     desloc = deslocamento_funcao_atual();
-    struct code *atualiza_rsp = gera_code(NULL_LABEL, op_addI, RSP, desloc, RSP, NULL_REGIS, NULL); // Atualiza RSP
+    struct code *atualiza_rsp = gera_code(NULL_LABEL, op_subI, RSP, desloc, RSP, NULL_REGIS, NULL); // Atualiza RSP
 
     atualiza_inicial->prox = atualiza_rsp;
     
@@ -172,7 +172,7 @@ struct code *retorno_funcao() {
 struct code *gera_atribuicao(struct AST *atrib, struct AST *expr) {
     int desloc, escopo;
     desloc = deslocamento_symbol(atrib->valor_lexico->valor.val_str, &escopo);
-    return gera_code(NULL_LABEL, op_storeAI, expr->local, NULL_REGIS, ((escopo == GLOBAL) ? RBSS:RFP), desloc, NULL);
+    return gera_code(NULL_LABEL, op_storeAI, expr->local, NULL_REGIS, ((escopo == GLOBAL) ? RBSS:RFP), ((escopo == GLOBAL) ? desloc : -desloc), NULL);
 }
 
 struct code *gera_inicializacao(struct AST *init) {
@@ -737,6 +737,7 @@ void libera_remendo(struct l_remendo *r) {
 void generateAsm(struct code *c) {
     print_initial_info();
     print_global_info();
+    print_AsmCode(c);
 }
 
 void print_initial_info() {
@@ -756,3 +757,242 @@ void print_global_info() {
         elemento = elemento->next_elem;
     }
 }
+
+char *converte_AsmReg(int reg) {
+    switch (reg)
+    {
+    case RBSS:
+        return "rip";
+        break;
+    case RFP:
+        return "rbp";
+        break;
+    case RSP:
+        return "rsp";
+        break;
+    case RPC:
+        return "rpc";
+        break;
+    
+    default:
+        break;
+    }
+}
+
+void Asm_RC_R(struct code *c) {
+    if (c->arg2 == RBSS)
+        printf("%s(%%%s), %%%s\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
+    else
+        printf("%d(%%%s), %%%s\n", c->arg2, converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
+}
+
+void Asm_LoadAI_pilha(struct code *c) {
+    printf("\tsubq\t$4, %%rsp\n");
+    if (c->arg1 == RBSS)
+        printf("\tmovl\t%s(%%%s), %%eax\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1));
+    else
+        printf("\tmovl\t%d(%%%s), %%eax\n", c->arg2, converte_AsmReg(c->arg1));
+    printf("\tmovl\t%%eax, (%%rsp)\n");
+}
+
+void print_AsmCode(struct code *c) {
+    if (c == NULL) return;
+    if (c->label != NULL_LABEL) {
+        printf(".L%d:\n", c->label);
+        printa_label_fun(c->label);
+    }
+    switch (c->operation)
+    {
+    case op_add:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\taddl\t%%edx, %%eax\n"); // OP
+        printf("\tsubq\t$4, %%rsp\n");
+        printf("\tmovl\t%%eax, (%%rsp)\n"); // Bota na pilha
+        break;
+    case op_sub:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tsubl\t%%edx, %%eax\n");
+        printf("\tsubq\t$4, %%rsp\n");
+        printf("\tmovl\t%%eax, (%%rsp)\n");
+        break;
+    case op_mult:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\timull\t%%edx, %%eax\n");
+        printf("\tsubq\t$4, %%rsp\n");
+        printf("\tmovl\t%%eax, (%%rsp)\n");
+        break;
+    case op_div:
+        printf("\tmovl\t(%%rsp), %%ecx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t$0, %%edx\n");
+        printf("\tidivl\t%%ecx, %%eax\n");
+        printf("\tsubq\t$4, %%rsp\n");
+        printf("\tmovl\t%%eax, (%%rsp)\n");
+        break;
+    case op_addI:
+        if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
+            printf("\taddq\t$%d, %%%s\n", c->arg2, converte_AsmReg(c->arg1));
+        } else {
+            if (c->arg1 < 0) {
+                printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
+            } else {
+                printf("\tmovl\t%%rsp, %%eax\n");
+                printf("\taddl\t$4, %%rsp\n");
+            }
+            printf("\taddl\t$%d, %%eax\n", c->arg2);
+            if (c->dest1 < 0) {
+                printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
+            } else {
+                printf("\tsubl\t$4, %%rsp\n");
+                printf("\tmovl\t%%eax, (%%rsp)\n");
+            }
+        }
+        break;
+    case op_subI:
+        if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
+            printf("\tsubq\t$%d, %%%s\n", c->arg2, converte_AsmReg(c->arg1));
+        } else {
+            if (c->arg1 < 0) {
+                printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
+            } else {
+                printf("\tmovl\t%%rsp, %%eax\n");
+                printf("\taddl\t$4, %%rsp\n");
+            }
+            printf("\taddl\t$%d, %%eax\n", c->arg2);
+            if (c->dest1 < 0) {
+                printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
+            } else {
+                printf("\tsubl\t$4, %%rsp\n");
+                printf("\tmovl\t%%eax, (%%rsp)\n");
+            }
+        }
+        break;
+    case op_rsubI:
+        printf("\tmovl\t%%rsp, %%eax\n");
+        printf("\taddl\t$4, %%rsp\n");
+        printf("\tneg\t%%eax\n");
+        printf("\tsubl\t$4, %%rsp\n");
+        printf("\tmovl\t%%eax, (%%rsp)\n");
+        break;
+    case op_multI:
+        // printf("multI");
+        break;
+    case op_divI:
+        // printf("divI");
+        break;
+    case op_loadI:
+        if (c->dest1 < 0) {
+            printf("\tmovl\t$%d, %%%s\n", c->arg1, converte_AsmReg(c->dest1));
+        } else {
+            printf("\tsubq\t$4, %%rsp\n");
+            printf("\tmovl\t$%d, (%%rsp)\n", c->arg1);
+        }
+        break;
+    case op_loadAI:
+        if (c->dest1 < 0) {
+            printf("\tmovl\t");
+            Asm_RC_R(c);
+        } else {
+            Asm_LoadAI_pilha(c);
+        }
+        break;
+    case op_storeAI:
+        // Tirar da pilha + atualizar pilha
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        // Store
+        if (c->dest1 == RBSS)
+            printf("\tmovl\t%%eax, %s(%%rip)\n", var_globl_desloc(c->dest2));
+        else
+            printf("\tmovl\t%%eax, %d(%%%s)\n", c->dest2, converte_AsmReg(c->dest1));
+        break;
+    case op_i2i:
+        if (c->arg1 < 0 && c->dest1 < 0) {
+            printf("\tmovq\t%%%s, %%%s\n", converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
+        } else {
+            // printf("\tmovl\t(%%rsp), %%eax\n");
+            // printf("\tmovl\t$4, %%rsp\n");
+            // printf("\tsubl\t$4, %%rsp\n");
+            // printf("\tmovl\t%%eax, (%%rsp)\n");
+        }
+        break;
+    case op_cmp_LT:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tjge\t.L%d\n", c->prox->dest2);
+        c = c->prox;
+        break;
+    case op_cmp_LE:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tjg\t.L%d\n", c->prox->dest2);
+        c = c->prox;
+        break;
+    case op_cmp_EQ:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tjne\t.L%d\n", c->prox->dest2);
+        c = c->prox;
+        break;
+    case op_cmp_GE:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tjl\t.L%d\n", c->prox->dest2);
+        c = c->prox;
+        break;
+    case op_cmp_GT:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tjle\t.L%d\n", c->prox->dest2);
+        c = c->prox;
+        break;
+    case op_cmp_NE:
+        printf("\tmovl\t(%%rsp), %%edx\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        printf("\tcmp\t%%edx, %%eax\n");
+        printf("\tje\t.L%d\n", c->prox->dest2);
+        c = c->prox;
+        break;
+    case op_jump:
+        // printf("jump");
+        // print_r_jmp(c);
+        break;
+    case op_jumpI:
+        // printf("jumpI");
+        // print_L_jmp(c);
+        break;
+    default:
+        break;
+    }
+    // printf("\n");
+    print_AsmCode(c->prox);
+}
+

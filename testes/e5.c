@@ -10,39 +10,45 @@ int fun_mult; // 6
 int fun3param1; // 7
 int fib0, fib1, fib2, fib3, fib4, fib5, fib6, fib7, fib8;
 
-int inc(int x) {
-    return x+1;
-}
+// int inc(int x) {
+//     return x+1;
+// }
 
-int add(int a, int b) {
-    return a+b;
-}
+// int add(int a, int b) {
+//     return a+b;
+// }
 
-int mult(int a, int b) {
-    return a*b;
-}
+// int mult(int a, int b) {
+//     return a*b;
+// }
 
-int multi_add(int a, int b, int c) {
-    return a+b+c;
-}
+// int multi_add(int a, int b, int c) {
+//     return a+b+c;
+// }
 
-int fib(int a) {
-    if (a == 0) {
-        return 0;
-    };
-    if (a == 1) {
-        return 1;
-    };
-    int aux1, aux2;
-    aux1 = fib(a-1);
-    aux2 = fib(a-2);
-    return aux1+aux2;
-}
+// int fib(int a) {
+//     if (a == 0) {
+//         return 0;
+//     };
+//     if (a == 1) {
+//         return 1;
+//     };
+//     int aux1, aux2;
+//     aux1 = fib(a-1);
+//     aux2 = fib(a-2);
+//     return aux1+aux2;
+// }
 
 int main() {
-
-    simples1 = 2 + 5;
-    simples2 = simples1 * (3  * (simples1 * 10));
+    // int a<=1;
+    simples1 = 0;
+    if (2 < 5 && 3 == 4) {
+        simples1 = 1;
+    } else {
+        simples1 = 9;
+    };
+    // simples2 = simples1 + 1;
+    // simples2 = simples1 * (3  * (simples1 * 10));
     
     // int i<=1;
 
@@ -84,5 +90,5 @@ int main() {
     // fib6 = fib(6);
     // fib7 = fib(7);
     // fib8 = fib(8);
-
+    // return simples1;
 }

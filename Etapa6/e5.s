@@ -23,63 +23,45 @@
 	.type	inc, @function
 inc:
 .LFB0:
-	.cfi_startproc
 	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	movl	%edi, -4(%rbp)
 	movl	-4(%rbp), %eax
 	addl	$1, %eax
 	popq	%rbp
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
 .LFE0:
 	.size	inc, .-inc
 	.globl	add
 	.type	add, @function
 add:
 .LFB1:
-	.cfi_startproc
 	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	movl	%edi, -4(%rbp)
 	movl	%esi, -8(%rbp)
 	movl	-4(%rbp), %edx
 	movl	-8(%rbp), %eax
 	addl	%edx, %eax
 	popq	%rbp
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
 .LFE1:
 	.size	add, .-add
 	.globl	mult
 	.type	mult, @function
 mult:
 .LFB2:
-	.cfi_startproc
 	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	movl	%edi, -4(%rbp)
 	movl	%esi, -8(%rbp)
 	movl	-4(%rbp), %eax
 	imull	-8(%rbp), %eax
 	popq	%rbp
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
 .LFE2:
 	.size	mult, .-mult
 	.globl	multi_add
