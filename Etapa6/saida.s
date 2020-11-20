@@ -51,6 +51,5 @@ main:
 	addq	$4, %rsp
 	movl	%eax, -16(%rsp)
 	call	inc
-	movl	-16(%rsp), %eax
 	leave
 	ret

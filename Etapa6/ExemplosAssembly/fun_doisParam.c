@@ -8,9 +8,10 @@ int inc(int x) {
     return inc(x+1);
 }
 
-int main() {
-    simples1 = 0;
+int foo (int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9){
+    return a1+a7+a8+a9;
+}
 
-    simples1 = inc(simples1);
-    return simples1;
+int main() {
+    foo(1, 2, 3, 4, 5,6,7,8,9);
 }
