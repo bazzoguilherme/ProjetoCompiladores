@@ -14,9 +14,9 @@ int inc(int x) {
     return x+1;
 }
 
-// int add(int a, int b) {
-//     return a+b;
-// }
+int add(int a, int b) {
+    return a+b;
+}
 
 // int mult(int a, int b) {
 //     return a*b;
@@ -41,16 +41,18 @@ int inc(int x) {
 
 int main() {
     // int a<=1;
-    simples1 = 0;
+    // simples1 = 0;
+    simples1 = inc(0);
+    simples2 = add(5, 3);
     // if (2 < 5 && 3 == 4) {
     //     simples1 = 1;
     // } else {
     //     simples1 = 9;
     // };
-    // simples2 = simples1 + 1;
+    // simples1 = simples1 + 1 * 10;
     // simples2 = simples1 * (3  * (simples1 * 10));
     
-    simples1 = inc(simples1);
+    // simples1 = inc(simples1);
     // int i<=1;
 
     // if (i == 2) {

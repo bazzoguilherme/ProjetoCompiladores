@@ -13,18 +13,41 @@ loadAI rfp, 12 => rsp
 loadAI rfp, 8 => rfp
 jump -> r3
 L2: i2i rsp => rfp
+subI rsp, 24 => rsp
+loadAI rfp, -16 => r4
+loadAI rfp, -20 => r5
+add r4, r5 => r4
+storeAI r4 => rfp, 4
+loadAI rfp, 0 => r6
+loadAI rfp, 12 => rsp
+loadAI rfp, 8 => rfp
+jump -> r6
+loadAI rfp, 0 => r7
+loadAI rfp, 12 => rsp
+loadAI rfp, 8 => rfp
+jump -> r7
+L3: i2i rsp => rfp
 subI rsp, 16 => rsp
-loadI 0 => r4
-storeAI r4 => rbss, 0
 storeAI rsp => rsp, 12
 storeAI rfp => rsp, 8
-loadAI rbss, 0 => r5
-storeAI r5 => rsp, 16
-addI rpc, 3 => r7
-storeAI r7 => rsp, 0
+loadI 0 => r8
+storeAI r8 => rsp, -32
+addI rpc, 3 => r10
+storeAI r10 => rsp, 0
 jumpI -> L1
-loadAI rsp, 4 => r6
-storeAI r6 => rbss, 0
+loadAI rsp, 4 => r9
+storeAI r9 => rbss, 0
+storeAI rsp => rsp, 12
+storeAI rfp => rsp, 8
+loadI 5 => r11
+storeAI r11 => rsp, -32
+loadI 3 => r12
+storeAI r12 => rsp, -36
+addI rpc, 3 => r14
+storeAI r14 => rsp, 0
+jumpI -> L2
+loadAI rsp, 4 => r13
+storeAI r13 => rbss, 4
 jumpI -> L0
 	.file	"programa.c"
 	.text
@@ -49,6 +72,8 @@ jumpI -> L0
 	.comm	fib8,4
 	.globl	inc
 	.type	inc, @function
+	.globl	add
+	.type	add, @function
 	.globl	main
 	.type	main, @function
 .L1:
@@ -69,9 +94,38 @@ inc:
 	addl	%edx, %eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
-	popq	%rbp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	leave
+	ret
+	leave
 	ret
 .L2:
+add:
+	endbr64
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$24, %rsp
+	subq	$4, %rsp
+	movl	-16(%rbp), %eax
+	movl	%eax, (%rsp)
+	subq	$4, %rsp
+	movl	-20(%rbp), %eax
+	movl	%eax, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	addl	%edx, %eax
+	subq	$4, %rsp
+	movl	%eax, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	leave
+	ret
+	leave
+	ret
+.L3:
 main:
 	endbr64
 	pushq	%rbp
@@ -81,13 +135,26 @@ main:
 	movl	$0, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
-	movl	%eax, simples1(%rip)
-
-	subq	$4, %rsp
-	movl	simples1(%rip), %eax
+	movl	%eax, -32(%rsp)
+	call	inc
+	subl	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
-	movl	%eax, 16(%rsp)
-	call	inc
-	
+	movl	%eax, simples1(%rip)
+	subq	$4, %rsp
+	movl	$5, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, -32(%rsp)
+	subq	$4, %rsp
+	movl	$3, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, -36(%rsp)
+	call	add
+	subl	$4, %rsp
+	movl	%eax, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, simples2(%rip)

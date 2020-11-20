@@ -6,13 +6,9 @@
 	.type	inc, @function
 inc:
 .LFB0:
-	.cfi_startproc
 	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$16, %rsp
 	movl	%edi, -4(%rbp)
 	cmpl	$10, -4(%rbp)
@@ -26,9 +22,7 @@ inc:
 	call	inc
 .L3:
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
 .LFE0:
 	.size	inc, .-inc
 	.globl	foo

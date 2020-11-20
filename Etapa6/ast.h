@@ -116,6 +116,14 @@ typedef enum OP {
     op_halt,
 } OP;
 
+typedef enum CodeType {
+    code_normal = 0,
+    code_preparacao_chamada = 1,
+    code_load_retorno_funcao,
+    code_returno_funcao,
+    code_saida_funcao,
+} CodeType;
+
 struct l_remendo {
     int *remendo;
     struct l_remendo *prox;
@@ -128,6 +136,7 @@ struct code {
     int arg2;
     int dest1;
     int dest2;
+    CodeType tipo;
     struct code *prox;
 };
 

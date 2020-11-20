@@ -77,6 +77,7 @@ struct code *gera_code(int label, OP op, int arg1, int arg2, int dest1, int dest
     codigo->arg2 = arg2;
     codigo->dest1 = dest1;
     codigo->dest2 = dest2;
+    codigo->tipo = code_normal;
     codigo->prox = prox;
     // printf("cria_code: %s %s%c %s => %s%c %s\n", traduz_op(op), arg1, ((arg2 == NULL) ? ' ' : ','), ((arg2 == NULL) ? "" : arg2), dest1, ((dest2 == NULL) ? ' ' : ','), ((dest2 == NULL) ? "" : dest2));
     return codigo;
@@ -123,10 +124,10 @@ struct code *gera_args(struct AST *params) {
     for (i = INIT_ESC_NOMEADO; aux != NULL; i += 4) {
         if (i == INIT_ESC_NOMEADO) {
             c = aux->codigo;
-            c = concat(c, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, i, NULL), NULL);
+            c = concat(c, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, -(i+16), NULL), NULL);
         } else {
             c_aux = aux->codigo;
-            c = concat(c, c_aux, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, i, NULL));
+            c = concat(c, c_aux, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, -(i+16), NULL));
         }
         aux = aux->prox;
     }
@@ -137,6 +138,7 @@ struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *pa
     // posicao retorno
     int reg = gera_regis();
     struct code *load_returned_value = gera_code(NULL_LABEL, op_loadAI, RSP, RETORNO_FUNC, dest, NULL_REGIS, NULL);
+    load_returned_value->tipo = code_load_retorno_funcao;
     struct code *jump_fun = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, label_funcao(fun_name->valor.val_str), NULL_REGIS, load_returned_value);
     struct code *store_pos_retorno = gera_code(NULL_LABEL, op_storeAI, reg, NULL_REGIS, RSP, LOCAL_RETORNO, jump_fun);
     struct code *pos_retorno = gera_code(NULL_LABEL, op_addI, RPC, 3, reg, NULL_REGIS, store_pos_retorno);
@@ -148,12 +150,13 @@ struct code *gera_chamada_funcao(struct valor_lexico_t *fun_name, struct AST *pa
 
     struct code *store_rfp = gera_code(NULL_LABEL, op_storeAI, RFP, NULL_REGIS, RSP, DESL_RFP, store_args);
     struct code *store_rsp = gera_code(NULL_LABEL, op_storeAI, RSP, NULL_REGIS, RSP, DESL_RSP, store_rfp);
-
+    store_rsp->tipo = code_preparacao_chamada;
     return store_rsp;
 }
 
 struct code *gera_retorno(struct AST *retorno) {
     struct code *c = gera_code(NULL_LABEL, op_storeAI, retorno->local, NULL_REGIS, RFP, RETORNO_FUNC, NULL);
+    c->tipo = code_returno_funcao;
     return concat(retorno->codigo, c, retorno_funcao());
 }
 
@@ -166,6 +169,7 @@ struct code *retorno_funcao() {
     struct code *rfp_salvo = gera_code(NULL_LABEL, op_loadAI, RFP, DESL_RFP, RFP, NULL_REGIS, jump);
     struct code *rsp_salvo = gera_code(NULL_LABEL, op_loadAI, RFP, DESL_RSP, RSP, NULL_REGIS, rfp_salvo);
     struct code *end_retorno = gera_code(NULL_LABEL, op_loadAI, RFP, 0, reg_retorno, NULL_REGIS, rsp_salvo);
+    end_retorno->tipo = code_saida_funcao;
     return end_retorno;
 }
 
@@ -799,12 +803,37 @@ void printa_call_function(int label_fun) {
     printf("\tcall\t%s\n", get_function_name(label_fun));
 }
 
+
 void print_AsmCode(struct code *c) {
     if (c == NULL) return;
     if (c->label != NULL_LABEL) {
         printf(".L%d:\n", c->label);
         printa_label_fun(c->label);
     }
+
+    if (c->tipo == code_preparacao_chamada) {
+        // Ignora store de RSP e RFP
+        c = c->prox->prox;
+    }
+
+    if (c->tipo == code_load_retorno_funcao) {
+        printf("\tsubq\t$4, %%rsp\n");
+        printf("\tmovl\t%%eax, (%%rsp)\n");
+        c = c->prox;
+    }
+
+    if (c->tipo == code_returno_funcao) {
+        printf("\tmovl\t(%%rsp), %%eax\n");
+        printf("\taddq\t$4, %%rsp\n");
+        c = c->prox;
+    }
+
+    if (c->tipo == code_saida_funcao) {
+        printf("\tleave\n");
+        printf("\tret\n");
+        c = c->prox->prox->prox;
+    }
+
     switch (c->operation)
     {
     case op_add:
@@ -861,7 +890,7 @@ void print_AsmCode(struct code *c) {
             if (c->dest1 < 0) {
                 printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
             } else {
-                printf("\tsubl\t$4, %%rsp\n");
+                printf("\tsubq\t$4, %%rsp\n");
                 printf("\tmovl\t%%eax, (%%rsp)\n");
             }
         }
@@ -880,16 +909,16 @@ void print_AsmCode(struct code *c) {
             if (c->dest1 < 0) {
                 printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
             } else {
-                printf("\tsubl\t$4, %%rsp\n");
+                printf("\tsubq\t$4, %%rsp\n");
                 printf("\tmovl\t%%eax, (%%rsp)\n");
             }
         }
         break;
     case op_rsubI:
         printf("\tmovl\t%%rsp, %%eax\n");
-        printf("\taddl\t$4, %%rsp\n");
+        printf("\taddq\t$4, %%rsp\n");
         printf("\tneg\t%%eax\n");
-        printf("\tsubl\t$4, %%rsp\n");
+        printf("\tsubq\t$4, %%rsp\n");
         printf("\tmovl\t%%eax, (%%rsp)\n");
         break;
     case op_multI:
