@@ -77,6 +77,24 @@ void opDiv_Asm(char *op) {
     push_Asm();
 }
 
+void opI_Asm(char *op, struct code *c) {
+    if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
+        printf("\t%sq\t$%d, %%%s\n", op, c->arg2, converte_AsmReg(c->arg1));
+    } else {
+        if (c->arg1 < 0) {
+            printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
+        } else {
+            pop_Asm("eax");
+        }
+        printf("\t%sl\t$%d, %%eax\n", op, c->arg2);
+        if (c->dest1 < 0) {
+            printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
+        } else {
+            push_Asm();
+        }
+    }
+}
+
 void opLoadI_Asm(struct code *c) {
     if (c->dest1 < 0) {
         printf("\tmovl\t$%d, %%%s\n", c->arg1, converte_AsmReg(c->dest1));
@@ -175,38 +193,11 @@ void print_AsmCode(struct code *c) {
         if (c->arg1 == RPC){
             callFunction_Asm(c->prox->prox->dest1);
             c = c->prox->prox;
-        } else if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
-            printf("\taddq\t$%d, %%%s\n", c->arg2, converte_AsmReg(c->arg1));
-        } else {
-            if (c->arg1 < 0) {
-                printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
-            } else {
-                pop_Asm("eax");
-            }
-            printf("\taddl\t$%d, %%eax\n", c->arg2);
-            if (c->dest1 < 0) {
-                printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
-            } else {
-                push_Asm();
-            }
-        }
+        } else 
+            opI_Asm("add", c);
         break;
     case op_subI:
-        if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
-            printf("\tsubq\t$%d, %%%s\n", c->arg2, converte_AsmReg(c->arg1));
-        } else {
-            if (c->arg1 < 0) {
-                printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
-            } else {
-                pop_Asm("eax");
-            }
-            printf("\taddl\t$%d, %%eax\n", c->arg2);
-            if (c->dest1 < 0) {
-                printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
-            } else {
-                push_Asm();
-            }
-        }
+        opI_Asm("sub", c);
         break;
     case op_rsubI:
         printf("\tneg\t(%%rsp)\n");
