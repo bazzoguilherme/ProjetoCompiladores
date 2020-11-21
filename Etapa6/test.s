@@ -31,7 +31,6 @@
 	.type	fib, @function
 	.globl	main
 	.type	main, @function
-.L1:
 inc:
 	endbr64
 	pushq	%rbp
@@ -55,7 +54,6 @@ inc:
 	ret
 	leave
 	ret
-.L2:
 add:
 	endbr64
 	pushq	%rbp
@@ -80,7 +78,6 @@ add:
 	ret
 	leave
 	ret
-.L3:
 mult:
 	endbr64
 	pushq	%rbp
@@ -105,7 +102,6 @@ mult:
 	ret
 	leave
 	ret
-.L4:
 multi_add:
 	endbr64
 	pushq	%rbp
@@ -140,7 +136,6 @@ multi_add:
 	ret
 	leave
 	ret
-.L5:
 fib:
 	endbr64
 	pushq	%rbp
@@ -233,7 +228,6 @@ fib:
 	ret
 	leave
 	ret
-.L10:
 main:
 	endbr64
 	pushq	%rbp

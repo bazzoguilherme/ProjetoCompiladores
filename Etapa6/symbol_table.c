@@ -718,17 +718,18 @@ int label_funcao(char *fun_name) {
     return (elemento != NULL) ? elemento->label : 0;
 }
 
-void printa_label_fun(int labl) {
+int printa_label_fun(int labl) {
     struct elem_table *gl = get_escopo_global()->topo;
     while(gl != NULL) {
         if (gl->label == labl) {
             printf("%s:\n", gl->key);
             printf("\tendbr64\n");
             printf("\tpushq\t%%rbp\n");
-            return;
+            return 1;
         }
         gl = gl->next_elem;
     }
+    return 0;
 }
 
 char *var_globl_desloc(int desloc) {

@@ -143,8 +143,9 @@ void callFunction_Asm(int label_fun) {
 void print_AsmCode(struct code *c) {
     if (c == NULL) return;
     if (c->label != NULL_LABEL) {
-        printf(".L%d:\n", c->label);
-        printa_label_fun(c->label);
+        if (!printa_label_fun(c->label)){
+            printf(".L%d:\n", c->label);
+        }
     }
 
     if (c->tipo == code_preparacao_chamada) {
