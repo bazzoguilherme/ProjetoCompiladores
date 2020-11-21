@@ -206,7 +206,7 @@ void print_AsmCode(struct code *c) {
         break;
     case op_rsubI:
         pop_Asm("eax");
-        printf("\tneg\t%%eax\n");
+        printf("\tnegl\t%%eax\n");
         push_Asm();
         break;
     case op_multI:
