@@ -869,10 +869,10 @@ void print_AsmCode(struct code *c) {
         push();
         break;
     case op_div:
-        pop("ecx");
+        pop("ebx");
         pop("eax");
-        printf("\tmovl\t$0, %%edx\n");
-        printf("\tidivl\t%%ecx, %%eax\n");
+        printf("\tcdq\n");
+        printf("\tidivl\t%%ebx, %%eax\n");
         push();
         break;
     case op_addI:
