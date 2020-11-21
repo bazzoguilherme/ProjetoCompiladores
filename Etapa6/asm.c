@@ -47,12 +47,12 @@ char *converte_AsmReg(int reg) {
     }
 }
 
-void pop(char *reg) {
+void pop_Asm(char *reg) {
     printf("\tmovl\t(%%rsp), %%%s\n", reg); // Tira da pilha
     printf("\taddq\t$4, %%rsp\n");
 }
 
-void push() {
+void push_Asm() {
     printf("\tsubq\t$4, %%rsp\n");
     printf("\tmovl\t%%eax, (%%rsp)\n"); // Bota na pilha
 }
@@ -62,14 +62,29 @@ void push_val(int value) {
     printf("\tmovl\t$%d, (%%rsp)\n", value); // Bota na pilha
 }
 
-void jmp_cond_label(char *jump_cond, int label) {
-    pop("edx");
-    pop("eax");
+void opBin_Asm(char *op) {
+    pop_Asm("edx");
+    pop_Asm("eax");
+    printf("\t%s\t%%edx, %%eax\n", op); // OP
+    push_Asm();
+}
+
+void opDiv_Asm(char *op) {
+    pop_Asm("edx");
+    pop_Asm("eax");
+    printf("\tcdq\n"); // Extende sinal
+    printf("\t%s\t%%edx, %%eax\n", op); // OP
+    push_Asm();
+}
+
+void jmpCond_Asm(char *jump_cond, int label) {
+    pop_Asm("edx");
+    pop_Asm("eax");
     printf("\tcmpl\t%%edx, %%eax\n");
     printf("\t%s\t.L%d\n", jump_cond, label);
 }
 
-void printa_call_function(int label_fun) {
+void callFunction_Asm(int label_fun) {
     printf("\tcall\t%s\n", get_function_name(label_fun));
 }
 
@@ -87,7 +102,7 @@ void print_AsmCode(struct code *c) {
     }
 
     if (c->tipo == code_load_retorno_funcao) {
-        push();
+        push_Asm();
         c = c->prox;
     }
 
@@ -112,33 +127,20 @@ void print_AsmCode(struct code *c) {
     switch (c->operation)
     {
     case op_add:
-        pop("edx");
-        pop("eax");
-        printf("\taddl\t%%edx, %%eax\n"); // OP
-        push();
+        opBin_Asm("addl");
         break;
     case op_sub:
-        pop("edx");
-        pop("eax");
-        printf("\tsubl\t%%edx, %%eax\n");
-        push();
+        opBin_Asm("subl");
         break;
     case op_mult:
-        pop("edx");
-        pop("eax");
-        printf("\timull\t%%edx, %%eax\n");
-        push();
+        opBin_Asm("imull");
         break;
     case op_div:
-        pop("ebx");
-        pop("eax");
-        printf("\tcdq\n");
-        printf("\tidivl\t%%ebx\n");
-        push();
+        opDiv_Asm("idivl");
         break;
     case op_addI:
         if (c->arg1 == RPC){
-            printa_call_function(c->prox->prox->dest1);
+            callFunction_Asm(c->prox->prox->dest1);
             c = c->prox->prox;
         } else if (c->arg1 == c->dest1 && c->arg1 < 0) { // Sendo utilizado para inicio de funcao 
             printf("\taddq\t$%d, %%%s\n", c->arg2, converte_AsmReg(c->arg1));
@@ -146,13 +148,13 @@ void print_AsmCode(struct code *c) {
             if (c->arg1 < 0) {
                 printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
             } else {
-                pop("eax");
+                pop_Asm("eax");
             }
             printf("\taddl\t$%d, %%eax\n", c->arg2);
             if (c->dest1 < 0) {
                 printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
             } else {
-                push();
+                push_Asm();
             }
         }
         break;
@@ -163,18 +165,18 @@ void print_AsmCode(struct code *c) {
             if (c->arg1 < 0) {
                 printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
             } else {
-                pop("eax");
+                pop_Asm("eax");
             }
             printf("\taddl\t$%d, %%eax\n", c->arg2);
             if (c->dest1 < 0) {
                 printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
             } else {
-                push();
+                push_Asm();
             }
         }
         break;
     case op_rsubI:
-        printf("\tneg\t%%eax\n");
+        printf("\tneg\t(%%rsp)\n");
         break;
     case op_multI:
         // printf("multI");
@@ -206,7 +208,7 @@ void print_AsmCode(struct code *c) {
         break;
     case op_storeAI:
         // Tirar da pilha + atualizar pilha
-        pop("eax");
+        pop_Asm("eax");
         // Store
         if (c->dest1 == RBSS)
             printf("\tmovl\t%%eax, %s(%%rip)\n", var_globl_desloc(c->dest2));
@@ -224,27 +226,27 @@ void print_AsmCode(struct code *c) {
         }
         break;
     case op_cmp_LT: 
-        jmp_cond_label("jge", c->prox->dest2);
+        jmpCond_Asm("jge", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_LE:
-        jmp_cond_label("jg", c->prox->dest2);
+        jmpCond_Asm("jg", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_EQ:
-        jmp_cond_label("jne", c->prox->dest2);
+        jmpCond_Asm("jne", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GE:
-        jmp_cond_label("jl", c->prox->dest2);
+        jmpCond_Asm("jl", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GT:
-        jmp_cond_label("jle", c->prox->dest2);
+        jmpCond_Asm("jle", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_NE:
-        jmp_cond_label("je", c->prox->dest2);
+        jmpCond_Asm("je", c->prox->dest2);
         c = c->prox;
         break;
     // case op_jump:
