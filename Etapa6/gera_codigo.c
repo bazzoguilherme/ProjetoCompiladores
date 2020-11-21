@@ -872,7 +872,7 @@ void print_AsmCode(struct code *c) {
         pop("ebx");
         pop("eax");
         printf("\tcdq\n");
-        printf("\tidivl\t%%ebx, %%eax\n");
+        printf("\tidivl\t%%ebx\n");
         push();
         break;
     case op_addI:
