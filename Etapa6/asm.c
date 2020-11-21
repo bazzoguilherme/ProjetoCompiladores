@@ -57,22 +57,6 @@ void push() {
     printf("\tmovl\t%%eax, (%%rsp)\n"); // Bota na pilha
 }
 
-void Asm_RC_R(struct code *c) {
-    if (c->arg2 == RBSS)
-        printf("%s(%%%s), %%%s\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
-    else
-        printf("%d(%%%s), %%%s\n", c->arg2, converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
-}
-
-void Asm_LoadAI_pilha(struct code *c) {
-    printf("\tsubq\t$4, %%rsp\n");
-    if (c->arg1 == RBSS)
-        printf("\tmovl\t%s(%%%s), %%eax\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1));
-    else
-        printf("\tmovl\t%d(%%%s), %%eax\n", c->arg2, converte_AsmReg(c->arg1));
-    printf("\tmovl\t%%eax, (%%rsp)\n");
-}
-
 void printa_call_function(int label_fun) {
     printf("\tcall\t%s\n", get_function_name(label_fun));
 }
@@ -200,10 +184,17 @@ void print_AsmCode(struct code *c) {
         break;
     case op_loadAI:
         if (c->dest1 < 0) {
-            printf("\tmovl\t");
-            Asm_RC_R(c);
+            if (c->arg2 == RBSS)
+                printf("\tmovl\t%s(%%%s), %%%s\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
+            else
+                printf("\tmovl\t%d(%%%s), %%%s\n", c->arg2, converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
         } else {
-            Asm_LoadAI_pilha(c);
+            printf("\tsubq\t$4, %%rsp\n");
+            if (c->arg1 == RBSS)
+                printf("\tmovl\t%s(%%%s), %%eax\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1));
+            else
+                printf("\tmovl\t%d(%%%s), %%eax\n", c->arg2, converte_AsmReg(c->arg1));
+            printf("\tmovl\t%%eax, (%%rsp)\n");
         }
         break;
     case op_storeAI:
