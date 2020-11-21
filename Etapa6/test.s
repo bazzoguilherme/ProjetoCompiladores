@@ -37,8 +37,8 @@ inc:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$20, %rsp
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$1, (%rsp)
@@ -61,11 +61,11 @@ add:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$24, %rsp
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
-	movl	%eax, (%rsp)
 	subq	$4, %rsp
+	movl	%eax, (%rsp)
 	movl	-20(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %edx
 	addq	$4, %rsp
@@ -86,11 +86,11 @@ mult:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$24, %rsp
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
-	movl	%eax, (%rsp)
 	subq	$4, %rsp
+	movl	%eax, (%rsp)
 	movl	-20(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %edx
 	addq	$4, %rsp
@@ -111,11 +111,11 @@ multi_add:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$28, %rsp
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
-	movl	%eax, (%rsp)
 	subq	$4, %rsp
+	movl	%eax, (%rsp)
 	movl	-20(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %edx
 	addq	$4, %rsp
@@ -124,8 +124,8 @@ multi_add:
 	addl	%edx, %eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
-	subq	$4, %rsp
 	movl	-24(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %edx
 	addq	$4, %rsp
@@ -146,8 +146,8 @@ fib:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$28, %rsp
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$0, (%rsp)
@@ -165,8 +165,8 @@ fib:
 	leave
 	ret
 .L7:
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$1, (%rsp)
@@ -184,8 +184,8 @@ fib:
 	leave
 	ret
 .L9:
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$1, (%rsp)
@@ -205,8 +205,8 @@ fib:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, -20(%rbp)
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$2, (%rsp)
@@ -226,11 +226,11 @@ fib:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, -24(%rbp)
-	subq	$4, %rsp
 	movl	-20(%rbp), %eax
-	movl	%eax, (%rsp)
 	subq	$4, %rsp
+	movl	%eax, (%rsp)
 	movl	-24(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %edx
 	addq	$4, %rsp
@@ -265,8 +265,8 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, simples1(%rip)
-	subq	$4, %rsp
 	movl	simples1(%rip), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$3, (%rsp)
@@ -285,8 +285,8 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, -16(%rbp)
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$2, (%rsp)
@@ -322,8 +322,8 @@ main:
 	addq	$4, %rsp
 	movl	%eax, -20(%rbp)
 .L16:
-	subq	$4, %rsp
 	movl	-20(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$0, (%rsp)
@@ -334,8 +334,8 @@ main:
 	cmpl	%edx, %eax
 	jle	.L15
 .L14:
-	subq	$4, %rsp
 	movl	-20(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$1, (%rsp)
@@ -349,8 +349,8 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, -20(%rbp)
-	subq	$4, %rsp
 	movl	while_test(%rip), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$1, (%rsp)
@@ -377,8 +377,8 @@ main:
 	addq	$4, %rsp
 	movl	%eax, -24(%rbp)
 .L19:
-	subq	$4, %rsp
 	movl	-24(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$20, (%rsp)
@@ -394,8 +394,8 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, -28(%rbp)
-	subq	$4, %rsp
 	movl	-24(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$1, (%rsp)
@@ -411,14 +411,14 @@ main:
 	movl	%eax, -24(%rbp)
 	jmp	.L19
 .L18:
-	subq	$4, %rsp
 	movl	-24(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, for_test(%rip)
-	subq	$4, %rsp
 	movl	-24(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$20, (%rsp)
@@ -429,8 +429,8 @@ main:
 	cmpl	%edx, %eax
 	jne	.L22
 .L20:
-	subq	$4, %rsp
 	movl	while_test(%rip), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	subq	$4, %rsp
 	movl	$10, (%rsp)
@@ -453,8 +453,8 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, ternario_test(%rip)
-	subq	$4, %rsp
 	movl	-16(%rbp), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
@@ -644,8 +644,8 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, fib8(%rip)
-	subq	$4, %rsp
 	movl	fun3param1(%rip), %eax
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp

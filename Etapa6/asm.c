@@ -77,6 +77,29 @@ void opDiv_Asm(char *op) {
     push_Asm();
 }
 
+void opLoadI_Asm(struct code *c) {
+    if (c->dest1 < 0) {
+        printf("\tmovl\t$%d, %%%s\n", c->arg1, converte_AsmReg(c->dest1));
+    } else {
+        push_val(c->arg1);
+    }
+}
+
+void opLoadAI_Asm(struct code *c) {
+    if (c->dest1 < 0) {
+        if (c->arg1 == RBSS)
+            printf("\tmovl\t%s(%%rip), %%%s\n", var_globl_desloc(c->arg2), converte_AsmReg(c->dest1));
+        else
+            printf("\tmovl\t%d(%%%s), %%%s\n", c->arg2, converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
+    } else {
+        if (c->arg1 == RBSS)
+            printf("\tmovl\t%s(%%rip), %%eax\n", var_globl_desloc(c->arg2));
+        else
+            printf("\tmovl\t%d(%%%s), %%eax\n", c->arg2, converte_AsmReg(c->arg1));
+        push_Asm();
+    }
+}
+
 void jmpCond_Asm(char *jump_cond, int label) {
     pop_Asm("edx");
     pop_Asm("eax");
@@ -185,26 +208,10 @@ void print_AsmCode(struct code *c) {
         // printf("divI");
         break;
     case op_loadI:
-        if (c->dest1 < 0) {
-            printf("\tmovl\t$%d, %%%s\n", c->arg1, converte_AsmReg(c->dest1));
-        } else {
-            push_val(c->arg1);
-        }
+        opLoadI_Asm(c);
         break;
     case op_loadAI:
-        if (c->dest1 < 0) {
-            if (c->arg2 == RBSS)
-                printf("\tmovl\t%s(%%%s), %%%s\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
-            else
-                printf("\tmovl\t%d(%%%s), %%%s\n", c->arg2, converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
-        } else {
-            printf("\tsubq\t$4, %%rsp\n");
-            if (c->arg1 == RBSS)
-                printf("\tmovl\t%s(%%%s), %%eax\n", var_globl_desloc(c->arg2), converte_AsmReg(c->arg1));
-            else
-                printf("\tmovl\t%d(%%%s), %%eax\n", c->arg2, converte_AsmReg(c->arg1));
-            printf("\tmovl\t%%eax, (%%rsp)\n");
-        }
+        opLoadAI_Asm(c);
         break;
     case op_storeAI:
         // Tirar da pilha + atualizar pilha
