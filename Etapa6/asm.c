@@ -70,10 +70,10 @@ void opBin_Asm(char *op) {
 }
 
 void opDiv_Asm(char *op) {
-    pop_Asm("edx");
+    pop_Asm("ebx");
     pop_Asm("eax");
     printf("\tcdq\n"); // Extende sinal
-    printf("\t%s\t%%edx, %%eax\n", op); // OP
+    printf("\t%s\t%%ebx\n", op); // OP
     push_Asm();
 }
 
