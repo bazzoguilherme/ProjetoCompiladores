@@ -100,6 +100,16 @@ void opLoadAI_Asm(struct code *c) {
     }
 }
 
+void opStoreAI_Asm(struct code *c) {
+    // Tirar da pilha + atualizar pilha
+    pop_Asm("eax");
+    // Store
+    if (c->dest1 == RBSS)
+        printf("\tmovl\t%%eax, %s(%%rip)\n", var_globl_desloc(c->dest2));
+    else
+        printf("\tmovl\t%%eax, %d(%%%s)\n", c->dest2, converte_AsmReg(c->dest1));
+}
+
 void jmpCond_Asm(char *jump_cond, int label) {
     pop_Asm("edx");
     pop_Asm("eax");
@@ -214,13 +224,7 @@ void print_AsmCode(struct code *c) {
         opLoadAI_Asm(c);
         break;
     case op_storeAI:
-        // Tirar da pilha + atualizar pilha
-        pop_Asm("eax");
-        // Store
-        if (c->dest1 == RBSS)
-            printf("\tmovl\t%%eax, %s(%%rip)\n", var_globl_desloc(c->dest2));
-        else
-            printf("\tmovl\t%%eax, %d(%%%s)\n", c->dest2, converte_AsmReg(c->dest1));
+        opStoreAI_Asm(c);
         break;
     case op_i2i:
         if (c->arg1 < 0 && c->dest1 < 0) {
