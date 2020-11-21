@@ -145,7 +145,7 @@ fib:
 	endbr64
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$28, %rsp
+	subq	$20, %rsp
 	movl	-16(%rbp), %eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
