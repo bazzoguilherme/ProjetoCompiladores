@@ -33,10 +33,11 @@ int fib(int a) {
     if (a == 1) {
         return 1;
     };
-    int aux1, aux2;
-    aux1 = fib(a-1);
-    aux2 = fib(a-2);
-    return aux1+aux2;
+    // int aux1, aux2;
+    return fib(a-1)+fib(a-2);
+    // aux1 = fib(a-1);
+    // aux2 = fib(a-2);
+    // return aux1+aux2;
 }
 
 int main() {
@@ -86,5 +87,5 @@ int main() {
     fib7 = fib(7);
     fib8 = fib(8);
 
-    return fun3param1;
+    return fib8;
 }

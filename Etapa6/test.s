@@ -202,9 +202,6 @@ fib:
 	call	fib
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
-	movl	(%rsp), %eax
-	addq	$4, %rsp
-	movl	%eax, -20(%rbp)
 	movl	-16(%rbp), %eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
@@ -221,15 +218,6 @@ fib:
 	addq	$4, %rsp
 	movl	%eax, -32(%rsp)
 	call	fib
-	subq	$4, %rsp
-	movl	%eax, (%rsp)
-	movl	(%rsp), %eax
-	addq	$4, %rsp
-	movl	%eax, -24(%rbp)
-	movl	-20(%rbp), %eax
-	subq	$4, %rsp
-	movl	%eax, (%rsp)
-	movl	-24(%rbp), %eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %edx
@@ -447,7 +435,11 @@ main:
 .L22:
 	subq	$4, %rsp
 	movl	$1, (%rsp)
-	neg	(%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	neg	%eax
+	subq	$4, %rsp
+	movl	%eax, (%rsp)
 	jmp	.L23
 .L23:
 	movl	(%rsp), %eax
@@ -644,7 +636,7 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, fib8(%rip)
-	movl	fun3param1(%rip), %eax
+	movl	fib8(%rip), %eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax

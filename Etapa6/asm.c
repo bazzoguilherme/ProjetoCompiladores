@@ -149,18 +149,21 @@ void print_AsmCode(struct code *c) {
 
     if (c->tipo == code_preparacao_chamada) {
         // Ignora store de RSP e RFP
-        c = c->prox->prox;
+        print_AsmCode(c->prox->prox);
+        return;
     }
 
     if (c->tipo == code_load_retorno_funcao) {
         push_Asm();
-        c = c->prox;
+        print_AsmCode(c->prox);
+        return;
     }
 
     if (c->tipo == code_returno_funcao) {
         printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
-        c = c->prox;
+        print_AsmCode(c->prox);
+        return;
     }
 
     if (c->tipo == code_saida_fun_main) {
@@ -172,7 +175,8 @@ void print_AsmCode(struct code *c) {
     if (c->tipo == code_saida_funcao) {
         printf("\tleave\n");
         printf("\tret\n");
-        c = c->prox->prox->prox;
+        print_AsmCode(c->prox->prox->prox);
+        return;
     }
 
     switch (c->operation)
@@ -200,13 +204,13 @@ void print_AsmCode(struct code *c) {
         opI_Asm("sub", c);
         break;
     case op_rsubI:
-        printf("\tneg\t(%%rsp)\n");
+        pop_Asm("eax");
+        printf("\tneg\t%%eax\n");
+        push_Asm();
         break;
     case op_multI:
-        // printf("multI");
         break;
     case op_divI:
-        // printf("divI");
         break;
     case op_loadI:
         opLoadI_Asm(c);
@@ -218,14 +222,9 @@ void print_AsmCode(struct code *c) {
         opStoreAI_Asm(c);
         break;
     case op_i2i:
-        if (c->arg1 < 0 && c->dest1 < 0) {
+        if (c->arg1 < 0 && c->dest1 < 0)
             printf("\tmovq\t%%%s, %%%s\n", converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
-        } else { // Not currently on use
-            // printf("\tmovl\t(%%rsp), %%eax\n");
-            // printf("\tmovl\t$4, %%rsp\n");
-            // printf("\tsubl\t$4, %%rsp\n");
-            // printf("\tmovl\t%%eax, (%%rsp)\n");
-        }
+        // "else" Not currently on use
         break;
     case op_cmp_LT: 
         jmpCond_Asm("jge", c->prox->dest2);
@@ -252,8 +251,6 @@ void print_AsmCode(struct code *c) {
         c = c->prox;
         break;
     // case op_jump:
-    //     // printf("jump");
-    //     // print_r_jmp(c);
     //     break;
     case op_jumpI:
         printf("\tjmp\t.L%d\n", c->dest1);
