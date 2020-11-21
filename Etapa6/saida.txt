@@ -27,7 +27,7 @@ loadAI rfp, 12 => rsp
 loadAI rfp, 8 => rfp
 jump -> r7
 L3: i2i rsp => rfp
-subI rsp, 16 => rsp
+subI rsp, 20 => rsp
 storeAI rsp => rsp, 12
 storeAI rfp => rsp, 8
 loadI 0 => r8
@@ -48,6 +48,43 @@ storeAI r14 => rsp, 0
 jumpI -> L2
 loadAI rsp, 4 => r13
 storeAI r13 => rbss, 4
+loadAI rbss, 0 => r15
+loadAI rbss, 4 => r16
+add r15, r16 => r15
+storeAI r15 => rbss, 0
+loadI 0 => r17
+storeAI r17 => rfp, -16
+L6: nop
+loadAI rfp, -16 => r18
+loadI 7 => r19
+cmp_LT r18, r19 -> r20
+cbr r20 -> L4, L5
+L4: nop
+loadAI rfp, -16 => r21
+loadI 1 => r22
+add r21, r22 => r21
+storeAI r21 => rfp, -16
+jumpI -> L6
+L5: nop
+loadI 10 => r23
+loadI 1 => r24
+add r23, r24 => r23
+loadI 11 => r25
+cmp_EQ r23, r25 -> r26
+cbr r26 -> L7, L8
+L7: nop
+loadI 99 => r27
+i2i r27 => r29
+jumpI -> L9
+L8: nop
+loadI 77 => r28
+i2i r28 => r29
+jumpI -> L9
+L9: nop
+storeAI r29 => rbss, 0
+loadAI rbss, 0 => r30
+storeAI r30 => rfp, 4
+jumpI -> L0
 jumpI -> L0
 	.file	"programa.c"
 	.text
@@ -130,14 +167,14 @@ main:
 	endbr64
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$16, %rsp
+	subq	$20, %rsp
 	subq	$4, %rsp
 	movl	$0, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, -32(%rsp)
 	call	inc
-	subl	$4, %rsp
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
@@ -153,8 +190,97 @@ main:
 	addq	$4, %rsp
 	movl	%eax, -36(%rsp)
 	call	add
-	subl	$4, %rsp
+	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, simples2(%rip)
+	subq	$4, %rsp
+	movl	simples1(%rip), %eax
+	movl	%eax, (%rsp)
+	subq	$4, %rsp
+	movl	simples2(%rip), %eax
+	movl	%eax, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	addl	%edx, %eax
+	subq	$4, %rsp
+	movl	%eax, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, simples1(%rip)
+	subq	$4, %rsp
+	movl	$0, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, -16(%rbp)
+.L6:
+	subq	$4, %rsp
+	movl	-16(%rbp), %eax
+	movl	%eax, (%rsp)
+	subq	$4, %rsp
+	movl	$7, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	cmpl	%edx, %eax
+	jge	.L5
+.L4:
+	subq	$4, %rsp
+	movl	-16(%rbp), %eax
+	movl	%eax, (%rsp)
+	subq	$4, %rsp
+	movl	$1, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	addl	%edx, %eax
+	subq	$4, %rsp
+	movl	%eax, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, -16(%rbp)
+	jmp	.L6
+.L5:
+	subq	$4, %rsp
+	movl	$10, (%rsp)
+	subq	$4, %rsp
+	movl	$1, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	addl	%edx, %eax
+	subq	$4, %rsp
+	movl	%eax, (%rsp)
+	subq	$4, %rsp
+	movl	$11, (%rsp)
+	movl	(%rsp), %edx
+	addq	$4, %rsp
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	cmpl	%edx, %eax
+	jne	.L8
+.L7:
+	subq	$4, %rsp
+	movl	$99, (%rsp)
+	jmp	.L9
+.L8:
+	subq	$4, %rsp
+	movl	$77, (%rsp)
+	jmp	.L9
+.L9:
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	movl	%eax, simples1(%rip)
+	subq	$4, %rsp
+	movl	simples1(%rip), %eax
+	movl	%eax, (%rsp)
+	movl	(%rsp), %eax
+	addq	$4, %rsp
+	leave
+	ret

@@ -162,7 +162,9 @@ struct code *gera_retorno(struct AST *retorno) {
 
 struct code *retorno_funcao() {
     if (strcmp(fun_atual, "main")==0) {
-        return gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, 0, NULL_REGIS, NULL);
+        struct code *ret_main = gera_code(NULL_LABEL, op_jumpI, NULL_REGIS, NULL_REGIS, 0, NULL_REGIS, NULL);
+        ret_main->tipo = code_saida_fun_main;
+        return ret_main;
     }
     int reg_retorno = gera_regis();
     struct code *jump = gera_code(NULL_LABEL, op_jump, NULL_REGIS, NULL_REGIS, reg_retorno, NULL_REGIS, NULL);;
@@ -828,6 +830,12 @@ void print_AsmCode(struct code *c) {
         c = c->prox;
     }
 
+    if (c->tipo == code_saida_fun_main) {
+        printf("\tleave\n");
+        printf("\tret\n");
+        return; // Fim do programa - sem nada depois da main
+    }
+
     if (c->tipo == code_saida_funcao) {
         printf("\tleave\n");
         printf("\tret\n");
@@ -1022,8 +1030,7 @@ void print_AsmCode(struct code *c) {
     //     // print_r_jmp(c);
     //     break;
     case op_jumpI:
-        // printf("jumpI");
-        // print_L_jmp(c);
+        printf("\tjmp\t.L%d\n", c->dest1);
         break;
     default:
         break;
