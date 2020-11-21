@@ -62,6 +62,11 @@ void push_val(int value) {
     printf("\tmovl\t$%d, (%%rsp)\n", value); // Bota na pilha
 }
 
+void jmp_cond_label(char *jump_cond, int label) {
+    printf("\tcmpl\t%%edx, %%eax\n");
+    printf("\t%s\t.L%d\n", jump_cond, label);
+}
+
 void printa_call_function(int label_fun) {
     printf("\tcall\t%s\n", get_function_name(label_fun));
 }
@@ -221,43 +226,37 @@ void print_AsmCode(struct code *c) {
     case op_cmp_LT:
         pop("edx");
         pop("eax");
-        printf("\tcmpl\t%%edx, %%eax\n");
-        printf("\tjge\t.L%d\n", c->prox->dest2);
+        jmp_cond_label("jge", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_LE:
         pop("edx");
         pop("eax");
-        printf("\tcmpl\t%%edx, %%eax\n");
-        printf("\tjg\t.L%d\n", c->prox->dest2);
+        jmp_cond_label("jg", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_EQ:
         pop("edx");
         pop("eax");
-        printf("\tcmpl\t%%edx, %%eax\n");
-        printf("\tjne\t.L%d\n", c->prox->dest2);
+        jmp_cond_label("jne", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GE:
         pop("edx");
         pop("eax");
-        printf("\tcmpl\t%%edx, %%eax\n");
-        printf("\tjl\t.L%d\n", c->prox->dest2);
+        jmp_cond_label("jl", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GT:
         pop("edx");
         pop("eax");
-        printf("\tcmpl\t%%edx, %%eax\n");
-        printf("\tjle\t.L%d\n", c->prox->dest2);
+        jmp_cond_label("jle", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_NE:
         pop("edx");
         pop("eax");
-        printf("\tcmpl\t%%edx, %%eax\n");
-        printf("\tje\t.L%d\n", c->prox->dest2);
+        jmp_cond_label("je", c->prox->dest2);
         c = c->prox;
         break;
     // case op_jump:
