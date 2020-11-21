@@ -33,28 +33,17 @@ int fib(int a) {
     if (a == 1) {
         return 1;
     };
-    return fib(a-1) + fib(a-2);
+    int aux1, aux2;
+    aux1 = fib(a-1);
+    aux2 = fib(a-2);
+    return aux1+aux2;
 }
 
 int main() {
-    // int a<=1;
-    // simples1 = 0;
-    simples1 = inc(0);
-    simples2 = add(5, 3);
-    simples1 = simples1 + simples2;
 
+    simples1 = 2 + 5;
+    simples2 = simples1 * 3;
 
-    simples1 = 10+2 == 11 ? 99 : 77;
-
-    if (2 < 5 && 3 == 4) {
-        simples1 = 1;
-    } else {
-        simples1 = 9;
-    };
-    simples1 = simples1 + 1 * 10;
-    simples2 = simples1 * (3  * (simples1 * 10));
-    
-    simples1 = inc(simples1);
     int i<=1;
 
     if (i == 2) {
@@ -73,8 +62,9 @@ int main() {
 
     int f <= 0;
     for (f = 0 : f < 20 : f = f+1) {
-
+	int inutil <= 0;
     };
+
     for_test = f;
 
     ternario_test = (f == 20 && while_test == 10) ? 11 : -1;
@@ -95,5 +85,6 @@ int main() {
     fib6 = fib(6);
     fib7 = fib(7);
     fib8 = fib(8);
-    return fib0;
+
+    return fun3param1;
 }

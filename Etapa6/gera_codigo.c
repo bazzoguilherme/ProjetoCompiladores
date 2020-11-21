@@ -891,7 +891,7 @@ void print_AsmCode(struct code *c) {
             if (c->arg1 < 0) {
                 printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
             } else {
-                printf("\tmovl\t%%rsp, %%eax\n");
+                printf("\tmovl\t(%%rsp), %%eax\n");
                 printf("\taddl\t$4, %%rsp\n");
             }
             printf("\taddl\t$%d, %%eax\n", c->arg2);
@@ -910,7 +910,7 @@ void print_AsmCode(struct code *c) {
             if (c->arg1 < 0) {
                 printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
             } else {
-                printf("\tmovl\t%%rsp, %%eax\n");
+                printf("\tmovl\t(%%rsp), %%eax\n");
                 printf("\taddl\t$4, %%rsp\n");
             }
             printf("\taddl\t$%d, %%eax\n", c->arg2);
@@ -923,7 +923,7 @@ void print_AsmCode(struct code *c) {
         }
         break;
     case op_rsubI:
-        printf("\tmovl\t%%rsp, %%eax\n");
+        printf("\tmovl\t(%%rsp), %%eax\n");
         printf("\taddq\t$4, %%rsp\n");
         printf("\tneg\t%%eax\n");
         printf("\tsubq\t$4, %%rsp\n");
