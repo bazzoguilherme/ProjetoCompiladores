@@ -3,6 +3,7 @@
 #include "exp_ast.h"
 #include "gera_codigo.h"
 #include "symbol_table.h"
+#include "asm.h"
 
 extern struct stack_symbol_table *stack;
 
