@@ -63,6 +63,8 @@ void push_val(int value) {
 }
 
 void jmp_cond_label(char *jump_cond, int label) {
+    pop("edx");
+    pop("eax");
     printf("\tcmpl\t%%edx, %%eax\n");
     printf("\t%s\t.L%d\n", jump_cond, label);
 }
@@ -172,9 +174,7 @@ void print_AsmCode(struct code *c) {
         }
         break;
     case op_rsubI:
-        pop("eax");
         printf("\tneg\t%%eax\n");
-        push();
         break;
     case op_multI:
         // printf("multI");
@@ -223,39 +223,27 @@ void print_AsmCode(struct code *c) {
             // printf("\tmovl\t%%eax, (%%rsp)\n");
         }
         break;
-    case op_cmp_LT:
-        pop("edx");
-        pop("eax");
+    case op_cmp_LT: 
         jmp_cond_label("jge", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_LE:
-        pop("edx");
-        pop("eax");
         jmp_cond_label("jg", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_EQ:
-        pop("edx");
-        pop("eax");
         jmp_cond_label("jne", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GE:
-        pop("edx");
-        pop("eax");
         jmp_cond_label("jl", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GT:
-        pop("edx");
-        pop("eax");
         jmp_cond_label("jle", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_NE:
-        pop("edx");
-        pop("eax");
         jmp_cond_label("je", c->prox->dest2);
         c = c->prox;
         break;
