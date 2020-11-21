@@ -57,6 +57,11 @@ void push() {
     printf("\tmovl\t%%eax, (%%rsp)\n"); // Bota na pilha
 }
 
+void push_val(int value) {
+    printf("\tsubq\t$4, %%rsp\n");
+    printf("\tmovl\t$%d, (%%rsp)\n", value); // Bota na pilha
+}
+
 void printa_call_function(int label_fun) {
     printf("\tcall\t%s\n", get_function_name(label_fun));
 }
@@ -134,8 +139,7 @@ void print_AsmCode(struct code *c) {
             if (c->arg1 < 0) {
                 printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
             } else {
-                printf("\tmovl\t(%%rsp), %%eax\n");
-                printf("\taddl\t$4, %%rsp\n");
+                pop("eax");
             }
             printf("\taddl\t$%d, %%eax\n", c->arg2);
             if (c->dest1 < 0) {
@@ -152,8 +156,7 @@ void print_AsmCode(struct code *c) {
             if (c->arg1 < 0) {
                 printf("\tmovl\t%%%s, %%eax\n", converte_AsmReg(c->arg1));
             } else {
-                printf("\tmovl\t(%%rsp), %%eax\n");
-                printf("\taddl\t$4, %%rsp\n");
+                pop("eax");
             }
             printf("\taddl\t$%d, %%eax\n", c->arg2);
             if (c->dest1 < 0) {
@@ -178,8 +181,7 @@ void print_AsmCode(struct code *c) {
         if (c->dest1 < 0) {
             printf("\tmovl\t$%d, %%%s\n", c->arg1, converte_AsmReg(c->dest1));
         } else {
-            printf("\tsubq\t$4, %%rsp\n");
-            printf("\tmovl\t$%d, (%%rsp)\n", c->arg1);
+            push_val(c->arg1);
         }
         break;
     case op_loadAI:
@@ -209,7 +211,7 @@ void print_AsmCode(struct code *c) {
     case op_i2i:
         if (c->arg1 < 0 && c->dest1 < 0) {
             printf("\tmovq\t%%%s, %%%s\n", converte_AsmReg(c->arg1), converte_AsmReg(c->dest1));
-        } else {
+        } else { // Not currently on use
             // printf("\tmovl\t(%%rsp), %%eax\n");
             // printf("\tmovl\t$4, %%rsp\n");
             // printf("\tsubl\t$4, %%rsp\n");
