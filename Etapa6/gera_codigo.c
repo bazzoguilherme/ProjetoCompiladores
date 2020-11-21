@@ -776,13 +776,20 @@ char *converte_AsmReg(int reg) {
     case RSP:
         return "rsp";
         break;
-    case RPC:
-        return "rpc";
-        break;
-    
     default:
+        return "";
         break;
     }
+}
+
+void pop(char *reg) {
+    printf("\tmovl\t(%%rsp), %%%s\n", reg); // Tira da pilha
+    printf("\taddq\t$4, %%rsp\n");
+}
+
+void push() {
+    printf("\tsubq\t$4, %%rsp\n");
+    printf("\tmovl\t%%eax, (%%rsp)\n"); // Bota na pilha
 }
 
 void Asm_RC_R(struct code *c) {
@@ -819,8 +826,7 @@ void print_AsmCode(struct code *c) {
     }
 
     if (c->tipo == code_load_retorno_funcao) {
-        printf("\tsubq\t$4, %%rsp\n");
-        printf("\tmovl\t%%eax, (%%rsp)\n");
+        push();
         c = c->prox;
     }
 
@@ -845,41 +851,29 @@ void print_AsmCode(struct code *c) {
     switch (c->operation)
     {
     case op_add:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\taddl\t%%edx, %%eax\n"); // OP
-        printf("\tsubq\t$4, %%rsp\n");
-        printf("\tmovl\t%%eax, (%%rsp)\n"); // Bota na pilha
+        push();
         break;
     case op_sub:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\tsubl\t%%edx, %%eax\n");
-        printf("\tsubq\t$4, %%rsp\n");
-        printf("\tmovl\t%%eax, (%%rsp)\n");
+        push();
         break;
     case op_mult:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\timull\t%%edx, %%eax\n");
-        printf("\tsubq\t$4, %%rsp\n");
-        printf("\tmovl\t%%eax, (%%rsp)\n");
+        push();
         break;
     case op_div:
-        printf("\tmovl\t(%%rsp), %%ecx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("ecx");
+        pop("eax");
         printf("\tmovl\t$0, %%edx\n");
         printf("\tidivl\t%%ecx, %%eax\n");
-        printf("\tsubq\t$4, %%rsp\n");
-        printf("\tmovl\t%%eax, (%%rsp)\n");
+        push();
         break;
     case op_addI:
         if (c->arg1 == RPC){
@@ -898,8 +892,7 @@ void print_AsmCode(struct code *c) {
             if (c->dest1 < 0) {
                 printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
             } else {
-                printf("\tsubq\t$4, %%rsp\n");
-                printf("\tmovl\t%%eax, (%%rsp)\n");
+                push();
             }
         }
         break;
@@ -917,17 +910,14 @@ void print_AsmCode(struct code *c) {
             if (c->dest1 < 0) {
                 printf("\tmovl\t%%eax, %%%s\n", converte_AsmReg(c->dest1));
             } else {
-                printf("\tsubq\t$4, %%rsp\n");
-                printf("\tmovl\t%%eax, (%%rsp)\n");
+                push();
             }
         }
         break;
     case op_rsubI:
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("eax");
         printf("\tneg\t%%eax\n");
-        printf("\tsubq\t$4, %%rsp\n");
-        printf("\tmovl\t%%eax, (%%rsp)\n");
+        push();
         break;
     case op_multI:
         // printf("multI");
@@ -953,8 +943,7 @@ void print_AsmCode(struct code *c) {
         break;
     case op_storeAI:
         // Tirar da pilha + atualizar pilha
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("eax");
         // Store
         if (c->dest1 == RBSS)
             printf("\tmovl\t%%eax, %s(%%rip)\n", var_globl_desloc(c->dest2));
@@ -972,55 +961,43 @@ void print_AsmCode(struct code *c) {
         }
         break;
     case op_cmp_LT:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjge\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_LE:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjg\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_EQ:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjne\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GE:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjl\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_GT:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tjle\t.L%d\n", c->prox->dest2);
         c = c->prox;
         break;
     case op_cmp_NE:
-        printf("\tmovl\t(%%rsp), %%edx\n");
-        printf("\taddq\t$4, %%rsp\n");
-        printf("\tmovl\t(%%rsp), %%eax\n");
-        printf("\taddq\t$4, %%rsp\n");
+        pop("edx");
+        pop("eax");
         printf("\tcmpl\t%%edx, %%eax\n");
         printf("\tje\t.L%d\n", c->prox->dest2);
         c = c->prox;
@@ -1035,7 +1012,6 @@ void print_AsmCode(struct code *c) {
     default:
         break;
     }
-    // printf("\n");
     print_AsmCode(c->prox);
 }
 
