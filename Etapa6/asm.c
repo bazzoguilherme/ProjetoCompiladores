@@ -139,13 +139,37 @@ void callFunction_Asm(int label_fun) {
     printf("\tcall\t%s\n", get_function_name(label_fun));
 }
 
+int load_parameters(int label_fun) {
+    struct elem_table *elemento = get_elem_function(label_fun);
+    struct elem_table *args = elemento->argumentos;
+    if (args == NULL) return 0;
+    int var_local = 16;
+    int val_pilha = 16;
+    int tot_var_local = 0;
+    struct elem_table *args_aux = args;
+    while(args_aux != NULL) {
+        val_pilha += 4;
+        tot_var_local++;
+        args_aux = args_aux->next_elem;
+    }
+
+    while(args!=NULL) {
+        printf("\tmovl\t-%d(%%rbp), %%eax\n", val_pilha);
+        printf("\tmovl\t%%eax, %d(%%rbp)\n", var_local);
+        var_local -= 4;
+        val_pilha -= 4;
+        args = args->next_elem;
+    }
+    return tot_var_local;
+}
 
 void print_AsmCode(struct code *c) {
     if (c == NULL) return;
     if (c->label != NULL_LABEL) {
-        if (!printa_label_fun(c->label)){
+        if (printa_label_fun(c->label)){
+            // load_parameters(c->label);
+        } else
             printf(".L%d:\n", c->label);
-        }
     }
 
     if (c->tipo == code_preparacao_chamada) {

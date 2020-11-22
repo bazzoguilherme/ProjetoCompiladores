@@ -431,7 +431,7 @@ main:
 	movl	$1, (%rsp)
 	movl	(%rsp), %eax
 	addq	$4, %rsp
-	neg	%eax
+	negl	%eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	jmp	.L23

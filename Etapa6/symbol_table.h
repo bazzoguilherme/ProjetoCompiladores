@@ -135,6 +135,7 @@ int label_funcao(char *fun_name);
 int printa_label_fun(int labl);
 char *var_globl_desloc(int desloc);
 char *get_function_name(int label_fun);
+struct elem_table *get_elem_function(int label);
 
 int erro_semantico(int err);
 

@@ -754,6 +754,17 @@ char *get_function_name(int label_fun) {
     return "";
 }
 
+struct elem_table *get_elem_function(int label) {
+    struct elem_table *gl = get_escopo_global()->topo;
+    while(gl != NULL) {
+        if (gl->label == label) {
+            return gl;
+        }
+        gl = gl->next_elem;
+    }
+    return NULL;
+}
+
 int erro_semantico(int err) {
     printf("ERRO: %d\n", err);
     exit(err);

@@ -119,15 +119,17 @@ struct code *gera_decl_funcao(struct valor_lexico_t *nome_funcao) {
 
 struct code *gera_args(struct AST *params) {
     struct AST *aux = params;
-    struct code *c=NULL, *c_aux=NULL;
+    struct code *c=NULL, *c_aux=NULL, *code_atual;
     int i;
     for (i = INIT_ESC_NOMEADO; aux != NULL; i += 4) {
+        code_atual = gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, -(i+16), NULL);
+        code_atual->tipo = code_adiciona_parametro;
         if (i == INIT_ESC_NOMEADO) {
             c = aux->codigo;
-            c = concat(c, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, -(i+16), NULL), NULL);
+            c = concat(c, code_atual, NULL);
         } else {
             c_aux = aux->codigo;
-            c = concat(c, c_aux, gera_code(NULL_LABEL, op_storeAI, aux->local, NULL_REGIS, RSP, -(i+16), NULL));
+            c = concat(c, c_aux, code_atual);
         }
         aux = aux->prox;
     }
