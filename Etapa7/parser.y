@@ -29,7 +29,7 @@ int yyerror (char const *s);
 extern int get_line_number(void);
 
 extern void *arvore;
-extern void exporta(void *arvore);
+extern void exporta(void *arvore, int opt);
 extern void libera(void *arvore);
 
 %}

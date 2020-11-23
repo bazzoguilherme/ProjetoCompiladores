@@ -37,7 +37,7 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 }
 
 
-void exporta (void *arvore){
+void exporta (void *arvore, int opt){
 	struct AST *ast = (struct AST*) arvore;
     if (ast != NULL){
         // ast->codigo = concat(instrucoes_iniciais(), ast->codigo, NULL);

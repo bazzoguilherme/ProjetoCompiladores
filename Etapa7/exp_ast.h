@@ -8,7 +8,7 @@ void libera_ast (struct AST *ast);
 
 void free_val_lex(struct valor_lexico_t *val_lex);
 
-void exporta (void *arvore);
+void exporta (void *arvore, int opt);
 
 void print_pointers(struct AST *ast);
 
