@@ -162,12 +162,12 @@ int load_parameters(int label_fun) {
     }
     return tot_var_local;
 }
-
+// int pop_from_return_function;
 void print_AsmCode(struct code *c) {
     if (c == NULL) return;
     if (c->label != NULL_LABEL) {
         if (printa_label_fun(c->label)){
-            // load_parameters(c->label);
+            // pop_from_return_function = load_parameters(c->label);
         } else
             printf(".L%d:\n", c->label);
     }

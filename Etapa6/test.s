@@ -630,7 +630,7 @@ main:
 	movl	(%rsp), %eax
 	addq	$4, %rsp
 	movl	%eax, fib8(%rip)
-	movl	fib8(%rip), %eax
+	movl	fib5(%rip), %eax
 	subq	$4, %rsp
 	movl	%eax, (%rsp)
 	movl	(%rsp), %eax
