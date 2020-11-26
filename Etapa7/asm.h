@@ -4,7 +4,7 @@
 #include "gera_codigo.h"
 
 typedef enum ASM_OP {
-    ASM_endbr64 = 0,
+    ASM_nop = 0,
     ASM_pushq = 1,
     ASM_pushl,
     ASM_movl,
@@ -28,6 +28,7 @@ typedef enum ASM_OP {
     ASM_call,
     ASM_leave,
     ASM_ret,
+    ASM_endbr64,
 } ASM_OP;
 
 typedef enum ASM_REG {
@@ -43,17 +44,18 @@ typedef enum ASM_REG {
 } ASM_REG;
 
 struct ASM {
-    int label;
-    ASM_OP asm_operation;
-    int I_value;
-    ASM_REG r1;
-    ASM_REG r2;
-    int desloc_r1;
-    int desloc_r2;
+    int label; // Label .Lx
+    ASM_OP asm_operation; // Operation (movl, addl..)
+    int I_value; // imediate value for an operation
+    ASM_REG r1; // register1
+    ASM_REG r2; // register2
+    int desloc_r1; // desloc in memory register1
+    int desloc_r2; // desloc in memory register2
     struct ASM *prox;
 };
 
 void generateAsm(struct code *c);
 void print_AsmCode(struct code *c);
+struct ASM *gera_asm(int label, ASM_OP op, int I_val, ASM_REG r1, ASM_REG r2, int desloc1, int desloc2);
 
 #endif

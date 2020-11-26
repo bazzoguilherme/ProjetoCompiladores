@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include "stdlib.h"
 #include "ast.h"
 #include "asm.h"
 #include "symbol_table.h"
@@ -286,3 +287,15 @@ void print_AsmCode(struct code *c) {
     print_AsmCode(c->prox);
 }
 
+struct ASM *gera_asm(int label, ASM_OP op, int I_val, ASM_REG r1, ASM_REG r2, int desloc1, int desloc2) {
+    struct ASM *asm_code = (struct ASM *) malloc (sizeof(struct ASM));
+    asm_code->label = label;
+    asm_code->asm_operation = op;
+    asm_code->I_value = I_val;
+    asm_code->r1 = r1;
+    asm_code->r2 = r2;
+    asm_code->desloc_r1 = desloc1;
+    asm_code->desloc_r2 = desloc2;
+    asm_code->prox = NULL;
+    return asm_code;
+}
