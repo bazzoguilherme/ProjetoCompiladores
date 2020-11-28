@@ -5,7 +5,7 @@
 #include "asm.h"
 #include "symbol_table.h"
 
-#define S_OPER 10
+#define S_OPER 15
 
 extern struct stack_symbol_table *stack;
 extern struct ASM *initial;
@@ -60,6 +60,7 @@ void pop_Asm(char *reg) {
     char *new_reg = (char *) malloc (S_OPER);
     snprintf(new_reg, S_OPER, "%%%s", reg);
     struct ASM *mov = gera_asm(ASM_movl, "(%rsp)", new_reg);
+    mov->note = Note_Pop;
     // printf("\tmovl\t(%%rsp), %%%s\n", reg); // Tira da pilha
     struct ASM *add = gera_asm(ASM_addq, "$4", "%rsp");
     // printf("\taddq\t$4, %%rsp\n");
@@ -71,6 +72,7 @@ void pop_Asm(char *reg) {
 void push_Asm() {
     // printf("\tsubq\t$4, %%rsp\n");
     struct ASM *sub = gera_asm(ASM_subq, "$4", "%rsp");
+    sub->note = Note_Push;
     // printf("\tmovl\t%%eax, (%%rsp)\n"); // Bota na pilha
     struct ASM *mov = gera_asm(ASM_movl, "%eax", "(%rsp)");
     current_asm->prox = sub;
@@ -81,6 +83,7 @@ void push_Asm() {
 void push_val(int value) {
     // printf("\tsubq\t$4, %%rsp\n");
     struct ASM *sub = gera_asm(ASM_subq, "$4", "%rsp");
+    sub->note = Note_Push;
     // printf("\tmovl\t$%d, (%%rsp)\n", value); // Bota na pilha
     char *new_val = (char *) malloc (S_OPER);
     snprintf(new_val, S_OPER, "$%d", value);
@@ -435,6 +438,7 @@ struct ASM *gera_asm(ASM_OP op, char *oper1, char *oper2) {
     asm_code->asm_operation = op;
     asm_code->operador1 = strdup(oper1);
     asm_code->operador2 = strdup(oper2);
+    asm_code->note = NoNote;
     asm_code->prox = NULL;
     return asm_code;
 }
@@ -535,6 +539,7 @@ struct ASM *gera_label_asm(char *label) {
     asm_code->asm_operation = ASM_nop;
     asm_code->operador1 = NULL;
     asm_code->operador2 = NULL;
+    asm_code->note = NoNote;
     asm_code->prox = NULL;
     return asm_code;
 }
@@ -547,6 +552,27 @@ struct ASM *gera_label_num_asm(int label_id) {
     asm_code->asm_operation = ASM_nop;
     asm_code->operador1 = NULL;
     asm_code->operador2 = NULL;
+    asm_code->note = NoNote;
     asm_code->prox = NULL;
     return asm_code;
+}
+
+struct ASM *optimize_assembly(struct ASM *assembly_code) {
+    struct ASM *assembly = assembly_code;
+    struct ASM *prev = assembly;
+    struct ASM *aux;
+    while(assembly!=NULL) {
+        
+        if (assembly->note == Note_Push){
+            if (assembly->prox->prox->note == Note_Pop) {
+                aux = gera_asm(ASM_movl, assembly->prox->operador1, assembly->prox->prox->operador2);
+                prev->prox = aux;
+                aux->prox = assembly->prox->prox->prox->prox;
+                assembly = aux;
+            }
+        }
+        prev = assembly;
+        assembly = assembly->prox;
+    }
+    return assembly_code;
 }

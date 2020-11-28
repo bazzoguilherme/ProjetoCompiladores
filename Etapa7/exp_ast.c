@@ -44,7 +44,7 @@ void exporta (void *arvore, int opt){
         // print_code(ast->codigo);
         struct ASM *assembly = generateAsm(ast->codigo);
         if (opt) {
-            
+            assembly = optimize_assembly(assembly);
         }
         export_Asm(assembly);
     }

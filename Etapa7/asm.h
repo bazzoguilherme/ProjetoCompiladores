@@ -31,11 +31,18 @@ typedef enum ASM_OP {
     ASM_endbr64,
 } ASM_OP;
 
+typedef enum ASM_NOTES {
+    NoNote = 0,
+    Note_Push=1,
+    Note_Pop,
+} ASM_NOTES;
+
 struct ASM {
     char *label; // Label .Lx
     ASM_OP asm_operation; // Operation (movl, addl..)
     char *operador1;
     char *operador2;
+    ASM_NOTES note;
     struct ASM *prox;
 };
 
@@ -51,5 +58,7 @@ void export_Asm(struct ASM *assembly);
 struct ASM *gera_vazio();
 struct ASM *gera_label_asm(char *label);
 struct ASM *gera_label_num_asm(int label_id);
+
+struct ASM *optimize_assembly(struct ASM *assembly_code);
 
 #endif
