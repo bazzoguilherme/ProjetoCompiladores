@@ -47,4 +47,4 @@ Código Otimizado:
 
 ## Redução de Tamanho
 Para a **etapa*6*** do projeto, o nosso arquivo de teste apresentava um tamanho de 640 linhas.
-Com as otimizações da **etapa*7*** o tamanho foi reduzido para ~410 linhas.
+Com as otimizações da **etapa*7*** o tamanho foi reduzido para ~400 linhas.
