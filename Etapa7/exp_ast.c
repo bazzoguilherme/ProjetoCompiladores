@@ -42,7 +42,11 @@ void exporta (void *arvore, int opt){
     if (ast != NULL){
         // ast->codigo = concat(instrucoes_iniciais(), ast->codigo, NULL);
         // print_code(ast->codigo);
-        generateAsm(ast->codigo);
+        struct ASM *assembly = generateAsm(ast->codigo);
+        if (opt) {
+            
+        }
+        export_Asm(assembly);
     }
     // print_pointers(ast);
     // print_ast(ast);

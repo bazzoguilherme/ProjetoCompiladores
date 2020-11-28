@@ -32,7 +32,7 @@ typedef enum ASM_OP {
 } ASM_OP;
 
 struct ASM {
-    int label; // Label .Lx
+    char *label; // Label .Lx
     ASM_OP asm_operation; // Operation (movl, addl..)
     char *operador1;
     char *operador2;
@@ -42,10 +42,14 @@ struct ASM {
 struct ASM *initial;
 struct ASM *current_asm;
 
-void generateAsm(struct code *c);
+struct ASM *generateAsm(struct code *c);
 void gera_AsmCode(struct code *c);
 struct ASM *gera_asm(ASM_OP op, char *oper1, char *oper2);
 
+void export_Asm(struct ASM *assembly);
+
 struct ASM *gera_vazio();
+struct ASM *gera_label_asm(char *label);
+struct ASM *gera_label_num_asm(int label_id);
 
 #endif
