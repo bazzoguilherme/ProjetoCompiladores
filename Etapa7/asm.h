@@ -31,31 +31,21 @@ typedef enum ASM_OP {
     ASM_endbr64,
 } ASM_OP;
 
-typedef enum ASM_REG {
-    ASM_M_rsp = 1,
-    ASM_rsp,
-    ASM_M_rbp,
-    ASM_rbp,
-    ASM_M_rip,
-    ASM_eax,
-    ASM_ebx,
-    ASM_ecx,
-    ASM_edx,
-} ASM_REG;
-
 struct ASM {
     int label; // Label .Lx
     ASM_OP asm_operation; // Operation (movl, addl..)
-    int I_value; // imediate value for an operation
-    ASM_REG r1; // register1
-    ASM_REG r2; // register2
-    int desloc_r1; // desloc in memory register1
-    int desloc_r2; // desloc in memory register2
+    char *operador1;
+    char *operador2;
     struct ASM *prox;
 };
 
+struct ASM *initial;
+struct ASM *current_asm;
+
 void generateAsm(struct code *c);
-void print_AsmCode(struct code *c);
-struct ASM *gera_asm(int label, ASM_OP op, int I_val, ASM_REG r1, ASM_REG r2, int desloc1, int desloc2);
+void gera_AsmCode(struct code *c);
+struct ASM *gera_asm(ASM_OP op, char *oper1, char *oper2);
+
+struct ASM *gera_vazio();
 
 #endif
