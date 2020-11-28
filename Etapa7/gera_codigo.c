@@ -84,7 +84,9 @@ struct code *gera_code(int label, OP op, int arg1, int arg2, int dest1, int dest
 }
 
 struct code *gera_loadI(OP op, struct valor_lexico_t *arg1, int dest){
-    return gera_code(NULL_LABEL, op, lex2int(arg1), NULL_REGIS, dest, NULL_REGIS, NULL);
+    struct code *load = gera_code(NULL_LABEL, op, lex2int(arg1), NULL_REGIS, dest, NULL_REGIS, NULL);
+    load->tipo = code_load_imed;
+    return load;
 }
 
 struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_lexico_t *arg1, int dest) {
@@ -92,6 +94,8 @@ struct code *gera_loadI_sinal(OP op, struct valor_lexico_t *sinal, struct valor_
     if (sinal != NULL && sinal->valor.val_char == '-') { // Inverte valor registrador
         struct code *sub = gera_code(NULL_LABEL, op_rsubI, dest, 0, dest, NULL_REGIS, NULL);
         c->prox = sub;
+    } else {
+        c->tipo = code_load_imed;
     }
     return c;
 }
@@ -738,4 +742,53 @@ void libera_remendo(struct l_remendo *r) {
     if (r == NULL) return;
     libera_remendo(r->prox);
     free(r);
+}
+
+int isBinOp(OP op) {
+    switch (op)
+    {
+    case op_add:
+    case op_sub:
+    case op_mult:
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+int valor_op_bin(int val1, int val2, OP op) {
+    if (op == op_add) 
+        return val1+val2;
+    else if (op == op_sub)
+        return val1-val2;
+    else 
+        return val1*val2;
+}
+
+struct code *optimize_iloc(struct code *iloc) {
+    struct code *code_atual = iloc;
+    struct code *prev = iloc;
+    struct code *code_prox;
+    struct code *new_c;
+
+    while (code_atual != NULL) {
+        // Se estiver carregando dois imediatos em sequencia
+        if (code_atual->tipo == code_load_imed && code_atual->prox->tipo == code_load_imed) {
+            code_prox = code_atual->prox;
+            // Verifica se logo após está se fazendo uma op binária (///TODO) com esses dois valores
+            // printf("Op: %d\narg1: %d\narg2: %d\n", code_prox->prox->operation, code_prox->prox->arg1, code_atual->prox->arg2);
+            // printf("Op: %d\narg1: %d\narg2: %d\n", op_add, code_atual->dest1, code_prox->dest1);
+            if (isBinOp(code_prox->prox->operation) && (code_prox->prox->arg1 == code_atual->dest1) && (code_prox->prox->arg2 == code_prox->dest1)) {
+                // printf("OTOTOTOTOTO\n\n\n\n\n");
+                new_c = gera_code(NULL_LABEL, op_loadI, valor_op_bin(code_atual->arg1, code_atual->prox->arg1, code_prox->prox->operation), NULL_REGIS, code_atual->prox->prox->dest1, code_atual->prox->prox->dest2, code_prox->prox->prox);
+                prev->prox = new_c;
+                code_atual = new_c;
+            }
+        }
+        
+        prev = code_atual;
+        code_atual = code_atual->prox;
+    }
+
+    return iloc;
 }

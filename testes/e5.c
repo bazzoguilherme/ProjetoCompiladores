@@ -87,5 +87,5 @@ int main() {
     fib7 = fib(7);
     fib8 = fib(8);
 
-    return fib7;
+    return fun3param1;
 }

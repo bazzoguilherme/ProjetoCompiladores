@@ -124,6 +124,7 @@ typedef enum CodeType {
     code_saida_funcao,
     code_saida_fun_main, // só porque está sendo feito diferente
     code_adiciona_parametro,
+    code_load_imed,
 } CodeType;
 
 struct l_remendo {

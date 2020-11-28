@@ -39,17 +39,19 @@ void free_val_lex(struct valor_lexico_t *val_lex) {
 
 void exporta (void *arvore, int opt){
 	struct AST *ast = (struct AST*) arvore;
+    struct code *codigo;
     if (ast != NULL){
-        // ast->codigo = concat(instrucoes_iniciais(), ast->codigo, NULL);
-        // print_code(ast->codigo);
-        struct ASM *assembly = generateAsm(ast->codigo);
-        if (opt) {
+        codigo = ast->codigo;
+        if (opt) { // Otimizacao ILOC
+            codigo = optimize_iloc(codigo);
+        }
+        // print_code(codigo);
+        struct ASM *assembly = generateAsm(codigo);
+        if (opt) { // Otimizacao ASM
             assembly = optimize_assembly(assembly);
         }
         export_Asm(assembly);
     }
-    // print_pointers(ast);
-    // print_ast(ast);
 }
 
 void print_pointers(struct AST *ast) {
