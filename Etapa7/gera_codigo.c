@@ -781,8 +781,9 @@ struct code *optimize_iloc(struct code *iloc) {
             if (isBinOp(code_prox->prox->operation) && (code_prox->prox->arg1 == code_atual->dest1) && (code_prox->prox->arg2 == code_prox->dest1)) {
                 // printf("OTOTOTOTOTO\n\n\n\n\n");
                 new_c = gera_code(NULL_LABEL, op_loadI, valor_op_bin(code_atual->arg1, code_atual->prox->arg1, code_prox->prox->operation), NULL_REGIS, code_atual->prox->prox->dest1, code_atual->prox->prox->dest2, code_prox->prox->prox);
+                new_c->tipo=code_load_imed;
                 prev->prox = new_c;
-                code_atual = new_c;
+                code_atual = prev;
             }
         }
         

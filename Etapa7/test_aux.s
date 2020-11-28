@@ -346,13 +346,7 @@ main:
 	movl	%eax, -32(%rsp)
 	movl	$2, %eax
 	movl	%eax, -36(%rsp)
-	subq	$4, %rsp
-	movl	$2, (%rsp)
-	movl	$1, %edx
-	movl	(%rsp), %eax
-	addq	$4, %rsp
-	addl	%edx, %eax
-	movl	%eax, %eax
+	movl	$3, %eax
 	movl	%eax, -40(%rsp)
 	call	multi_add
 	movl	%eax, %eax
