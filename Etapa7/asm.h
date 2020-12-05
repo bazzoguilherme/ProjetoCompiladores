@@ -46,9 +46,6 @@ struct ASM {
     struct ASM *prox;
 };
 
-struct ASM *initial;
-struct ASM *current_asm;
-
 struct ASM *generateAsm(struct code *c);
 void gera_AsmCode(struct code *c);
 struct ASM *gera_asm(ASM_OP op, char *oper1, char *oper2);

@@ -8,8 +8,8 @@
 #define S_OPER 15
 
 extern struct stack_symbol_table *stack;
-extern struct ASM *initial;
-extern struct ASM *current_asm;
+struct ASM *initial;
+struct ASM *current_asm;
 
 void print_initial_info() {
     printf("\t.file\t\"programa.c\"\n");
